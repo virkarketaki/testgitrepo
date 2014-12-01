@@ -1,0 +1,13 @@
+<apex:page controller="CnP_PaaS.Misc_TopTen_FirstNames_Count" contentType="application/x-excel#Top_First_Names_count.xls" standardStylesheets="false"  language="english">
+<h1>Misc Top 10 FirstNames #</h1>
+Downlaod Date and Time : <apex:outputLabel value="{!Dvalue}"></apex:outputLabel>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar">
+      <apex:column headerValue="Serial #" value="{!ar.Sno}" style="text-align:center;"/>  
+          <apex:column headerValue="First Name" value="{!ar.FirstName}"/>  
+           <apex:column headerValue="Number Of Transactions" value="{!ar.DonationsNumber}"/>  
+      </apex:pageBlockTable>
+      {!IF(ResultSet.size==0,"NO records available.",NULL)} 
+      </apex:pageBlock>
+      
+      </apex:page>

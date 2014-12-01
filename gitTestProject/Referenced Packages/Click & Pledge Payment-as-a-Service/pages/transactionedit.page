@@ -1,0 +1,145 @@
+<apex:page controller="CnP_PaaS.CnP_Transaction_Detail_Controller" action="{!errorPage}" tabstyle="CnP_PaaS__CnP_Transaction__c" title="C&P Transaction Detail">
+
+     <apex:form >   
+     <apex:actionFunction name="getAPIParams" id="getAPIParams"  reRender="theForm" >
+         <apex:param name="sessionId" assignTo="{!apiSessionId}" value="{!$Api.Session_ID}" />
+         <apex:param name="serverURL" assignTo="{!apiServerURL}" value="{!$Api.Partner_Server_URL_190}" /> 
+         <apex:param name="currentPageURL" assignTo="{!currentPageURL}" value="{!$CurrentPage.Url}" /> 
+     </apex:actionFunction>
+     
+        <script language="JavaScript">      
+          window.onload = function() {getAPIParams(); }                
+        </script>
+               
+         <apex:pageblock title="Transaction Detail">
+         <apex:pageblockButtons >
+         <apex:commandButton action="{!saveTransaction}" value="Save"/>
+           <apex:commandButton action="{!cancelTransaction}" value="Cancel"/>
+             
+         </apex:pageblockButtons>
+   <apex:pageBlockSection title="Transaction Information">
+             <apex:outputField value="{!cnptransaction.Name}"/>
+             <apex:outputField value="{!cnptransaction.OwnerId}"/>                          
+             <apex:inputField value="{!cnpTransaction.CnP_PaaS__Account__c}"/>
+              <apex:inputField value="{!cnptransaction.CnP_PaaS__Contact__c}"/>
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__TransactionTimeZone__c}"/>
+
+   <apex:outputField value="{!cnptransaction.CnP_PaaS__TransactionDate__c}" rendered="false"/>
+            
+             </apex:pageBlockSection>
+             <apex:pageBlockSection rendered="{!IsCash}">
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__AutorizationCode__c}"  />
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__GatewayTransactionNumber__c}"/>
+
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__VaultGUID__c}"/>    
+                                                             
+              <apex:outputField value="{!cnptransaction.CnP_PaaS__Transaction_Type__c}"/>    
+           
+         </apex:pageBlockSection>                               
+         <apex:pageBlockSection title="Amount">
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__TotalCharged__c}"/>                          
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__Deductible_Charge__c}"/>            
+             
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__Shipping_Cost_Charge__c}"/>                          
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__Discount_Charge__c}"/>            
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__TaxAmount_Charge__c}"/> 
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__Charge_Amount__c}"/>                 
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__SurCharge__c}"/>
+             
+             </apex:pageBlockSection>
+             <apex:pageBlockSection title="Amount Due" rendered="{!IsRecurring}">             
+                 <apex:outputField value="{!cnptransaction.CnP_PaaS__TotalDue__c}"/> 
+                 <apex:outputField value="{!cnptransaction.CnP_PaaS__Shipping_Cost_Due__c}"/> 
+                 <apex:outputField value="{!cnptransaction.CnP_PaaS__Discount_Due__c}"/>                       
+                 <apex:outputField value="{!cnptransaction.CnP_PaaS__TaxAmount_Due__c}"/>  
+             </apex:pageBlockSection>   
+    
+       <apex:pageblockSection title="ACH Information"  rendered="{!IsACH}">                                      
+             <!-- apex:outputField value="{!cnptransaction.Routing_Number__c}"/ -->
+             <!-- apex:outputField value="{!cnptransaction.Account_Type__c}"/ -->  
+                              <apex:outputField value="{!cnptransaction.CnP_PaaS__PaymentType__c}"/> 
+   
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__Invoice_Check_Number__c}"/>                   
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__Name_On_card__c}"/>                                               
+             <!-- apex:outputField value="{!cnptransaction.Check_Type__c}"/ -->
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__IdType__c}"/>
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__IdNumber__c}"/>
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__IdState__c}"/>                                                          
+         </apex:pageblockSection>
+
+          <apex:pageblockSection title="Purchase Order Information" rendered="{!IsPurchaseOrder}"   >                                      
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__PaymentType__c}"/>
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__Invoice_Check_Number__c}"/>                               
+         </apex:pageblockSection>
+          <apex:pageblockSection title="Check Information" rendered="{!IsCheck}">                                      
+          <apex:outputField value="{!cnptransaction.CnP_PaaS__PaymentType__c}"/>
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__Invoice_Check_Number__c}"/>                               
+         </apex:pageblockSection>
+         <apex:pageblockSection title="Cash Information" rendered="{!Cash}">                                      
+         <apex:outputField value="{!cnptransaction.CnP_PaaS__PaymentType__c}"/>
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__Invoice_Check_Number__c}"/>                               
+         </apex:pageblockSection>
+        <apex:pageblockSection title="Invoice Information" rendered="{!IsInvoice}"   >                                      
+        <apex:outputField value="{!cnptransaction.CnP_PaaS__PaymentType__c}"/>
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__Invoice_Check_Number__c}"/>
+         </apex:pageblockSection>
+                  
+
+         <apex:pageblockSection title="Credit Card Information" id="CreditCardPanel" rendered="{!IsCreditCard}" >                                      
+            <apex:outputField value="{!cnptransaction.CnP_PaaS__Credit_Card_Name__c}" />                          
+            <apex:outputField value="{!cnptransaction.CnP_PaaS__CreditCard4x4__c}"  />                          
+            <apex:outputField value="{!cnptransaction.CnP_PaaS__Name_On_card__c}"/>                          
+            <apex:outputField value="{!cnptransaction.CnP_PaaS__CardExpiration__c}"/>                          
+         </apex:pageblockSection>
+   <apex:pageblockSection title="Checkout Page Information" rendered="{!(IsCash)}">
+                     <apex:outputField value="{!cnptransaction.CnP_PaaS__CnPAccountID__c}"/>   
+            <apex:outputField value="{!cnptransaction.CnP_PaaS__CnP_Account_ID__c}"/> 
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__CheckOutPage__c}"/>                          
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__CheckOutPageId__c}" />      
+              
+        <!-- </apex:pageblockSection>-->
+        <!-- <apex:pageblockSection title="Campaign & Tracker "  >-->
+            
+             <apex:outputField value="{!cnptransaction.CnP_PaaS__UrlReferrer__c}"/>
+           
+         </apex:pageblockSection>
+         <apex:pageblockSection title="Shipping Address" rendered="{!ShowShippingAddress}">
+             <apex:inputField value="{!cnptransaction.CnP_PaaS__ShippingAddress1__c}"/>   
+             <apex:inputField value="{!cnptransaction.CnP_PaaS__ShippingAddress2__c}"/>         
+             <apex:inputField value="{!cnptransaction.CnP_PaaS__ShippingCity__c}"/>   
+             <apex:inputField value="{!cnptransaction.CnP_PaaS__ShippingState__c}"/> 
+             <apex:inputField value="{!cnptransaction.CnP_PaaS__ShippingProvince__c}"/>         
+             <apex:inputField value="{!cnptransaction.CnP_PaaS__ShippingCountry__c}"/>   
+             <apex:inputField value="{!cnptransaction.CnP_PaaS__ShippingZipCode__c}"/>         
+             <apex:inputField value="{!cnptransaction.CnP_PaaS__ShippingPhone__c}"/>         
+         </apex:pageblockSection>         
+         <apex:pageblockSection title="Tracking Information"  >
+          <apex:inputField value="{!cnptransaction.CnP_PaaS__Tracker__c}"/>            
+             <apex:inputField value="{!cnptransaction.CnP_PaaS__Campaign__c}"/>
+          <!--  <apex:inputField value="{!cnptransaction.CustomQuestions__c}"/>   -->
+  
+
+         </apex:pageblockSection>
+
+     </apex:pageblock>
+     </apex:form>          
+
+    <!-- apex:relatedList list="Opportunities__r"/ -->    
+    
+    <apex:pageblock title="Related Donation(s) List" >
+        <apex:pageblockSection >  
+            <apex:pageBlockTable value="{!opportunitylist}" var="opportunity" width="100%">         
+                <apex:column headerValue="Name" width="=400px">
+                    <apex:outputLink value="/{!opportunity.Id}">{!opportunity.Name}</apex:outputLink>                 
+                </apex:column>   
+                <apex:column headerValue="Amount" width="200">        
+                    <apex:outputField value="{!opportunity.Amount}"/>                                                    
+                </apex:column>           
+                <apex:column headerValue="Stage" width="200">    
+                    <apex:outputField value="{!opportunity.StageName}"/>                            
+                </apex:column>           
+            </apex:pageBlockTable>      
+        </apex:pageblockSection>  
+    </apex:pageblock>
+    
+</apex:page>

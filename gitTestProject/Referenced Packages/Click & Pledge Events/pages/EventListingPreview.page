@@ -1,0 +1,350 @@
+<apex:page standardController="CnP_PaaS_EVT__Event_listing__c" extensions="CnP_PaaS_EVT.EventListing" showHeader="false" standardStylesheets="false" >
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+     <script>
+     
+                     $(document).ready(function () {                                       
+                     $('.demoTable tbody tr:not(.stubCell)').bind('mouseover mouseout',
+                                function (e) {
+                                        // hilight the row
+                                        e.type == 'mouseover' ? $(this).children('td').addClass('hilightRow') : $(this).children('td').removeClass('hilightRow');
+                                }
+                        );
+                       
+                      $('#Header img').removeAttr('width');
+                      $('#Header img').removeAttr('height');  
+                });        
+
+        </script>
+  <style>
+  
+  
+                
+            /* Main */
+            body{
+            background-color:{!CreateListing.Page_background__c}; 
+            
+            }
+            img{
+                   border-radius:10px;
+                    moz-border-radius:10px;
+                    webkit-border-radius:10px;
+                     max-width: 640px;
+            }
+            
+            #Main{
+                width:640px;
+               /* height:1000px;*/
+                margin-left:auto;
+                margin-right:auto;
+            }
+            /* ==============================*/
+            /* Header */
+                #Header{
+                    width:100%;
+                
+                    float:left;
+                  
+                    border:1px solid #fff;
+                    border-radius:10px;
+                    moz-border-radius:10px;
+                    webkit-border-radius:10px;
+                      -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+                        -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+                    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+                }
+                #HeaderLeft{
+                    float:left;
+                    width:100%;
+                 
+                }
+                #HeaderRight{
+                    float:left;
+                    width:600px;
+                  
+                }
+                /********************/
+                /* ContentArea */
+                #ContentArea{
+                    float:left;
+                    width:620px;
+                   
+                    background-color:#fff;
+                   
+                    border:1px solid #fff;
+                    border-radius:10px;
+                    moz-border-radius:10px;
+                    webkit-border-radius:10px;
+                    margin-top:5px;
+                    padding:10px;
+                    color:{!CreateListing.Section_headers_text__c};
+                    font-size:{!CreateListing.Font_size__c};  
+                    font-family:{!CreateListing.Font_family__c};
+                    -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+                    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+                    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);  
+                }
+                
+                #ContentTop{
+                    float:left;
+                    width:97%;
+                    height:auto;
+                    padding: 10px 10px 10px 6px;
+                    text-align:left;
+                    background-color:{!CreateListing.Page_header__c};
+                    margin-bottom:10px;
+                    border-radius:10px;
+                    moz-border-radius:10px;
+                    webkit-border-radius:10px;
+                   
+                }
+
+
+                /* ==============================*/
+                            /* Footer */
+            #Footer{
+                width:612px;           
+              
+                float:left;
+                background-color:{!CreateListing.Footer_background__c};                
+                padding:10px;
+                padding-left:20px;
+                margin-top:5px;
+                border-radius:10px;
+                moz-border-radius:10px;
+                webkit-border-radius:10px;
+                -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+                -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+                box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+            }
+            
+            #Footer a {
+                color:#999;
+            }
+            
+            #Footer a:hover {
+                text-decoration:none;
+            }
+            /* ==============================*/
+            /*List events style*/
+.Box
+{
+    
+     width:629px;
+   
+    float:left;
+    font-family:'Arial';
+}
+
+.t1
+{
+   
+    font-size:16px;
+   
+    text-align:left;
+  
+   padding-left:10px;
+       
+}
+
+.Box .Top
+{
+    float:left;
+    display:block;
+ 
+     width:620px;
+  
+}
+
+.Top .T-Left
+{
+    float:left;
+    width:11px;
+  
+    background-repeat:no-repeat;
+    background-position:left;
+    height:43px;
+}
+.Top .Title1 h2 {
+   
+    padding: 2px 0 2px 5px;
+    margin:0px;
+
+}
+
+.Top .Title1
+{
+    
+  
+   
+   width: 609px;
+  
+   
+    background-color:{!CreateListing.Section_titleheader_background__c};
+    background-repeat:repeat-x;
+
+    float:left;
+    -webkit-border-radius: 8px 8px 0px 0px;
+    -moz-border-radius: 8px 8px 0px 0px;
+    border-radius: 8px 8px 0px 0px;
+    padding : 5px;
+            line-height:30px;
+}
+
+.Top .T-Right
+{
+    width:11px;
+    height:43px;
+    float:left;
+   
+    background-repeat:no-repeat;
+    background-position:right;
+}
+
+.ContMiddle
+{
+    width:597px;
+   
+    float:left;   
+   
+    background-color:{!CreateListing.Section_Headers_background__c};
+    border-left:1px solid {!CreateListing.Section_titleheader_background__c};
+    border-right:1px solid {!CreateListing.Section_titleheader_background__c};
+    border-bottom:1px solid {!CreateListing.Section_titleheader_background__c};
+    -webkit-border-radius: 0px 0px 8px 8px;
+    -moz-border-radius: 0px 0px 8px 8px;
+    border-radius: 0px 0px 8px 8px;
+    padding:10px;
+    font-size:11px;
+    line-height:16px;
+}
+
+.Box .Bottom
+{
+  
+    width:620px;
+    float:left;
+    height:17px;
+}
+
+.Bottom .B-Left
+{
+    float:left;
+    width:11px;
+    height:17px;
+   
+    background-repeat:no-repeat;
+    background-position:left;
+}
+
+.Box .B-Middle
+{
+   
+      width:597px;
+    height:16px;
+    border-bottom:1px solid #e4e4e4;
+    background-color:#fff;
+    float:left;
+}
+
+.Box .B-Right
+{
+    
+    background-repeat:no-repeat;
+    background-position:right;
+    float:left;
+    height:17px;
+    width:11px;
+}
+
+.demoTable{
+    width:597px;//500px
+}
+
+ .demoTable thead th {
+                        white-space: nowrap;
+                        overflow-x:hidden;
+                        padding: 3px;
+                        text-align:left;
+                }
+                .demoTable tbody td {
+                        padding: 3px;
+                        text-align:left;
+                }
+       .hilightRow {
+        background: #ccc;
+        cursor: pointer;
+}
+.registerlink
+{
+    border-radius:2px;display:block;padding:1px;background-color:#ffffff;font-family:Tahoma;color:#000000;text-decoration:none;
+}
+.even{
+   background:#E3DCDB;
+}
+.odd{
+  background:#FCF7F7;
+}
+ #cnp {
+            line-height:25px;
+            color:#CCC;
+            font-family:Arial, Helvetica, sans-serif;
+            font-size:11px;
+            max-width:700px;
+            text-align:center;
+            margin:0 auto;
+    
+    } 
+        
+        </style>
+
+<apex:pageBlock >
+<title>{!CreateListing.Name}</title>
+ <div id="Main">
+       <div id="Header">
+           <div id="HeaderLeft"><apex:outputfield value="{!CreateListing.CnP_PaaS_EVT__Upload_banner__c}"  /></div>
+           <div id="HeaderRight"></div>
+       </div> 
+       <div id="ContentArea">
+           <div id="Right">
+                <div id="ContentTop">
+                   
+                   <span>
+                   <apex:outputfield value="{!CreateListing.CnP_PaaS_EVT__Title_and_information__c}" />
+                   </span>
+                   
+                </div>
+                <div id="ContentBott">
+                     <div class="Box">
+                              
+                            <div class="Top">
+                                  
+                                    <div class="Title1">
+                                        <h2 class="t1"><apex:outputfield value="{!CreateListing.CnP_PaaS_EVT__Section_header_title__c}" /></h2>
+                                        
+                                    </div>  
+                                   
+                            </div>
+                            
+                                  
+                            <div class="ContMiddle" style="overflow:auto">
+                            <span>
+                                  <apex:outputfield value="{!CreateListing.CnP_PaaS_EVT__Section_description__c}" />
+                                  </span><br/>
+                                  <br/>
+                             <apex:pageBlockSection >                                  
+                                 
+                             </apex:pageBlockSection>
+                            </div>
+                          
+                        </div>
+                </div> 
+           </div> 
+       </div> 
+       <div id="Footer">
+            <span><apex:outputfield value="{!CreateListing.CnP_PaaS_EVT__Footer_information__c}" /></span>
+       </div>          
+ </div>  
+
+</apex:pageBlock>
+<div id="cnp">Powered by Click &amp; Pledge</div>
+</apex:page>

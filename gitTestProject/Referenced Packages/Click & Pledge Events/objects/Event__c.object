@@ -1,0 +1,1210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <content>CreateAnEventPage</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <content>CreateAnEventPage</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <content>CreateAnEventPage</content>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Visualforce</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <deprecated>false</deprecated>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Acknowledgement_Mandatory__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Acknowledgement Mandatory</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Address__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Address of the event.</description>
+        <externalId>false</externalId>
+        <label>Address</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Agenda_Display_Name__c</fullName>
+        <defaultValue>&quot;Download Agenda&quot;</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Agenda Display Name</label>
+        <length>100</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Allow_to_print_ticket__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_UsedAllow Registrant to Print Tickets</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>American_express__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>American Express</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>At_the_door__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>At the Door</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Available_Inventory__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(Total_Inventory__c&gt;0, Total_Inventory__c-Inventory_sold__c,null )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Available Inventory</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Brief_agenda__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Agenda for the event</description>
+        <externalId>false</externalId>
+        <label>Brief Agenda</label>
+        <length>30000</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>C_P_Account_Id__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>C&amp;P Account Number</label>
+        <length>255</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Campaign__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Campaign</label>
+        <referenceTo>Campaign</referenceTo>
+        <relationshipLabel>C&amp;P Events</relationshipLabel>
+        <relationshipName>C_P_Events</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Cash__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Cash</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Check__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Check</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Confirmation_message__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Confirmation Message</label>
+        <length>32000</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Contact__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_used Event Coorditator</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>C&amp;P Events (Event Coorditator)</relationshipLabel>
+        <relationshipName>Events</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Creat_invitation_event__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Creat Invitations for this Event</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Create_ticket_registration__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Create Ticket for Each Registration</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Credit_card__c</fullName>
+        <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Credit Card</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Currency__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_used Currency</label>
+        <picklist>
+            <picklistValues>
+                <fullName>$ US Dollar</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>€ Euro</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>£ Pound</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>C$ CAD</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Custom_Payment_Check__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Custom Payment Enable</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Custom_Payment_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Custom Payment Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Declined__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Registration Declined Message</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Disclaimer_Terms_Conditions__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Disclaimer / Terms &amp; Conditions</label>
+        <length>32000</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Discover__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Discover</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>End_date_and_time__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Event end date and time</description>
+        <externalId>false</externalId>
+        <label>Ends On</label>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Event_Ended__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Event Ended</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Event_category__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_used Event Category</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Event_description__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Description of the event briefly</description>
+        <externalId>false</externalId>
+        <label>Event Description</label>
+        <length>32000</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Event_listing__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Event Listing</label>
+        <referenceTo>Event_listing__c</referenceTo>
+        <relationshipName>Events</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Event_logo__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Used Event Logo</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Event_title__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Title of the event.</description>
+        <externalId>false</externalId>
+        <label>Event Name (External)</label>
+        <length>255</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Event_user_coorditator__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Event User Coorditator</label>
+        <referenceTo>User</referenceTo>
+        <relationshipName>Events</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Fax__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Used Fax</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Hide_First_Page_of_Registration__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Hide First Page of Registration</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Inventory_sold__c</fullName>
+        <defaultValue>0</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Inventory sold</label>
+        <precision>10</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Invoice_P_O__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Invoice</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Location__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Location of the event.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Enter event&apos;s location here</inlineHelpText>
+        <label>Un_Used Location</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Maximum_capacity__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Maximum Capacity for this Event</label>
+        <length>100</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Opening_page_information__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Used Opening Page Information</label>
+        <length>32000</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Organization_Information__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Organization Information</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Organization__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Used_Organization</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Owner_email__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Used Owner&apos;s Email</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Pdf_Name__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Pdf Name</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Phone__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Used Phone</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Phone</type>
+    </fields>
+    <fields>
+        <fullName>Primary_Campaign__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Primary Campaign</label>
+        <length>250</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Public_site__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(Hide_First_Page_of_Registration__c==true,  HYPERLINK(Site_Url__c &amp; 
+&quot;/CnP_PaaS_EVT__EventRegistration_1?event_id=&quot;&amp; Id &amp;&quot;&amp;pagename=Page1_Opening_Page&amp;Temp=Cookie&quot;,&apos;View&apos;,&apos;CnP_PaaS_Evt&apos;), HYPERLINK(Site_Url__c &amp; &quot;/CnP_PaaS_EVT__EventRegistration_1?event_id=&quot;&amp; Id &amp;&quot;&amp;pagename=Page1_Opening_Page&quot;,&apos;View&apos;,&apos;CnP_PaaS_Evt&apos;))</formula>
+        <label>Event Site</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Publish_date__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Date when the event should be published.</description>
+        <externalId>false</externalId>
+        <label>Publish On</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Purchase_order__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Purchase Order</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Receipt_Header__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Receipt Header</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Receipt_Terms_Condition__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Terms &amp; Conditions</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Registration_amount__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Used Registration Amount</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Registration_closing_date__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Used Registration Closing Date</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Registration_conformation_message__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Registration Confirmation Message</label>
+        <length>32000</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Report_Color__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Report Color</label>
+        <length>25</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Send_Receipt__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Send Receipt</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Show_Terms_Conditions__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Show Terms &amp; Conditions</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Show_address_map__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Show Address Map on Registration Form</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Show_time_zone_on_registrationform__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Un_Show Time Zone on Registration Form</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Site_Url__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Force.com Site</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Sold_Out__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Sold Out</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Start_date_and_time__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Event start date and time</description>
+        <externalId>false</externalId>
+        <label>Starts On</label>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Terms_Conditions__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Terms &amp; Conditions</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>15</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Thank_You_Message_Receipt__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Thank You Message</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Thank_You__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Thank You Message</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Time_zone__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <inlineHelpText>Select the time zone here</inlineHelpText>
+        <label>Un_Used Time Zone</label>
+        <picklist>
+            <picklistValues>
+                <fullName>(GMT+14:00) Line Is. Time (Pacific/Kiritimati)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+13:00) Phoenix Is. Time (Pacific/Enderbury)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+13:00) Tonga Time (Pacific/Tongatapu)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+12:45) Chatham Standard Time (Pacific/Chatham)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+12:00) New Zealand Standard Time (Pacific/Auckland)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+12:00) Fiji Time (Pacific/Fiji)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+11:30) Norfolk Time (Pacific/Norfolk)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+11:00) Petropavlovsk-Kamchatski Summer Time (Asia/Kamchatka)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+11:00) Solomon Is. Time (Pacific/Guadalcanal)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+10:30) Lord Howe Standard Time (Australia/Lord_Howe)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+10:00) Eastern Standard Time (Queensland)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+10:00) Eastern Standard Time (New South Wales)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+09:30) Central Standard Time (South Australia)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+09:30) Central Standard Time (Northern Territory)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+09:00) Korea Standard Time (Asia/Seoul)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+09:00) Japan Standard Time (Asia/Tokyo)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+08:00) Hong Kong Time (Asia/Hong_Kong)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+08:00) Malaysia Time (Asia/Kuala_Lumpur)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+08:00) Philippines Time (Asia/Manila)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+08:00) China Standard Time (Asia/Shanghai)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+08:00) Singapore Time (Asia/Singapore)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+08:00) China Standard Time (Asia/Taipei)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+08:00) Western Standard Time (Australia)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+07:00) Indochina Time (Asia/Bangkok)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+07:00) West Indonesia Time (Asia/Jakarta)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+07:00) Indochina Time (Asia/Saigon)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+06:30) Myanmar Time (Asia/Rangoon)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+06:00) Bangladesh Time (Asia/Dacca)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+05:45) Nepal Time (Asia/Katmandu)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+05:30) India Standard Time (Asia/Calcutta)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+05:30) India Standard Time (Asia/Colombo)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+05:00) Pakistan Time (Asia/Karachi)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+05:00) Uzbekistan Time (Asia/Tashkent)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+05:00) Yekaterinburg Summer Time (Asia/Yekaterinburg)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+04:30) Afghanistan Time (Asia/Kabul)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+04:00) Gulf Standard Time (Asia/Dubai)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+04:00) Georgia Time (Asia/Tbilisi)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+03:30) Iran Daylight Time (Asia/Tehran)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+03:00) Eastern African Time (Africa/Nairobi)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+03:00) Arabia Standard Time (Asia/Baghdad)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+03:00) Arabia Standard Time (Asia/Kuwait)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+03:00) Arabia Standard Time (Asia/Riyadh)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+03:00) Moscow Daylight Time (Europe/Moscow)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+02:00) Eastern European Time (Africa/Cairo)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+02:00) South Africa Standard Time (Africa/Johannesburg)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+02:00) Israel Daylight Time (Asia/Jerusalem)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+02:00) Eastern European Summer Time (Europe/Athens)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+02:00) Eastern European Summer Time (Europe/Bucharest)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+02:00) Eastern European Summer Time (Europe/Helsinki)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+02:00) Eastern European Summer Time (Europe/Istanbul)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+02:00) Eastern European Summer Time (Europe/Minsk)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+01:00) Central European Summer Time (Europe/Amsterdam)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+01:00) Central European Summer Time (Europe/Berlin)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+01:00) Central European Summer Time (Europe/Brussels)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+01:00) Central European Summer Time (Europe/Paris)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+01:00) Central European Summer Time (Europe/Prague)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+01:00) Central European Summer Time (Europe/Rome)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+00:00) Irish Summer Time (Europe/Dublin)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+00:00) Western European Summer Time (Europe/Lisbon)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+00:00) British Summer Time (Europe/London)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT+00:00) Greenwich Mean Time (GMT)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-01:00) Cape Verde Time (Atlantic/Cape_Verde)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-02:00) South Georgia Standard Time (Atlantic/South_Georgia)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-03:00) Argentine Time (America/Buenos_Aires)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-03:00) Brasilia Time (America/Sao_Paulo)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-03:30) Newfoundland Daylight Time (America/St_Johns)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-04:00) Atlantic Daylight Time (America/Halifax)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-04:00) Atlantic Standard Time (America/Puerto_Rico)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-04:00) Chile Time (America/Santiago)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-04:00) Atlantic Daylight Time (Atlantic/Bermuda)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-04:30) Venezuela Time (America/Caracas)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-05:00) Colombia Time (America/Bogota)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-05:00) Eastern Daylight Time (America/Indianapolis)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-05:00) Peru Time (America/Lima)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-05:00) Eastern Daylight Time (America/New_York)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-05:00) Eastern Standard Time (America/Panama)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-06:00) Central Daylight Time (America/Chicago)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-06:00) Central Standard Time (America/El_Salvador)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-06:00) Central Daylight Time (America/Mexico_City)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-07:00) Mountain Daylight Time (America/Denver)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-07:00) Mountain Standard Time (America/Phoenix)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-08:00) Pacific Daylight Time (America/Los_Angeles)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-08:00) Pacific Daylight Time (America/Tijuana)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-09:00) Alaska Daylight Time (America/Anchorage)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-10:00) Hawaii Standard Time (Pacific/Honolulu)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-11:00) Niue Time (Pacific/Niue)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>(GMT-11:00) Samoa Standard Time (Pacific/Pago_Pago)</fullName>
+                <default>false</default>
+            </picklistValues>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Total_Inventory__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Total Inventory</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Visa__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Visa</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Web_address__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Web Address</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>address_on_registration__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Show Address on the Registration Form</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>category__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Category</label>
+        <referenceTo>Event_category__c</referenceTo>
+        <relationshipName>Events</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>e_check__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>eCheck</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>event_coordinator__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Event Coordinator</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipName>Events1</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>iFrame_Code__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>&apos;&lt;iframe src=&quot;&apos; &amp; Site_Url__c &amp; &apos;/CnP_PaaS_EVT__EventRegistration_1?event_id=&apos;&amp; Id  &amp;&apos;&amp;pagename=Page1_Opening_Page&quot; align=&quot;top&quot; height=&quot;900&quot; width=&quot;660&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;&apos;</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>iFrame Code</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>master_card__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Master Card</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <label>C&amp;P Event</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Start_date_and_time__c</columns>
+        <columns>End_date_and_time__c</columns>
+        <columns>category__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>Event Name (Internal)</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>C&amp;P Events</pluralLabel>
+    <searchLayouts>
+        <customTabListAdditionalFields>Event_title__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Start_date_and_time__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>End_date_and_time__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Event_listing__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Publish_date__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>Public_site__c</customTabListAdditionalFields>
+        <customTabListAdditionalFields>CREATED_DATE</customTabListAdditionalFields>
+        <searchFilterFields>NAME</searchFilterFields>
+    </searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

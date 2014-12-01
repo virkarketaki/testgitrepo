@@ -1,0 +1,12 @@
+<apex:page standardController="Address__c" extensions="HelpTextController" sidebar="false" tabStyle="Address__c" standardstyleSheets="true" showHeader="true">
+	<apex:form id="formId">
+		<apex:pageBlock >
+			<apex:pageBlockSection >
+				<apex:inputField value="{!objAddress.n1__c}" required="true" taborderhint="01"/>
+				<apex:inputField value="{!objAddress.n2__c}" required="true" taborderhint="02"/>
+				<apex:inputField value="{!objAddress.n3__c}" required="true" taborderhint="03"/>
+				<apex:inputField value="{!objAddress.n4__c}" required="true" taborderhint="04"/>
+			</apex:pageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

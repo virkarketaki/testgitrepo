@@ -1,0 +1,92 @@
+<apex:component controller="McaApp.MCANestedOffersTabController" allowDML="true">
+
+  <apex:attribute name="submission" description="" type="Id" assignTo="{!submissionId}"/>
+        
+    <apex:pageBlock id="offers">
+    
+      <apex:pageBlockButtons >
+      
+        <apex:CommandButton action="{!newOffer}" value="New Offer" rerender="offers"></apex:CommandButton>
+        
+        <apex:CommandButton action="{!saveAll}" value="Save" rerender="offers" status="loadingPanel"></apex:CommandButton>
+        <apex:CommandButton action="{!editAll}" value="Edit All" rerender="offers" status="loadingPanel"></apex:CommandButton>
+        
+        
+        <apex:CommandButton action="{!refresh}" value="Refresh" rerender="offers" status="loadingPanel"></apex:CommandButton>
+        <apex:CommandButton action="{!refresh}" value="Cancel" rerender="offers" status="loadingPanel"></apex:CommandButton>
+        
+      </apex:pageBlockButtons>
+  
+      <apex:dataTable value="{!offers}" var="offer" styleClass="list tablesorting tablesorter" headerClass="headerRow">
+      
+        <apex:inlineEditSupport />
+        
+        <apex:column >
+          <apex:outputLink value="/{!offer.Id}" target="blank" rendered="{!NOT(ISBLANK(offer.Id))}"> View </apex:outputLink>
+          <apex:outputLabel value=" | " rendered="{!NOT(ISBLANK(offer.Id))}"/>
+                    
+          <apex:commandLink action="{!deleteOffer}" value="Del" rerender="rerender" rendered="{!NOT(ISBLANK(offer.Id))}" status="loadingPanel">
+            <apex:param name="recordToDelete" value="{!offer.Id}" assignTo="{!recordToDelete}" ></apex:param>
+          </apex:commandLink>
+        </apex:column>              
+         
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__Deal_Type__c.Label}">
+          <apex:outputField value="{!offer.McaApp__Deal_Type__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__Deal_Type__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>
+  
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__Amount__c.Label}">
+          <apex:outputField value="{!offer.McaApp__Amount__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__Amount__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>
+        
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__Payback_Amt__c.Label}">
+          <apex:outputField value="{!offer.McaApp__Payback_Amt__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__Payback_Amt__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>
+        
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__Rate__c.Label}">
+          <apex:outputField value="{!offer.McaApp__Rate__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__Rate__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>
+        
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__Term_Months__c.Label}">
+          <apex:outputField value="{!offer.McaApp__Term_Months__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__Term_Months__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>                        
+        
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__Holdback__c.Label}">
+          <apex:outputField value="{!offer.McaApp__Holdback__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__Holdback__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>
+        
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__Payment_Amt__c.Label}">
+          <apex:outputField value="{!offer.McaApp__Payment_Amt__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__Payment_Amt__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>          
+        
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__PMT_Schedule__c.Label}">
+          <apex:outputField value="{!offer.McaApp__PMT_Schedule__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__PMT_Schedule__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>  
+        
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__Status__c.Label}">
+          <apex:outputField value="{!offer.McaApp__Status__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__Status__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>                      
+            
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__Send__c.Label}">
+          <apex:outputField value="{!offer.McaApp__Send__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__Send__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>  
+        
+        <apex:column headerValue="{!$ObjectType.McaApp__Offer__c.Fields.McaApp__Funder__c.Label}">
+          <apex:outputField value="{!offer.McaApp__Funder__c}" rendered="{!AND(NOT(ISBLANK(offer.Id)), NOT(editAll))}"/>
+          <apex:inputField value="{!offer.McaApp__Funder__c}" rendered="{!OR((ISBLANK(offer.Id)), editAll)}"/>
+        </apex:column>      
+      
+      </apex:dataTable>
+      
+    </apex:pageBlock>
+
+</apex:component>

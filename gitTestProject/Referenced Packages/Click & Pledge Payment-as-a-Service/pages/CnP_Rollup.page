@@ -1,0 +1,61 @@
+<apex:page controller="CnP_PaaS.CnP_Rollup" title="C&P Rollup">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+<style>
+   .helpLink {
+       position:relative;       
+    }
+
+    .video{
+      display:none;
+      width:12%;
+      height:auto;
+      background:#EEE;
+      border:1px solid #CCC;
+      position:absolute;     
+      z-index:10;
+      margin-left:950Px;
+    }
+</style>
+<script>
+ $(function(){
+          $(".video").mouseout(function(){
+             
+              $(this).fadeOut(8000);
+             
+          })
+          });
+</script>
+
+<apex:form >
+<apex:outputLink styleClass="helpLink" rendered="{!subTab['Rollups']['Rollups'].display=='true'}" >  
+                                
+                                 <Apex:outputLabel value="C&P Help for this Page" style="font-size:90%;margin-left:940Px;margin-right:5Px;" onmouseover="jQuery('[id$=Foo]').css('display','block');"/>      
+                                 <apex:image value="/s.gif" styleClass="helpIcon" onmouseover="jQuery('[id$=Foo]').css('display','block');" />                    
+                          </apex:outputLink>
+                          <apex:outputPanel id="Foo" styleClass="video"  >   
+                           <ul style="padding-left:5px;" >                       
+                              {!subTab['Rollups']['Rollups'].description} <br/> <br/>
+                              <Apex:outputpanel rendered="{!subTab['Rollups']['Rollups'].ActiveLink=='true'}">
+                                  <li><a href="{!subTab['Rollups']['Rollups'].link}" target="_blank" >{!subTab['Rollups']['Rollups'].strlink}</a> <br/></li></Apex:outputpanel>
+                              <Apex:outputpanel rendered="{!subTab['Rollups']['Rollups'].ActiveVideo=='true'}">
+                                 <li> <a href="{!subTab['Rollups']['Rollups'].video}"  onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subTab['Rollups']['Rollups'].strVideo}</a></li></Apex:outputpanel>
+                           
+                           </ul>
+                          </apex:outputPanel>
+
+<apex:pageMessages />
+ <apex:pageBlock >
+            <apex:pageBlockButtons > 
+             
+                <apex:commandButton value="Campaign Rollup From Version 3.X to 4.X" action="{!camprollup}" style="margin-left:-134px;"/>
+                <apex:commandButton value="Custom Question Rollup Version 3.X to 4.X" action="{!cqrollup}"/>
+               <apex:commandButton value="Application Name Version 4.x to 5.x" action="{!applicationrollup}"/>
+            </apex:pageBlockButtons>
+            <apex:outputText >
+               Click on respective button to Rollup.
+            </apex:outputText>
+             </apex:pageBlock>
+             
+</apex:form>
+
+</apex:page>

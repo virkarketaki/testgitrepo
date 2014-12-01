@@ -1,0 +1,280 @@
+<apex:page standardController="CnP_PaaS_EVT__Custom_fields__c" extensions="CnP_PaaS_EVT.CustomFields">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+ <script type="text/javascript">
+ $(document).ready(function(){
+    $(".newsection").attr('maxlength','80');
+    $(".question").attr('maxlength','80');
+ })
+  
+ function validate(){
+                     
+                     var EventName = $(".EventNameC").val();
+                     
+                     
+                   var g = $(".group").val();
+                                   
+                   var q = $(".qu").val();
+                  var Place=$(".PlaceQ").val();
+                   
+                   if(EventName==''){
+                   alert("Please Select Event");
+                   $(".EventNameC").focus();
+                       return false;
+                   }
+                   if(g=="Select")
+                   {
+                       alert("Please Select a Section or Create a New Section");
+                       $(".group").focus();
+                       return false;
+                   }
+                   var newsection=$(".newsection").val();
+                  
+                   if(newsection=="")
+                   {
+                       alert("Please Enter a New Section Heading");
+                       $(".newsection").focus();
+                       return false;
+                       
+                   }
+                    
+                   if(q=="")
+                   {
+                       alert("Please Select Question type");
+                       $(".qu").focus();
+                       return false;
+                   }
+                   var question =$(".question").val();
+                   if(question=="")
+                   {
+                       alert("Please Enter The Question");
+                      
+                       return false;
+                   }
+                   if(question.length>80)
+                   {
+                       alert("Question size should be 80 charaters");
+                      
+                       return false;
+                   }
+                   var question_type=$(".qu").val();
+                   
+                   if(question_type=="Radio button" || question_type=="Check box" || question_type=="Select list")
+                   {
+                       var question_value=$(".qu1").val();
+                      
+                       if(question_value=="" || question_value==" ")
+                       {
+                           alert("Please Enter Answer Options");
+                           $(".qu1").focus();
+                           return false;
+                       }
+                   }                   
+                    var req = $(".FieldInfo_FieldVlaues").is(':checked');
+                    var visible = $(".FieldInfo_visible").is(':checked');
+                    var def = $(".default1").val();
+                   
+                   if(req==true && visible==false && def=="")
+                    {
+                          alert("Please Enter Default Value");
+                          $(".default").focus();
+                          return false;
+                    }                   
+ } 
+function LoadFunction(){
+
+    window.location.reload();
+}
+function CheckVisible(value)
+{  
+      if(value)
+      {         
+          $(".FieldInfo_visible").attr('checked',true);
+      }
+}
+function CheckRequired(value)
+{
+     if(!value)
+     {
+          $(".default").show();
+          $(".default1").show();
+          var def=$(".default1").val();
+          if(def=="")
+          {
+             alert("Enter Default Value!");
+             $(".default1").focus();
+             return false;
+          }
+     }
+     if(value)
+     {   
+        $(".default1").hide();      
+        $(".default").hide();
+     }
+}
+
+function trimvalue(value,fieldclass)
+    {
+    alert("naresh");
+     var replace=value.trim();
+     $("."+fieldclass).attr('value',replace);
+    }
+function maxlenth(){
+//alert("naresh");
+ $(".newsection").attr('maxlength','80');
+    $(".question").attr('maxlength','80');
+}    
+</script>
+<style>
+ .requiredBlock {
+      background-color: #CC0000;
+    bottom: 1px;
+    height: 27px;
+    left: -4px;
+    position: absolute;
+    top: 4px;
+    width: 3px;
+}
+}
+.requiredInput {
+height:100%;
+position:relative;
+}
+</style>
+<apex:form id="CreateCustomField" >
+<apex:pageBlock id="CustomFieldBlock">
+<apex:pageBlockButtons >
+                        <apex:commandlink action="{!save}" value="Save" styleClass="btn save" style="text-decoration:none"  onclick="return validate();"><apex:param value="Save" assignTo="{!Redirect}"/></apex:commandlink>
+                        <apex:commandlink action="{!Save}" value="Save and New" styleClass="btn save" style="text-decoration:none" onclick="return validate();" rendered="{!if(RecordId==null,true,false)}"><apex:param value="SaveAndNew" assignTo="{!Redirect}"/></apex:commandlink>
+                        <apex:commandButton action="{!cancel}" value="Cancel"/>
+                       
+                </apex:pageBlockButtons>
+                <apex:pageMessages />
+<apex:pageBlockSection title="Custom Field Details" id="FieldInfo" columns="1" collapsible="false">
+<apex:pageBlockSectionItem rendered="{!if(EventName!=null,true,false)}">
+<apex:outputLabel value="Event Name"/>
+<apex:outputPanel >
+   <a href="../{!EventRecId}" target="_self"><apex:outputText value="{!EventName}" /></a>
+</apex:outputPanel>
+
+</apex:pageBlockSectionItem>
+<apex:pageBlockSectionItem rendered="{!if((RegistrationLevelName!=null && EventName!=null),true,false)}">
+<apex:outputLabel value="Registration Level Name"/>
+<apex:outputPanel >
+   <a href="../{!LevelRecId}" target="_self"><apex:outputText value="{!RegistrationLevelName}" /></a>
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+
+<apex:pageBlockSectionItem rendered="{!IF((EventName==null && CreateCustomField.CnP_PaaS_EVT__Event__c!=null),true,false)}">
+<apex:outputLabel value="Event Name"/>
+<apex:outputPanel >
+<apex:inputField value="{!CreateCustomField.CnP_PaaS_EVT__Event__c}" style="width:250px" id="FieldInfo_Event" styleclass="EventNameC">
+<apex:actionsupport event="onchange" action="{!NewFieldRecord}" rerender="PlaceIn" />
+</apex:inputField>
+<!--<script>document.getElementById('{!$Component.FieldInfo_Event}').disabled = true; </script>-->
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+<apex:pageBlockSectionItem rendered="{!IF((EventName==null && RegistrationLevelName==null && CreateCustomField.CnP_PaaS_EVT__Registration_level__c!=null),true,false)}">
+
+<apex:outputLabel value="Registration Level Name"/>
+<apex:outputPanel >
+<apex:selectlist value="{!CreateCustomField.CnP_PaaS_EVT__Registration_level__c}" size="1" rendered="{!IF(RecordId==null,true,false)}">
+<apex:actionsupport event="onchange" action="{!NewFieldRecord}" rerender="CreateCustomField" />
+<apex:selectOptions value="{!EventLevels}" />
+</apex:selectlist>
+
+<apex:inputField value="{!CreateCustomField.CnP_PaaS_EVT__Registration_level__c}" rendered="{!IF(RecordId!=null,true,false)}" style="width:250px" id="FieldInfo_level">
+<apex:actionsupport event="onchange" action="{!NewFieldRecord}" rerender="CreateCustomField" />
+</apex:inputField>
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+
+<apex:pageBlockSectionItem rendered="{!IF((RecordId==null && EventName==null && CreateCustomField.CnP_PaaS_EVT__Event__c==null),true,false)}">
+<apex:outputLabel value="Event Name"/>
+<apex:outputPanel >
+<apex:inputField value="{!CreateCustomField.CnP_PaaS_EVT__Event__c}" style="width:250px" id="FieldInfo_Event1">
+<apex:actionsupport event="onchange" action="{!NewFieldRecord}" rerender="PlaceIn" />
+</apex:inputField>
+<!--<script>document.getElementById('{!$Component.FieldInfo_Event}').disabled = true; </script>-->
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+<apex:pageBlockSectionItem rendered="{!IF((RecordId==null && EventName==null && CreateCustomField.CnP_PaaS_EVT__Registration_level__c==null),true,false)}">
+<apex:outputLabel value="Registration Level Name"/>
+<apex:outputPanel id="PlaceIn">
+<apex:selectlist value="{!CreateCustomField.CnP_PaaS_EVT__Registration_level__c}" size="1">
+<apex:actionsupport event="onchange" action="{!NewFieldRecord}" rerender="CreateCustomField" />
+<apex:selectOptions value="{!EventLevels}" />
+</apex:selectlist>
+<!--<apex:inputField value="{!CreateCustomField.CnP_PaaS_EVT__Registration_level__c}" style="width:250px" id="FieldInfo_level1">
+<apex:actionsupport event="onchange" action="{!NewFieldRecord}" rerender="CreateCustomField" />
+</apex:inputField>-->
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+
+
+<apex:pageBlockSectionItem >
+<apex:outputLabel value="Add to"/>
+<apex:selectradio id="PlaceIn" value="{!PlaceIn}" styleClass="PlaceQ">
+<apex:actionSupport event="onchange" reRender="SelectSection" />                                
+<apex:selectOption itemValue="ExistingSection" itemLabel="Existing Section" />
+<apex:selectOption itemValue="NewSection" itemLabel="New Section"/>
+</apex:selectradio>
+</apex:pageBlockSectionItem>
+<apex:outputPanel id="SelectSection" style="margin-left:10%;">
+<apex:outputPanel rendered="{!PlaceIn=='ExistingSection'}">
+<apex:pageBlockSectionItem >
+<apex:outputlabel value="Select Section" for="values"  style="position:relative;font-weight:bold;font-size:91%;color:#4A4A56;" />
+<apex:selectList value="{!CreateCustomField.CnP_PaaS_EVT__Select_group__c}" styleClass="group" size="1" id="values" style="width:155px;position:relative;margin-left:22px">
+              
+              <apex:selectOptions value="{!GroupList}"/>
+          </apex:selectList>
+</apex:pageBlockSectionItem>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!PlaceIn=='NewSection'}">
+<apex:outputlabel value="New Section Heading" for="values" style="font-weight:bold;font-size:91%;color:#4A4A56;text-align:left;float: left;margin-left: 6.5%;"/>
+<apex:inputField value="{!CreateCustomField.CnP_PaaS_EVT__Create_new_group__c}" onfocus="maxlenth();"  id="FieldInfo_Newgroup" style="width:500px;position:relative;left:17px;left: 24px;float: left;" styleClass="newsection"/>
+
+</apex:outputPanel>
+</apex:outputPanel>
+<apex:pageBlockSectionItem > 
+<apex:outputlabel value="Question" for="values" /> 
+<apex:inputField value="{!CreateCustomField.CnP_PaaS_EVT__Question__c}" styleClass="question" style="width:500px;margin-left:8px" id="FieldInfo_FieldLabel"/>
+</apex:pageBlockSectionItem>
+<!--<apex:inputField value="{!CreateCustomField.Field_name__c}" id="FieldInfo_FieldName"/>-->
+
+<apex:outputPanel id="FieldValuesBlock">
+<apex:pageBlockSectionItem helpText="Answer format for the custom question">
+
+<apex:outputlabel value="Question Type" for="values" style="position:relative;font-weight:bold;font-size:91%;color:#4A4A56;margin-left:10%;"  />
+<apex:outputPanel >
+<apex:inputField value="{!CreateCustomField.CnP_PaaS_EVT__Field_type__c}" styleClass="qu" id="FieldInfo_FieldType" style="width:155px;position:relative;margin-left:22px" >
+<apex:actionSupport event="onchange" reRender="FieldValuesBlock"/>
+</apex:inputField><br /><br />
+</apex:outputPanel>
+</apex:pageBlockSectionItem>
+
+
+<apex:outputPanel rendered="{!(CreateCustomField.CnP_PaaS_EVT__Field_type__c=='Radio button' || CreateCustomField.CnP_PaaS_EVT__Field_type__c=='Check box' || CreateCustomField.CnP_PaaS_EVT__Field_type__c=='Select list')}">
+
+<apex:pageBlockSectionItem >
+<apex:outputLabel value="Answers/options"  style="position:relative;left:95px;font-weight:bold;bottom:40px;font-size:91%;color:#4A4A56;"/>
+<apex:outputPanel >
+<apex:inputtextarea cols="96" rows="7" onkeyup="javascript:this.value=this.value.replace(/\n/g, '');" value="{!CreateCustomField.CnP_PaaS_EVT__Field_Options__c}" id="FieldInfo_FieldVlaues" styleClass="qu1"  style="position:relative;left:116px;"/>
+<!--<apex:inputField value="{!CreateCustomField.Field_values__c}" id="FieldInfo_FieldVlaues"  style="position:relative;left:35px;"/>-->
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(Separated by semicolon ; )
+</apex:outputPanel>
+</apex:pageBlockSectionItem> 
+</apex:outputPanel>
+</apex:outputPanel>
+
+<apex:inputField value="{!CreateCustomField.CnP_PaaS_EVT__Required__c}" id="FieldInfo_FieldVlaues" styleClass="FieldInfo_FieldVlaues" onchange="return CheckVisible(this.checked)"/>
+<apex:inputField value="{!CreateCustomField.CnP_PaaS_EVT__Visible__c}" id="FieldInfo_visible" styleClass="FieldInfo_visible" onchange="return CheckRequired(this.checked)" />
+<apex:pageBlockSectionItem > 
+ <apex:outputLabel value="Default Value" styleClass="default"></apex:outputLabel>
+<apex:inputField value="{!CreateCustomField.CnP_PaaS_EVT__Default_value__c}" id="FieldInfo_Dvalue" styleClass="default1" /> 
+</apex:pageBlockSectionItem> 
+                      
+</apex:pageBlockSection>
+</apex:pageBlock>
+</apex:form> 
+</apex:page>

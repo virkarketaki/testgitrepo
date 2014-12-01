@@ -1,0 +1,107 @@
+<apex:page controller="CnP_PaaS.CnP_Import_controller" tabstyle="Cnp_import__tab" title="C&P Import:Home">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+ <script type="text/javascript">
+ jQuery=$.noConflict(); 
+
+ jQuery(function(){
+          jQuery(".video").mouseout(function(){
+             
+              jQuery(this).fadeOut(8000);
+             
+          })
+          })  
+          
+ function batch(){
+          var condition=0;
+         
+              var file = jQuery(".csvfile").val();
+              if(file!=""){
+              var file_size =jQuery(".csvfile")[0].files[0].size;
+              }
+            
+              if(file==""){
+                   condition=condition+1;
+                   alert(" Please select a Valid CSV File");
+                  
+              }else if(file.match(/\.(csv||CSV)$/) ){
+                   condition=0;
+                    
+              }else{ 
+                   condition=condition+1;
+                   alert("Please Choose Only CSV file Format!");
+                   jQuery(".csvfile").val("");
+                   jQuery(".csvfile").focus();
+                   return false;
+               } 
+      
+            if(condition == 0){
+                   jQuery('html, body').animate({scrollTop:350}, 'fast');
+                   jQuery("#light").attr('style','display:block');
+                   jQuery("#fade").attr('style','display:block');
+                    return true;
+                  }else{
+                  return false;
+                  }
+      
+    }
+    </script>
+    <style>
+    .helpLink {
+       position:relative;       
+    }
+
+    .video{
+      display:none;
+      width:12%;
+      height:auto;
+      background:#EEE;
+      border:1px solid #CCC;
+      position:absolute;     
+      z-index:10;
+      margin-left:950Px;
+    }
+   </style> 
+    
+ <apex:form >
+ 
+  <apex:sectionHeader title="C&P Importer"/>
+  
+                      <apex:outputLink styleClass="helpLink" rendered="{!subtab['Importer']['Importer'].display=='true'}">  
+                              <Apex:outputLabel value="C&P Help for this Page" style="font-size:90%;margin-left:950Px;margin-right:5Px;" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; "/>  
+                               <apex:image value="/s.gif" styleClass="helpIcon" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; "/>                        
+                         </apex:outputLink>
+                          <apex:outputPanel id="Foo1" styleClass="video"  >   
+                               <ul style="padding-left:4px;" >                       
+                             {!subtab['Importer']['Importer'].description} <br/> <br/>
+                             <li><a href="{!subtab['Importer']['Importer'].link}" target="_blank" >{!subTab['Importer']['Importer'].strlink}</a> <br/></li>
+                             <li> <a href="{!subtab['Importer']['Importer'].video}" onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subtab['Importer']['Importer'].strVideo}</a></li>
+                           </ul>
+                          </apex:outputPanel>
+                          
+   <apex:pageBlock title="C&P Importer" >
+       
+      <apex:pageBlockSection title="Upload CSV File for import" id="fileSelection" columns="1" collapsible="false" rendered="{!IF(contacttype == 'semiautomatic', true, false)}"> 
+          <apex:outputPanel layout="block">  
+         <apex:inputFile value="{!contentFile}" filename="{!nameFile}"  styleclass="csvfile"/>
+
+     <apex:commandButton value="Preview"  action="{!details}" immediate="false" rendered="{!displaybutton}"  onclick="if(!batch()){return false;}" /> 
+          </apex:outputPanel> 
+          <p>File format must be comma-separated-values (CSV). File must be UTF8 encoded if it contains special characters (e.g. accented letters, etc.).</p>
+          <apex:inputtext value="{!contacttype}" style="display:none" styleClass="contype"/>
+       </apex:pageBlockSection>
+       
+       
+          <apex:pageBlockSection columns="1" collapsible="false" rendered="{!IF(contacttype != 'semiautomatic', true, false)}">
+         The C &amp;P Settings > Contact and Account Should be set to "Semi Automatic" to process the Import. Please go to: C&amp;P Settings > Contact and Account and set the setting to "Semi Automatic" before using the batch import.
+             
+          </apex:pageblocksection> 
+         
+          
+   <!--   <apex:outputLabel value="C&P Import will be available in Release 7.0 due out in March 2013." style="font-weight:normal;color:green"/> -->
+
+
+         
+   </apex:pageBlock>  
+
+   </apex:form>
+ </apex:page>

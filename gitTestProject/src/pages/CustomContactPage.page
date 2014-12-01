@@ -1,0 +1,33 @@
+<apex:page standardController="Contact" extensions="CustomContactPageController">
+    <apex:form >
+        <apex:sectionheader title="Contact Edit" subtitle="{!if(objContact.Id==null,'New Contact',objContact.Name)}"/>
+        <apex:pageBlock mode="edit" title="Contact Edit">
+            <apex:pageBlockSection title="Contact Information" columns="2">
+                <apex:outputField value="{!objContact.OwnerId}"/>
+                <apex:inputField value="{!objContact.Phone}"/>
+                <apex:repeat value="{!contactInfoFields1}" var="conInfo">
+                    <apex:inputField value="{!objContact[conInfo.fieldPath]}" required="{!OR(conInfo.required, conInfo.dbrequired)}"/>
+                </apex:repeat>
+                <apex:inputField value="{!objContact.Fax}"/>
+                <apex:repeat value="{!contactInfoFields2}" var="conInfo">
+                    <apex:inputField value="{!objContact[conInfo.fieldPath]}" required="{!OR(conInfo.required, conInfo.dbrequired)}"/>
+                </apex:repeat>
+            </apex:pageBlockSection>
+        
+            <apex:pageBlockSection title="Address Information" columns="2">
+                <apex:repeat value="{!addrInfoFields}" var="addrInfo">
+                    <apex:inputField value="{!objContact[addrInfo.fieldPath]}" required="{!OR(addrInfo.required, addrInfo.dbrequired)}"/>
+                </apex:repeat>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Description Information" columns="2" rendered="{!isPortal}">
+                <apex:inputField value="{!objContact.Description}"/>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!saveRecord}" title="Save"/>
+                <apex:commandButton value="Cancel" action="{!cancelRecord}" title="Cancel" immediate="true"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

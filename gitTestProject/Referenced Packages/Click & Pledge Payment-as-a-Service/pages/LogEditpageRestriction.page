@@ -1,0 +1,10 @@
+<apex:page standardController="CnP_PaaS__CnP_Auto_Responder_Sending_Details__c" extensions="CnP_PaaS.LogDetailsController">
+     <apex:sectionHeader title="Auto Responder Log Edit" subtitle="Options"/>
+   <apex:form >
+      <apex:pageBlock >
+          <apex:pageMessage summary="The message has already been sent and may no longer be edited." severity="Info" strength="3" />
+          <br/>
+           <apex:commandLink value="Back" action="/{!backcontactid}" styleclass="btn" style="text-decoration:none"/>
+      </apex:pageBlock>
+    </apex:form>
+</apex:page>

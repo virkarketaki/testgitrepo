@@ -1,0 +1,35 @@
+<apex:page name="Attendeeinfo.xls" controller="CnP_PaaS_EVT.Eventattendees_download" cache="true" contentType="application/vnd.ms-excel#AttendeeReport.xls" standardStylesheets="false" tabStyle="CnP_PaaS_EVT__Event__c" language="english" readOnly="true" >
+<h1>{!levelname} Attendee Information Report</h1>
+Download Date and Time : <apex:outputLabel value="{!cday}"></apex:outputLabel> 
+
+<apex:pageblock >
+<!--<apex:pageBlockTable value="{!eventattendee}" var="eve" style="width:100%">-->
+
+<apex:dataTable value="{!eventattendee}" var="eve" style="width:100%" >
+<apex:column headerValue="Contact Id" value="{!eve.ContactId__r.id}"/>
+<apex:column headerValue="First Name" value="{!eve.ContactId__r.FirstName}"/>
+<apex:column headerValue="Last Name" value="{!eve.ContactId__r.LastName}"/>
+<apex:column headerValue="Email" value="{!eve.ContactId__r.Email}"/>
+<apex:column headerValue="Date Registered" value="{!eve.CreatedDate}"/>
+
+
+<apex:column headerValue="Address" value="{!eve.ContactId__r.MailingStreet}"/>
+<apex:column headerValue="City" value="{!eve.ContactId__r.MailingCity}"/>
+<apex:column headerValue="State" value="{!eve.ContactId__r.MailingState}"/>
+<apex:column headerValue="Country" value="{!eve.ContactId__r.MailingCountry}"/>
+<apex:column headerValue="Zip" value="{!eve.ContactId__r.MailingPostalCode}"/>
+
+<apex:column headerValue="Total $" value="${!eve.CnP_PaaS_EVT__Total_Amount__c}"/>
+
+
+<apex:repeat value="{!customquestionevent}" var="eventquestion">
+<apex:column headerValue="{!eventquestion.Name}"><apex:variable value="{!eventquestion.id}{!eve.id}" var="rows"/><apex:repeat value=" {!questionmap[rows]}" var="cust1">{!cust1}</apex:repeat>  </apex:column>
+</apex:repeat>
+
+</apex:dataTable>
+
+
+
+
+</apex:pageblock>
+</apex:page>

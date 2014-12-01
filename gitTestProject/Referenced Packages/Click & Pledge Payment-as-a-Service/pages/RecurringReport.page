@@ -1,0 +1,496 @@
+<apex:page controller="CnP_PaaS.Recurring_controller" tabStyle="C_P_Reports__tab" >
+<apex:sectionHeader title="C&P Custom Reports" subtitle="Recurring Report"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__DataTables,'js/jquery.dataTables.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS__DataTables,'css/demo_table_jui.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS__DataTables,'jquery-ui-1.8.4.custom.css')}"/>
+ 
+ <!--<link type="text/css" rel="stylesheet" href="{!URLFOR($Resource.jquerygrid, "jquery/media/css/demo_table_jui.css")}" />
+        <link type="text/css" rel="stylesheet"  href="{!URLFOR($Resource.jquerygrid, "jquery/media/jquery-ui-1.8.4.custom.css")}" />-->
+  <script>
+     
+     function getdatafields()
+     {
+        
+         var name=$(".name").val();
+         var numrows=$(".getrowdata").val();
+         var itemvalues='';
+       
+         for(var i=0;i<numrows;i++)
+         {
+            var filedname=$(".fieldnamegroup"+i).text();
+            var agre_function=$(".getdatafield"+i).val();
+            itemvalues+=filedname+':'+agre_function+';';
+         }
+       
+          $("#light").attr('style','display:block');
+          $("#fade").attr('style','display:block');
+         getdata(itemvalues);
+        
+     }
+     function completerequest()
+     {
+          $("#light").attr('style','display:none');
+          $("#fade").attr('style','display:none'); 
+     }
+     function changefield(id)
+     {
+   
+       var field=$(".fieldname"+id).val();
+       
+       if(field=='# of Installments' || field=='Installment Amount' || field=='Installment(s) Made' || field=='Total' || field=='Total Charged' || field=='Upcoming Receipts')
+         {
+            
+          chageoperator('numeric');
+         }  
+        else
+        {
+         chageoperator('');
+        }   
+     } 
+    
+     function disable()
+     {
+      
+     disablemethod();
+     } 
+   function valueschange()
+   {
+   disablemethod();
+     if(confirm("Please Select 'Group By' fields and click the double arrow button")==true);
+     
+   } 
+   
+   function valueschanged()
+   {
+    disablemethod();
+    if(confirm("Please click the double arrow button and select the 'Aggregate Functions', and click the 'Run Query'")==true);
+   } 
+   
+  </script>
+  
+  
+<style>
+
+ .calenderIcon{    
+    
+    padding-left: 10px;
+    padding-top: 2px;
+  }
+  .black_overlay{
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 100%;
+background-color: black;
+z-index:1001;
+-moz-opacity: 0.8;
+opacity:.40;
+filter: alpha(opacity=80);
+}
+.white_content {
+display: none;
+position: absolute;
+text-align: center;
+top: 30%;
+left: 20%;
+width: 15%;
+height: 4%;
+padding: 16px;
+background-color: white;
+z-index:1002;
+overflow: auto;
+border-radius:20px;
+-webkit-border-radius: 20px;
+-moz-border-radius: 20px;
+border:1px solid #000;
+} 
+ 
+</style>  
+<apex:form >
+<apex:outputPanel id="message">
+ <apex:pageMessages /> </apex:outputPanel>
+
+    <apex:pageBlock mode="edit">
+    <div id="light" class="white_content">   
+                <apex:image value="{!URLFOR($Resource.CnP_PaaS__LoaderImage)}" title="we are processing your request. please wait..." style="height: 15px;width: 30px;"  /><br/>
+               <apex:outputlabel value="we are processing your request. please wait...                  "  />
+              
+         </div>
+         <div id="fade" class="black_overlay"></div>
+  <input type="button" value="Reload Page" onClick="window.location.reload()"/>
+  <apex:pageblock id="saveblock" > 
+<apex:outputLabel rendered="{!savelabelbutton}" >Report Name: </apex:outputLabel>&nbsp;&nbsp;
+  <apex:inputField value="{!dreport.Name}" styleClass="Name" style="width:500px;" rendered="{!savelabelbutton}"  />&nbsp;
+  <apex:commandButton value="Save" action="{!savereport}" rendered="{!savebutton}" />
+  <apex:commandButton value="Update" action="{!savereport}" rendered="{!updatebutton}"/>
+  
+  <div style="float:right;">
+ <!--<apex:outputLabel value="{!info}" style="padding: 4px 4px;float:left;"></apex:outputLabel>
+ 
+ <apex:selectList value="{!offset}" size="1" styleClass="offset" rendered="{!download}" style="float:center;">
+ <apex:selectOptions value="{!downloadoptionslist}"></apex:selectOptions>
+ </apex:selectList>-->
+  <apex:outputLink value="/apex/downloadrecurringreport?id={!rid}" styleClass="download123" style="text-decoration:none;display:block;border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 4px 4px;float:right;background-color:#FFFFFF;" target="CnP_PaaS_Evt_Download" rendered="{!downloadbutton}">Download top 4000 records</apex:outputLink>
+</div>
+ 
+  </apex:pageblock> 
+  
+ 
+  
+   <table width="100%" border="0">
+      <tr>  
+    <td width="100%" valign="top">
+ 
+      <apex:pageBlock title="Parameters" mode="edit" id="criteria" rendered="{!showgroup}">
+      <apex:outputPanel >
+    <apex:panelGrid columns="6" id="abcd">&nbsp;
+   <apex:outputLabel >Application Name:</apex:outputLabel>
+            <apex:selectList id="sel1" value="{!leftselected}" multiselect="true" style="width:150px" size="8">
+              <apex:selectOptions value="{!unselectedvalues}" />
+
+           </apex:selectList>
+
+                <apex:panelGroup >
+
+                    <br/>
+
+                    <apex:outputLabel value=">"  styleclass="btn"  > 
+
+                        <apex:actionSupport event="onclick" action="{!selectclick}" reRender="abcd"/>
+
+                   </apex:outputLabel>
+
+                    <br/><br/>
+
+                    <apex:outputLabel value="<"  styleclass="btn">
+                        <apex:actionSupport event="onclick" action="{!unselectclick}" reRender="abcd"/>
+
+                </apex:outputLabel>
+
+                </apex:panelGroup>
+
+            <apex:selectList id="sel2" value="{!rightselected}" multiselect="true" style="width:150px" size="8" styleClass="rightselect">
+
+                <apex:selectOptions value="{!SelectedValues}" />
+
+            </apex:selectList>
+              <apex:outputLabel style="float:right;" >AND</apex:outputLabel>
+        </apex:panelGrid>
+        
+    </apex:outputPanel> <br/>
+      <apex:outputpanel >
+       <apex:outputLabel >Date Field:</apex:outputLabel>&nbsp;&nbsp;
+        <apex:selectList value="{!datefield}" size="1"  >
+             <apex:selectOptions value="{!datefieldlist}"/>
+         </apex:selectList>
+        
+       <apex:outputLabel >Range:</apex:outputLabel>&nbsp;  
+       <apex:selectList value="{!rangevalue}" size="1"  >
+             <apex:selectOptions value="{!rangelist}"/>
+         </apex:selectList>
+      
+   
+      <apex:outputLabel value="Get" onclick="getdatafields();" styleClass="btn" rendered="{!okbutton}" />  
+      <apex:selectList value="{!firstfiltercondition}"  size="1" >
+                            <apex:selectOptions value="{!filterconoption}"/>
+                   </apex:selectList> 
+     </apex:outputpanel> <br/><br/>
+      
+      
+      
+ <apex:commandButton value="Group By" action="{!groupby}" rendered="{!groupbutton}" style="float:center;"/>
+  <apex:commandButton value=" Add Filter " action="{!AddRecord}"  rendered="{!showfilter}" reRender="pb1"/>
+  
+  <apex:actionFunction name="chageoperator"  reRender="conditions,pb1"/>
+   <apex:actionFunction name="disablemethod" action="{!disablemethod}" reRender="text4,text5,runqb,criteria"/>
+ <apex:variable value="0" var="rowNum"/>
+      <table cellpadding="2" cellspacing="2">
+      <tr>
+      <td>
+       <apex:actionFunction name="getdata" action="{!runSearch}" reRender="resulttest,results1,results,testresult,order,saveblock,orderlist,message" oncomplete="completerequest();">
+              <apex:param value="" name="fieldwithagre_function" />  
+        </apex:actionFunction>
+        
+         <apex:pageBlockSection >
+       <apex:pageBlockSectionItem helpText="Select Number of Fields for Query" rendered="{!showgroupwithfield}">
+       
+        <apex:outputLabel value="Select Fields" rendered="{!showgroupwithfield}"> </apex:outputLabel>
+                    <apex:selectList value="{!selectedfieldsforque}"  size="4"   multiselect="true" rendered="{!showgroupwithfield}" onblur="valueschange();" >
+                            <apex:selectOptions value="{!objectNames}"/>
+                   </apex:selectList>
+           </apex:pageBlockSectionItem>     
+            
+    
+       <apex:pageBlockSectionItem helpText="Select Number of Fields for Group by in Query" rendered="{!showgroupwithfield}">
+        <apex:outputLabel value="And Group By" rendered="{!showgroupwithfield}"></apex:outputLabel>
+            <apex:selectList value="{!selectedfieldsforgroup}"  size="4"   multiselect="true" rendered="{!showgroupwithfield}" onblur="valueschanged();" >
+                            <apex:selectOptions value="{!objectNamesGroup}"/>
+                   </apex:selectList>
+        </apex:pageBlockSectionItem>               
+                   </apex:pageBlockSection>
+      </td>
+      
+      <td>
+      <apex:commandButton value=">>" action="{!addfieldsforquery}" rerender="text3,text4,text5,message,orderlist,criteria" rendered="{!showgroupwithfield}" />
+      </td>
+      </tr>
+      <tr>
+      <td >
+       <apex:outputPanel id="text3" rendered="{!showgroupwithfield}">
+         <apex:variable value="0" var="rowNum"/>
+            
+        <apex:pageBlockTable value="{!grpWrapper}" var="grp">
+        <apex:column headerValue="Fields"  value="{!grp.groupfield}" styleClass="fieldnamegroup{!rowNum}"/>
+         <apex:column headerValue="Aggregate Functions">
+           <apex:selectList value="{!grp.groupaggrfun}" size="1" id="text4" styleClass="getdatafield{!rowNum}" rendered="{!IF(grp.groupaggrfun==null || grp.groupaggrfun!='None' || grp.groupaggrfun=='Sum' || grp.groupaggrfun=='Avg' || grp.groupaggrfun=='Count' || grp.groupaggrfun=='Max' || grp.groupaggrfun=='Min',true,false)}" >
+            
+           <apex:selectOptions value="{!function}" rendered="{!IF(grp.groupaggrfun==null || grp.groupaggrfun!='None' || grp.groupaggrfun=='Sum' || grp.groupaggrfun=='Avg' || grp.groupaggrfun=='Count' || grp.groupaggrfun=='Max' || grp.groupaggrfun=='Min',true,false)}"/>
+                   
+           </apex:selectList>
+          <apex:selectList value="{!grp.groupaggrfun}" size="1" id="text45" styleClass="getdatafield{!rowNum}" rendered="{!IF( grp.groupaggrfun=='None' ,true,false)}" disabled="{!IF( grp.groupaggrfun=='None' ,true,false)}" >
+            <apex:selectOptions value="{!Function1}" rendered="{!IF(grp.groupaggrfun=='None' ,true,false)}"/>
+          
+                   
+           </apex:selectList> 
+                     
+        </apex:column>
+        
+         <apex:column ><apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}"/>   </apex:column>
+        
+        </apex:pageBlockTable>
+         <input type="hidden" value="{!rowNum}" class="getrowdata"/>
+        </apex:outputPanel>
+      </td>
+      
+       <td>
+          <apex:outputPanel id="text4" rendered="{!showgroupwithfield}">
+          <apex:outputLabel value="Run Query" onclick="getdatafields();" styleClass="btn" rendered="{!runquerybutton}" id="runqb"/>
+       </apex:outputPanel>
+       </td>
+      </tr>
+     
+      <tr><td>
+    
+            </td>  
+       </tr>
+       <tr><td> 
+       <apex:outputPanel id="pb1">
+          <apex:variable value="0" var="rowNumCampaign"/>      
+             
+            <apex:pageBlockTable value="{!lstWrapper}"  var="item" rendered="{!filtertable}" >
+               
+                <apex:column headerValue="Field Name">
+                   <apex:selectList value="{!item.selectedobject}"  size="1"  onchange="changefield({!rowNumCampaign});"  styleClass="fieldname{!rowNumCampaign}" >
+                            <apex:selectOptions value="{!objectNames}"/>
+                   </apex:selectList>
+                </apex:column>
+                 <apex:column headerValue="Operator" id="conditions">
+                        
+                           <apex:selectList value="{!item.selectedcondition}"  size="1" rendered="{!IF( item.selectedobject!='Installment Amount' && item.selectedobject!='Installment Number'  && item.selectedobject!='Installment(s) Made' && item.selectedobject!='Total' && item.selectedobject!='Total Charged' && item.selectedobject!='Upcoming Receipts',true,false)}" >
+                                <apex:selectOptions value="{!conditions}"/>
+                          </apex:selectList> 
+                         <apex:selectList value="{!item.selectedcondition}"  size="1" rendered="{!IF(item.selectedobject=='Installment Amount' ||  item.selectedobject=='Installment Number'  || item.selectedobject=='Installment(s) Made' || item.selectedobject=='Total' || item.selectedobject=='Total Charged' || item.selectedobject=='Upcoming Receipts',true,false)}" >
+                                <apex:selectOptions value="{!conditions1}"/>
+                          </apex:selectList>  
+                </apex:column>
+                  <apex:column headerValue="Value">
+                             <apex:inputText value="{!item.lastname}"/> 
+                </apex:column>
+           <apex:column headerValue="Command">
+                <apex:commandButton value="Remove" action="{!Removefilter}" reRender="pb1,results,resulttest,message" oncomplete="getdatafields()">
+              
+                 <apex:param name="contIdParam" value="{!rowNumCampaign}" assignTo="{!DeleteId}"/>
+                     
+                 </apex:commandButton>
+                </apex:column>
+                 <apex:column >
+                 <apex:outputPanel id="selector"  style="display:{!IF(lstWrapper.size-1 >  VALUE(rowNumCampaign),'block','none')}"   rendered="{!IF(lstWrapper.size==VALUE(rowNumCampaign)+1,false,true)}">
+          
+              
+                   <apex:selectList value="{!item.filtercondition}" id="selector1"  size="1"  >
+                            <apex:selectOptions value="{!filterconoption}" />
+                   </apex:selectList>
+        
+                  </apex:outputPanel>  
+                 
+               
+                  <apex:variable var="rowNumCampaign" value="{!VALUE(rowNumCampaign) + 1}"/>
+                </apex:column>   
+            </apex:pageBlockTable> 
+              </apex:outputPanel> 
+            </td> 
+            
+            </tr>
+       <tr>
+        <td>
+       <apex:outputLabel > Row Limit [Max 50,000]</apex:outputLabel>&nbsp;&nbsp;
+        <apex:inputText value="{!querylimit}" maxlength="5" style="width:50px;"/>
+      
+     <apex:outputpanel id="orderlist" rendered="{!showgroupwithfield}">
+       <apex:outputLabel >Sort By:</apex:outputLabel>&nbsp;&nbsp;
+        <apex:selectList value="{!fieldfororderby}" size="1"  id="order" >
+           <apex:selectOptions value="{!FieldsOrderby}" />
+           </apex:selectList>
+          
+            
+            </apex:outputpanel>
+            <apex:selectList value="{!ordertype}" size="1"  id="ordertype" rendered="{!showgroupwithfield}">
+           <apex:selectOptions value="{!orderlist}" />
+           </apex:selectList>
+            <apex:outputPanel id="text5">
+             <apex:outputLabel value="OK" onclick="getdatafields();" styleClass="btn"  rendered="{!okbutton}" /><br/>
+             </apex:outputPanel>
+        </td>
+        <td>
+     
+       </td>
+      </tr>
+          </table>
+      </apex:pageBlock> 
+    </td>
+   </tr>
+     </table>
+   </apex:pageBlock>
+  </apex:form>
+  
+      <apex:pageBlock id="resulttest" rendered="{!showgroupwithfield}">
+       <apex:outputlabel value="Showing only 500 Records ({!recsize})" rendered="{!messageshow}" ></apex:outputlabel>
+       <apex:variable value="1" var="rowNum2"/>
+     <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__DataTables,'js/jquery.dataTables.js')}"/>
+     <script type="text/javascript">
+            $(document).ready(function() {          
+
+                oTable = $('.displaylevel').dataTable({
+                    "bJQueryUI": true,                  
+                    aoColumnDefs: [
+                      { aTargets: [0], bSortable: true}]                           
+                }
+                              
+                );
+               $('#rownum').hide();
+            } );
+        </script>
+          
+      
+      <apex:pageBlockTable value="{!rec_trans1}" rows="500" var="que" id="results1" styleClass="displaylevel" rendered="{!groupresult}" >
+       <apex:column headerValue="Serial #" >
+       <apex:outputText value="{!rowNum2}"> </apex:outputText>
+       
+       <apex:variable var="rowNum2" value="{!VALUE(rowNum2) + 1}" />
+       </apex:column>  
+       
+      <apex:repeat value="{!fieldsforresult}" var="cc">
+      <apex:column headerValue="{!cc}">
+        <apex:outputtext value="{0,number,0}" rendered="{!IF(cc=='NoofInstallments',true,false)}">
+                     <apex:param value="{!que[cc]}"/>
+              </apex:outputtext>
+              
+             <apex:outputText value="{0,number,0}" rendered="{!IF(cc=='InstallmentsMade',true,false)}">
+               <apex:param value="{!que[cc]}"/>
+             </apex:outputText> 
+               <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='InstallmentAmount' && numericval==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,0}" rendered="{!If(cc=='InstallmentAmount' && numericval==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='Total' && numericval1==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value="{0, number,0}" rendered="{!If(cc=='Total' && numericval1==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='TotalCharged' && numericval2==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,0}" rendered="{!If(cc=='TotalCharged' && numericval2==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='UpcomingReceipts' && numericval3==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value="{0, number,0}" rendered="{!If(cc=='UpcomingReceipts' && numericval3==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputtext value="{!que[cc]}" rendered="{!IF(cc!='NoofInstallments' && cc!='InstallmentAmount' && cc!='InstallmentsMade' && cc!='Total' && cc!='TotalCharged' && cc!='UpcomingReceipts' ,true,false)}"/>    
+          </apex:column></apex:repeat>
+          
+           
+     </apex:pageBlockTable>
+    
+     </apex:pageBlock>
+   
+  
+  
+  
+   <apex:pageBlock id="results" rendered="{!filterresult}"> 
+    <apex:outputlabel value="Showing only 500 Records ({!recsize})" rendered="{!messageshow}" ></apex:outputlabel>
+     <apex:variable value="1" var="rowNum1"/>
+ <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__DataTables,'js/jquery.dataTables.js')}"/>
+     <script type="text/javascript">
+            $(document).ready(function() {          
+
+                oTable = $('.displaylevel').dataTable({
+                    "bJQueryUI": true,                  
+                    aoColumnDefs: [
+                      { aTargets: [0], bSortable: true}]                           
+                }
+                              
+                );
+            } );
+        </script>
+  
+     <apex:pageBlockTable value="{!rec_trans}" rows="500" var="rect" id="testresult" styleClass="displaylevel" rendered="{!filterresult}" >
+      <apex:column headerValue="Serial #" >
+        <apex:outputText value="{!rowNum1}" ></apex:outputText>
+       
+         <apex:variable var="rowNum1" value="{!VALUE(rowNum1) + 1}" />
+         </apex:column>
+  
+    <apex:column headerValue="Recurring ID" >
+            <apex:outputlink value="/{!rect.CnP_PaaS__Recurring_Transaction__r.id}" target="_blank">
+            <apex:outputLabel value="{!rect.CnP_PaaS__Recurring_Transaction__r.Name}" style="color: blue;cursor:pointer;"></apex:outputLabel>
+            </apex:outputlink>
+            </apex:column>
+     <apex:column value="{!rect.createddate}"/>
+    
+  <apex:column headerValue="Name"     value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Contact__r.Name}"/> 
+  <apex:column headerValue="Email"  value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Contact__r.Email}"/>
+  <apex:column headerValue="Phone"   value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Contact__r.phone}"/>
+
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__RecurringMethod__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__Installment_Amount__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__InstallmentsMade__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__InstallmentNumber__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__Installments__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__NextInstallment_Date__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__Periodicity__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__Total__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__Upcoming_Receipts__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.Name}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Campaign__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__CardExpiration__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__CheckOutPage__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__CreditCard4x4__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Credit_Card_Name__c}"/>
+ 
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Name_On_card__c}"/>
+ <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Check_Number__c}"/>
+    <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__TotalCharged__c}"/>
+   
+  
+  </apex:pageBlockTable> 
+     
+  </apex:pageBlock>
+   
+ </apex:page>

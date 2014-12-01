@@ -1,0 +1,81 @@
+<apex:component controller="McaApp.MCASubmissionsTabController" allowDML="true">
+
+  <apex:form id="records" styleClass="records">
+  
+    <c:MCAJQTabComponent />
+  
+    <apex:pageBlock >
+    
+      <apex:pageBlockButtons >
+      
+        <apex:CommandButton action="{!newSubmission}" value="New Submission" rerender="records,refreshComponent" immediate="true"></apex:CommandButton>
+      
+        <apex:CommandButton action="{!saveAll}" value="Save" rerender="records,refreshComponent" status="loadingPanel"></apex:CommandButton>
+        <apex:CommandButton action="{!editAll}" value="Edit All" rerender="records,refreshComponent" status="loadingPanel"></apex:CommandButton>
+        
+        <apex:CommandButton action="{!refresh}" value="Refresh" rerender="records,refreshComponent" status="loadingPanel" immediate="true"></apex:CommandButton>
+        <apex:CommandButton action="{!refresh}" value="Cancel" rerender="records,refreshComponent" status="loadingPanel" immediate="true"></apex:CommandButton>
+        
+      </apex:pageBlockButtons>
+      
+      <apex:pageBlockSection columns="1" title="Submissions ({!containers.size})" collapsible="false">
+         <apex:pageBlockTable value="{!containers}" var="container" styleClass="tablesorting tablesorter" headerClass="header" >
+          <apex:inlineEditSupport event="ondblclick" />
+        
+          <apex:column >
+            
+            <apex:outputLink value="/{!container.submission.Id}" target="blank" rendered="{!NOT(ISBLANK(container.submission.Id))}"> View </apex:outputLink>
+            <apex:outputLabel value=" | " rendered="{!NOT(ISBLANK(container.submission.Id))}"/>
+            <apex:commandLink action="{!deleteSubmission}" value="Del" rerender="records,refreshComponent" rendered="{!NOT(ISBLANK(container.submission.Id))}" status="loadingPanel" immediate="true">
+              <apex:param name="recordToDelete" value="{!container.submission.Id}" assignTo="{!recordToDelete}"></apex:param>
+            </apex:commandLink>
+            
+            <apex:commandLink action="{!removeSubmission}" value="Remove" rerender="records,refreshComponent" rendered="{!(ISBLANK(container.submission.Id))}" status="loadingPanel" immediate="true">
+              <apex:param name="indexToRemove" value="{!container.index}" assignTo="{!indexToRemove}"></apex:param>
+            </apex:commandLink>            
+            
+          </apex:column>
+        
+          <apex:column headerValue="{!$ObjectType.McaApp__Submission__c.Fields.Name.Label}">
+            <apex:outputField value="{!container.submission.Name}" rendered="{!AND(NOT(ISBLANK(container.submission.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.submission.Name}" rendered="{!OR((ISBLANK(container.submission.Id)), editAll)}"/>
+          </apex:column>
+    
+          <apex:column headerValue="{!$ObjectType.McaApp__Submission__c.Fields.McaApp__Funder__c.Label}">
+            <apex:outputField value="{!container.submission.McaApp__Funder__c}" rendered="{!AND(NOT(ISBLANK(container.submission.Id)), NOT(editAll))}" />  
+            <apex:inputField value="{!container.submission.McaApp__Funder__c}" rendered="{!OR((ISBLANK(container.submission.Id)), editAll)}" />
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Submission__c.Fields.McaApp__Date_Submitted__c.Label}">
+            <apex:outputField value="{!container.submission.McaApp__Date_Submitted__c}" rendered="{!AND(NOT(ISBLANK(container.submission.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.submission.McaApp__Date_Submitted__c}" rendered="{!OR((ISBLANK(container.submission.Id)), editAll)}"/>
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Submission__c.Fields.McaApp__Status__c.Label}">
+            <apex:outputField value="{!container.submission.McaApp__Status__c}" rendered="{!AND(NOT(ISBLANK(container.submission.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.submission.McaApp__Status__c}" rendered="{!OR((ISBLANK(container.submission.Id)), editAll)}"/>
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Submission__c.Fields.McaApp__Status_Date__c.Label}">
+            <apex:outputField value="{!container.submission.McaApp__Status_Date__c}" rendered="{!AND(NOT(ISBLANK(container.submission.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.submission.McaApp__Status_Date__c}" rendered="{!OR((ISBLANK(container.submission.Id)), editAll)}"/>
+          </apex:column>
+            
+          <apex:column headerValue="{!$ObjectType.McaApp__Submission__c.Fields.McaApp__Contact__c.Label}">
+            <apex:outputField value="{!container.submission.McaApp__Contact__c}" rendered="{!AND(NOT(ISBLANK(container.submission.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.submission.McaApp__Contact__c}" rendered="{!OR((ISBLANK(container.submission.Id)), editAll)}"/>
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Submission__c.Fields.McaApp__Program__c.Label}">
+            <apex:outputField value="{!container.submission.McaApp__Program__c}" rendered="{!AND(NOT(ISBLANK(container.submission.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.submission.McaApp__Program__c}" rendered="{!OR((ISBLANK(container.submission.Id)), editAll)}"/>
+          </apex:column>
+          
+        </apex:pageBlockTable>
+      </apex:pageBlockSection>
+		  
+    </apex:pageBlock>
+    
+  </apex:form>  
+
+</apex:component>

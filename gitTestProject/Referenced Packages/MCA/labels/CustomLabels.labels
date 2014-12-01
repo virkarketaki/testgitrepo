@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>BankListId</fullName>
+        <categories>BankEnhancedList</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>BankListId</shortDescription>
+        <value>00BF0000006arxQ</value>
+    </labels>
+    <labels>
+        <fullName>CLOSED_RENEWED</fullName>
+        <categories>Contract stage change</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>CLOSED/RENEWED</shortDescription>
+        <value>Closed/Renewed</value>
+    </labels>
+    <labels>
+        <fullName>Chatter_Feed_update_ChatterFeedPost</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Chatter Feed update&gt;ChatterFeedPost</shortDescription>
+        <value>has requested the following Stips from merchant :</value>
+    </labels>
+    <labels>
+        <fullName>Chatter_Feed_update_TaskSubject</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Chatter Feed update&gt;TaskSubject</shortDescription>
+        <value>Pending Items for</value>
+    </labels>
+    <labels>
+        <fullName>CongaEmailTemplate_Offer</fullName>
+        <categories>Send Offers button on Opportunity</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Contains Id of Conga EMail template for Offer</shortDescription>
+        <value>a0Qi0000003fmSm</value>
+    </labels>
+    <labels>
+        <fullName>CongaQueryId_Offer</fullName>
+        <categories>Send Offer button on Opportunity</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Id  of CongaQuery Offer</shortDescription>
+        <value>a0Ri0000005FGzC</value>
+    </labels>
+    <labels>
+        <fullName>CreateContract_CannotSkipOffer</fullName>
+        <categories>Create Contract</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>CreateContract_CannotSkipOffer</shortDescription>
+        <value>Error : Cannot switch tabs if Offer is not selected. Please Select an Offer to go to next screen.</value>
+    </labels>
+    <labels>
+        <fullName>CreateContract_InitialStage</fullName>
+        <categories>Create Contract</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>CreateContract_InitialStage</shortDescription>
+        <value>Contract Signed/Pending Funding</value>
+    </labels>
+    <labels>
+        <fullName>CreateContract_NoSubmissionNOfferErr</fullName>
+        <categories>Create Contract</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>CreateContract_NoSubmissionNOfferErr</shortDescription>
+        <value>No Submissions or Offers are present for this Opportunity.  Please Create Submissions or Offer to enter the Deal Entry Wizard</value>
+    </labels>
+    <labels>
+        <fullName>CreateContract_StageFunded</fullName>
+        <categories>Create Contract</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>CreateContract_StageFunded</shortDescription>
+        <value>Funded</value>
+    </labels>
+    <labels>
+        <fullName>DashbaordIdeas_Commissions_Path_Url</fullName>
+        <categories>This custom label used in &quot;MCA_Home&quot; page which will navigate to</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCAHome_Commissions Path Url</shortDescription>
+        <value>/01ZF0000000aPuD</value>
+    </labels>
+    <labels>
+        <fullName>DashbaordIdeas_Dashboard_Path_Url</fullName>
+        <categories>This label is used on &quot;MCA_Home&quot; page which will navigate to dashbaord home page.</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCAHome_Dashboard Path Url</shortDescription>
+        <value>/01ZF0000000EZlT</value>
+    </labels>
+    <labels>
+        <fullName>Dashbaord_Renewal_Path_Url</fullName>
+        <categories>This label is used on &quot;Dashboard_Ideas&quot; page which will navigate to &quot;Manage Renewal&quot; page.</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCAHome_Renewal Path Url</shortDescription>
+        <value>/apex/ManageRenewal</value>
+    </labels>
+    <labels>
+        <fullName>DashboardIdeas_Admin</fullName>
+        <categories>This custom label used in &quot;Dashboard_Ideas&quot; page which will redirect to admin page.</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCAHome_Admin</shortDescription>
+        <value>apex/AdminPage</value>
+    </labels>
+    <labels>
+        <fullName>DashboardIdeas_CampaignsUrl</fullName>
+        <categories>This custom label used in &quot;Dashboard_Ideas&quot; page which will redirect to Campaign Metrics Dashboard</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCAHome_CampaignsUrl</shortDescription>
+        <value>/01Zi0000000MuCr</value>
+    </labels>
+    <labels>
+        <fullName>DashboardIdeas_DealsDashboard</fullName>
+        <categories>This custom label used in &quot;Dashboard_Ideas&quot; page which will redirect to deal management dashboard.</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCAHome_DealsDashboard</shortDescription>
+        <value>/01ZF0000000aWVg</value>
+    </labels>
+    <labels>
+        <fullName>DashboardIdeas_Lead</fullName>
+        <categories>MCA-Home</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>DashboardIdeas_Lead</shortDescription>
+        <value>/01Z90000000MIwm</value>
+    </labels>
+    <labels>
+        <fullName>DashboardIdeas_MyInbox</fullName>
+        <categories>This custom label used in &quot;Dashboard_Ideas&quot; page which will redirect to home page.</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCAHome_MyInbox</shortDescription>
+        <value>https://activities.na10.visual.force.com/apex/Activities?sfdc.tabName=01rF0000000dlIs</value>
+    </labels>
+    <labels>
+        <fullName>DashboardIdeas_Syndication_Dashboard</fullName>
+        <categories>This custom label used in &quot;Dashboard_Ideas&quot; page which will redirect to syndication dashbaord page</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCAHome_Syndication_Dashboard</shortDescription>
+        <value>/01ZF0000000aXLU</value>
+    </labels>
+    <labels>
+        <fullName>Email_Stips_Template_Id</fullName>
+        <categories>Stips</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Email Stips Template Id</shortDescription>
+        <value>00X90000001B4zH</value>
+    </labels>
+    <labels>
+        <fullName>FUNDED</fullName>
+        <categories>Contract stage change</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>FUNDED</shortDescription>
+        <value>Funded</value>
+    </labels>
+    <labels>
+        <fullName>FundingApplicationTemplateId</fullName>
+        <categories>Opportunity button Create PDF</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>FundingApplicationTemplateId</shortDescription>
+        <value>a0Si0000004JsBU</value>
+    </labels>
+    <labels>
+        <fullName>FundingApplication_CongaQueryOwner1</fullName>
+        <categories>Funding Application,Send PDF button on Opportunit, Create PDF button</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>FundingApplication_CongaQueryOwner1</shortDescription>
+        <value>a0WF000000E2J6v</value>
+    </labels>
+    <labels>
+        <fullName>FundingApplication_CongaQueryOwner2</fullName>
+        <categories>Funding Application,Send PDF button on Opportunit, Create PDF button</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>FundingApplication_CongaQueryOwner2</shortDescription>
+        <value>a0WF000000EHt3b</value>
+    </labels>
+    <labels>
+        <fullName>FundingApplication_NoBusinessUserErr</fullName>
+        <categories>Funding Application &apos;Send Funding Application button&apos;</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>FundingApplication_NoBusinessUserErr</shortDescription>
+        <value>No Business User Contact Role to send the Funding Application for signing. Please create Business User Contact Role to send Funding Application for signing.</value>
+    </labels>
+    <labels>
+        <fullName>ISOListId</fullName>
+        <categories>AccountEnhancedList</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>ISOListId</shortDescription>
+        <value>00BF0000006arxR</value>
+    </labels>
+    <labels>
+        <fullName>MCA_Home_Opportunity_Stage_Agreement_Signed</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCA_Home Opportunity Stage Agreement Signed</shortDescription>
+        <value>Agreement Signed</value>
+    </labels>
+    <labels>
+        <fullName>MCA_Home_Opportunity_Stage_Approved</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCA_Home Opportunity Stage Approved</shortDescription>
+        <value>Approved</value>
+    </labels>
+    <labels>
+        <fullName>MCA_Home_Opportunity_Stage_Underwriting</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCA_Home Opportunity Stage Underwriting</shortDescription>
+        <value>Underwriting</value>
+    </labels>
+    <labels>
+        <fullName>MCA_Home_Task_Activities_Management_Dashboard</fullName>
+        <categories>This custom label used in &quot;MCA_Home&quot; page which will redirect to Activities Management Dashboard</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MCA_Home Task Activities Management Dashboard</shortDescription>
+        <value>/01ZF0000000acnl</value>
+    </labels>
+    <labels>
+        <fullName>MovingRenewal_CreatedOppNextStep</fullName>
+        <categories>MovingRenewals</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MovingRenewal_CreatedOppNextStep</shortDescription>
+        <value>Call merchant for possible renewal</value>
+    </labels>
+    <labels>
+        <fullName>MovingRenewal_CreatedOppStage</fullName>
+        <categories>This Label is used in Manage Renewals functionality</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MovingRenewal_CreatedOppStage</shortDescription>
+        <value>Renewal Prospecting</value>
+    </labels>
+    <labels>
+        <fullName>MovingRenewal_FollowupTasksCreated</fullName>
+        <categories>MovingRenewals</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MovingRenewal_FollowupTasksCreated</shortDescription>
+        <value>Successfully created Followup Tasks for selected Contracts</value>
+    </labels>
+    <labels>
+        <fullName>MovingRenewal_SaveSuccessful</fullName>
+        <categories>MovingRenewals</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MovingRenewal_SaveSuccessful</shortDescription>
+        <value>Your changes are saved successfully.</value>
+    </labels>
+    <labels>
+        <fullName>MovingRenewal_SelectCheckboxErr</fullName>
+        <categories>This label is used in MovingRenewal page which will popup when user select any functionality without selecting any contract.</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MovingRenewal_SelectCheckboxErr</shortDescription>
+        <value>In order to proceed, you must select Contract</value>
+    </labels>
+    <labels>
+        <fullName>MovingRenewal_ThankyouMsg</fullName>
+        <categories>MovingRenewals</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MovingRenewal_ThankyouMsg</shortDescription>
+        <value>The Following Opportunities were created</value>
+    </labels>
+    <labels>
+        <fullName>OfferWizard_EmailSubject</fullName>
+        <categories>Offer Wizard</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OfferWizard_EmailSubject</shortDescription>
+        <value>Opportunities Offer</value>
+    </labels>
+    <labels>
+        <fullName>OfferWizard_ErrorMsg</fullName>
+        <categories>Offer Wizard / Send Offers button on Opportunity</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>OfferWizard_ErrorMsg</shortDescription>
+        <value>Chosen Offers are not present or All Offers are sent</value>
+    </labels>
+    <labels>
+        <fullName>SubmissionWizard_LogoName</fullName>
+        <categories>Submission Wizard</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>SubmissionWizard_LogoName</shortDescription>
+        <value>Submission Email Logo</value>
+    </labels>
+    <labels>
+        <fullName>Submission_ChatterFeedBody</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Submission_ChatterFeedBody</shortDescription>
+        <value>The Deal was submitted to :</value>
+    </labels>
+    <labels>
+        <fullName>Submission_EmailLimitExceeded</fullName>
+        <categories>Submission Wizard</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Submission_EmailLimitExceeded</shortDescription>
+        <value>Please Contact you Administrator. The Maximum number of email that can be sent in a day exceeded</value>
+    </labels>
+    <labels>
+        <fullName>Submission_MailNotSent</fullName>
+        <categories>Submission Wizard</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Submission_MailNotSent</shortDescription>
+        <value>Error :  Your application was not submitted to the following Programs, Please enter Submission Email Address in Program</value>
+    </labels>
+    <labels>
+        <fullName>Submission_MailSent</fullName>
+        <categories>Submission Wizard</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Submission_MailSent</shortDescription>
+        <value>Your application has been submitted to the following Programs.</value>
+    </labels>
+    <labels>
+        <fullName>Submission_SelectProgram</fullName>
+        <categories>Submission Wizard</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Submission_SelectProgram</shortDescription>
+        <value>No Program and Attachment is selected for submission or there exist no Attachments for submission. Please ensure at least one Program and Attachment is selected.</value>
+    </labels>
+    <labels>
+        <fullName>Submission_TemplateMissingError</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Submission_TemplateMissingError</shortDescription>
+        <value>There is no submission details filled for the record. Please create template in &lt;a href=&quot;/a2C/e?retURL=%2Fa2C%2Fo&quot;&gt; Submission Detail &lt;/a&gt;</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_AmountPaidMustBePositive</fullName>
+        <categories>Transaction Error</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Transaction_AmountPaidMustBePositive</shortDescription>
+        <value>Amount Paid can not be a negative value. Please Specify positive value.</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_BillPaidAmountExceedsBalanceAmount</fullName>
+        <categories>Transaction Error</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Transaction_BillPaidAmountExceedsBalanceAmount</shortDescription>
+        <value>Bill Paid Amount exceeds Balance Amount.</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_LineItemAmountExceedsTransactionAmount</fullName>
+        <categories>Transaction Error</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Transaction_LineItemAmountExceedsTransactionAmount</shortDescription>
+        <value>Amount In Transaction Line Item Exceeds Transaction Amount</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_PaidAmountExceedRecDueAmt</fullName>
+        <categories>Transaction Error</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Transaction_PaidAmountExceedRecDueAmt</shortDescription>
+        <value>Amount Paid Exceeds Receivable Due Amount.</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_TransactionAmountMustBePositive</fullName>
+        <categories>Transaction Error</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Transaction_TransactionAmountMustBePositive</shortDescription>
+        <value>Transaction Amount can not be a negative value. Please specify Positive value.</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_TransactionAmountmustBeFilled</fullName>
+        <categories>Transaction Error</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Transaction_TransactionAmountmustBeFilled</shortDescription>
+        <value>Transaction Amount must be filled.</value>
+    </labels>
+</CustomLabels>

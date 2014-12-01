@@ -1,0 +1,77 @@
+<apex:page controller="MultipleRowSelection">
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"  />
+    
+    <script type="text/javascript">
+    var number;
+        
+        $(document).ready(function(){
+           $("#click").click(function(e){
+                if (e.shiftKey){
+                    alert("clicked");
+                }
+           });
+        
+           
+
+});
+        function test(cls, num)
+           {
+                $('.'+cls).click(function(e){
+                alert('****'+number+'****'+num+'****'+$('.'+cls).is(':checked'));
+                
+                var isSelected;
+           
+                if (e.shiftKey){
+                    alert("clicked1 --> "+cls);
+                    
+                    if($('.'+cls).is(':checked'))
+                        isSelected = true;
+                    else
+                        isSelected = false;
+                    
+                    if(number != null)
+                    {
+                        var prevIndex = parseInt(number);
+                        var currIndex = parseInt(num);
+                        
+                        if(prevIndex != currIndex)
+                        {
+                        var end = Math.max(prevIndex,currIndex);
+                        var start = Math.min(prevIndex,currIndex);
+                        
+                        
+                        for(var i=start;i<=end;i++) {
+//                          $('.cls'+i).prop('checked', true);
+                            $('.cls'+i).prop('checked', isSelected);
+                        }
+                        }
+                    }
+//                      $('.cls1').prop('checked', true);
+                    //fun();
+                }
+                number = num;
+           });
+           }
+        
+    </script>
+    
+        
+    <apex:form id="formId">
+   
+        <apex:pageBlock id="pgBlockId">
+            <apex:variable var="TcktSrNo" value="{!0}"/>
+           <apex:pageBlockTable id="tableId" value="{!listWrapperClass}" var="wrapper">
+               <apex:column headerValue="Select">
+                    <apex:variable var="TcktSrNo" value="{!TcktSrNo + 1}"/>
+<!-- <!--                   <apex:inputCheckbox styleClass="cls{!wrapper.num}" value="{!wrapper.isSelected}" onchange="test('cls{!wrapper.num}');" onkeypress="shiftChk(event);"/> -->
+<!-- <!--                   <apex:inputCheckbox styleClass="cls{!wrapper.num}" value="{!wrapper.isSelected}" onchange="test('cls{!wrapper.num}','{!wrapper.num}');"/> -->
+                    <apex:inputCheckbox styleClass="cls{!TcktSrNo}" value="{!wrapper.isSelected}" onchange="test('cls{!TcktSrNo}','{!TcktSrNo}');"/>
+                </apex:column>
+                <apex:column headerValue="Name" value="{!wrapper.str}"/> 
+           </apex:pageBlockTable>
+            
+           
+        </apex:pageBlock>
+        <div id="click">Click</div>
+    </apex:form>
+</apex:page>

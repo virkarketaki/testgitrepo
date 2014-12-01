@@ -1,0 +1,335 @@
+<apex:page standardController="CnP_PaaS__Embeded_Virtual_Terminal__c" extensions="CnP_PaaS.Embedded_VT_Controller"   tabstyle="CnP_PaaS__Embeded_Virtual_Terminal__c">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script> 
+
+<script>
+
+
+function Credit_Options(){
+    var CreditValue= document.getElementById('{!$Component.vieweVTTransaction.block.SelectPayOptions.CreditCardItem.Credit_card}').checked;
+    var temp=document.getElementById('{!$Component.vieweVTTransaction.block.SelectPayOptions.CreditCardItem.CreditCardOptions}');
+if(CreditValue==true){
+temp.style.display='block';
+/*$(".visa").attr('checked','checked');
+$(".master").attr('checked','checked');*/
+}else if(CreditValue==false){
+temp.style.display='none';
+/*$(".visa").attr('checked','');
+$(".master").attr('checked','');*/
+
+}
+
+}
+function checkvalue(){
+      var acc=$(".acc").val();
+        var reg = /^([0-9])+$/;
+          var reg_appname =/^([a-zA-Z0-9\.\,\#\-\'\ ])+$/;
+          var appname= $(".appname").val();
+       var versionnum= $(".versionnum").val();
+        var idnumber= $(".idnumber").val();
+            var pagename= $(".pagename").val();
+            
+            
+              var visa1= document.getElementById('{!$Component.vieweVTTransaction.block.SelectPayOptions.CreditCardItem.Visa_card}').checked;
+     var master= document.getElementById('{!$Component.vieweVTTransaction.block.SelectPayOptions.CreditCardItem.Master_card}').checked;
+      var Discover= document.getElementById('{!$Component.vieweVTTransaction.block.SelectPayOptions.CreditCardItem.Discover}').checked;
+      var AmericanEx= document.getElementById('{!$Component.vieweVTTransaction.block.SelectPayOptions.CreditCardItem.AmericanEx }').checked;
+      var eCheck= document.getElementById('{!$Component.vieweVTTransaction.block.SelectPayOptions.CreditCardItem.e_check}').checked;
+      var InVoice= document.getElementById('{!$Component.vieweVTTransaction.block.SelectPayOptions.CreditCardItem.InVoice}').checked;
+      var PurchaseOrder= document.getElementById('{!$Component.vieweVTTransaction.block.SelectPayOptions.CreditCardItem.PurchaseOrder}').checked;
+        if(appname !="" && !reg_appname.test(appname)){
+             alert("Please enter valid data in Application Name");
+                      $(".appname").focus();
+                      return false;
+       }
+      
+       if(versionnum!="" && !reg_appname.test(versionnum)){
+             alert("Please enter valid data in Version Number");
+                      $(".versionnum").focus();
+                      return false;
+       }
+       if(idnumber!="" && !reg_appname.test(idnumber)){
+             alert("Please enter valid data in Identification Number");
+                      $(".idnumber").focus();
+                      return false;
+       }
+        if(pagename!="" && !reg_appname.test(pagename)){
+             alert("Please enter valid data in Page Name");
+                      $(".pagename").focus();
+                      return false;
+       }
+      
+                     
+        if(acc == ""){
+            alert("Please Select C&P Account Number to process Payments");
+              $(".acc").focus();
+            return false;
+        }
+           if(acc!="" && reg.test(acc)==false)
+        {
+         
+            alert("Please Enter Valid Account Number");
+            $(".acc").focus();
+            return false;
+        }
+        
+               if(pagename == ""){
+           alert("Please Enter a Value in Page Name");
+              $(".pagename ").focus();
+            return false;
+       } 
+       if(visa1 == false && master == false && Discover == false && AmericanEx == false && eCheck == false && InVoice == false && PurchaseOrder == false){
+          alert("Please select any one Payment Method ");
+          return false;
+      }         
+        
+}
+
+function imposeMaxLength(Event, Object, MaxLen){
+  var e = window.event ? event.keyCode : Event.which;
+  if((e==32) || (e==13) || (e > 47)){
+      if(MaxLen && (Object.value.length > MaxLen-1))
+       {
+           
+            Object.value = Object.value.substr(0,MaxLen);  
+            if(window.event){
+                 window.event.returnValue=null;
+            }else{
+               
+                return false;
+            }
+       } 
+  }
+}
+</script>
+ <apex:form id="vieweVTTransaction">
+  <apex:pageMessage severity="INFO" rendered="{!checkingperson}" >
+
+  <span style="font-weight:normal;">Embedded Virtual Terminal Process is currently not available in the instances where Person Accounts are activated.</span><br />
+   <br />
+    </apex:pageMessage>
+   
+   <apex:pageBlock title=" Embedded Virtual Terminal (eVT)" id="block" rendered="{!IF(checkingperson==false,true,false)}">
+       <apex:pageBlockButtons >
+           <apex:commandButton action="{!updateeVT}" value="Update" onclick="return checkvalue();"/>
+             <apex:commandButton action="{!cancel}" value="  Cancel  "/>
+       </apex:pageBlockButtons>
+        <apex:pageBlockSection title="Application Information" columns="1">
+            <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Application_Name__c}" style="width:250px" styleClass="appname"/>
+            <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Version_Number__c}" style="width:250px" styleClass="versionnum"/>
+            <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Identification_Number__c}" style="width:250px" styleClass="idnumber"/>
+       </apex:pageBlockSection>
+       
+       
+       <apex:pageBlockSection title="Page Information" columns="1">
+            <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Page_Name__c}" style="width:250px" styleClass="pagename"/>
+           <!-- <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Click_Pledge_Account_Id__c}"/>
+            <apex:inputField value="{!viewEVTTransaction.Form_CSS__c}" style="width:450px;height:100px;"/>-->
+            
+               <apex:pageBlockSectionItem labelStyle="font-weight:bold;font-size:12px;">
+       Form CSS  <apex:inputTextarea value="{!formcss}" style="width:450px;height:100px;" id="formcss" />
+       </apex:pageBlockSectionItem>
+   
+            
+       </apex:pageBlockSection>
+       
+         <apex:pageBlockSection id="SelectPayOptions" title="Select Payment Options" columns="1">
+                       <!--  <apex:pageblocksectionItem id="AccountIdItem" helpText="Your Click & Pledge Account Number to be found in C&P admin portal [Account Info>Your Profile>Account Number]">
+                         <apex:outputLabel value="C&P Account Number"/>
+                          <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Click_Pledge_Account_Id__c}" styleClass="acc" />
+                         </apex:pageBlockSectionItem>-->
+                         
+                         
+                            <apex:pageBlockSectionItem id="AccountIdItem" helpText="Your Click & Pledge Account Number to be found in C&P admin portal [Account Info>Your Profile>Account Number]">
+                             <apex:outputLabel value="C&P Account Number"></apex:outputLabel>                             
+                            <apex:outputPanel styleClass="requiredInput" layout="block"  >
+                       <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                    <apex:selectList value="{!viewEVTTransaction.CnP_PaaS__Click_Pledge_Account_Id__c}" size="1" styleClass="acc">
+                                <Apex:selectOptions value="{!CnPAccount}"></Apex:selectOptions>
+                             </apex:selectList>
+                             </apex:outputpanel>
+                     </apex:pageBlockSectionItem>
+                     
+                     
+                                  <apex:outputLabel value="Terms & Conditions"></apex:outputLabel>
+                          <apex:pageBlockSectionItem >
+                           <apex:outputPanel >
+                             <apex:outputPanel Style="padding-left:200px;">
+                               <apex:inputCheckbox value="{!viewEVTTransaction.CnP_PaaS__Show_terms__c}"   styleClass="checkbox" />
+                                        <apex:outputLabel value="Show Terms and Conditions"/><br />
+                             </apex:outputPanel>
+                             <apex:outputPanel Style="padding-left:200px;">
+                               <apex:inputCheckbox value="{!viewEVTTransaction.CnP_PaaS__Acknowledgement__c}"   styleClass="checkbox"/>
+                                        <apex:outputLabel value="Show Acknowledgement Mandatory"/><br />
+                             </apex:outputPanel>
+                            
+                             </apex:outputPanel>    
+                              
+                           </apex:pageBlockSectionItem>
+                           <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Terms_Conditions_Text__c}"/>
+         <apex:outputLabel value="Payment Methods"></apex:outputLabel>
+                         <apex:pageblocksectionItem helpText="Accepted payment options – refer to your Click & Pledge admin portal for accepted cards [Accepted Cards]" id="CreditCardItem" >
+                                 <apex:outputLabel value="Online Options"/>
+                                 <apex:outputpanel >
+                                  <apex:inputCheckbox value="{!CreditCard}" id="Credit_card" onChange="Credit_Options();" >
+                                          
+                                        </apex:inputCheckbox>
+                                        <apex:outputLabel value="Credit Card"/><br />
+                                        <apex:outputpanel id="CreditCardOptions" style="display:{!if(CreditCard==true,'block','none')};position:relative;left:30px;">
+                                        <apex:outputPanel >
+                                        <apex:inputCheckbox value="{!viewEVTTransaction.CnP_PaaS__Visa__c}" id="Visa_card"  styleClass="visa" />
+                                        <apex:outputLabel value="Visa"/><br />
+                                        <apex:inputCheckbox value="{!viewEVTTransaction.CnP_PaaS__Master_Card__c}" id="Master_card"  styleClass="master" />
+                                        <apex:outputLabel value="Master Card"/><br />
+                                        <apex:inputCheckbox value="{!viewEVTTransaction.CnP_PaaS__Discover__c}" id="Discover" styleClass="Discover" />
+                                        <apex:outputLabel value="Discover"/><br />
+                                        <apex:inputCheckbox value="{!viewEVTTransaction.CnP_PaaS__American_Express__c}" id="AmericanEx" styleClass="AmericanEx" />
+                                        <apex:outputLabel value="American Express"/><br />
+                                        
+                                        </apex:outputpanel>
+                                        </apex:outputpanel>
+                                        <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__e_Check__c}" id="e_check" styleClass="eCheck"/>
+                                        <apex:outputLabel value="eCheck"/><br />
+                                        <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Invoice_PO__c}" id="InVoice" styleClass="invoice"/>
+                                        <apex:outputLabel value="Invoice"/><br />
+                                        <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Purchase_Order__c}" id="PurchaseOrder" styleClass="po"/>
+                                        <apex:outputLabel value="Purchase Order"/><br />
+                                       </apex:outputpanel>
+                         </apex:pageblocksectionItem>  
+               
+              
+                          
+                      <apex:outputLabel value="Messages"/>
+                        <apex:pageBlockSectionItem >                                                                           
+                         <apex:outputLabel value="Thank you" />
+                              <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Thank_you__c}"/>                
+                         </apex:pageBlockSectionItem>
+                         <apex:pageBlockSectionItem >
+                         <apex:outputLabel value="Payment Declined" />
+                             <apex:inputField value="{!viewEVTTransaction.CnP_PaaS__Payment_Declined__c}"/>
+                         </apex:pageBlockSectionItem>
+              
+              </apex:pageBlockSection>
+              
+           
+       
+      
+           <apex:pageBlockSection title="Receipt" columns="1">
+           Note: Receipt does not support images in the body of the text
+            <apex:inputTextArea value="{!viewEVTTransaction.CnP_PaaS__Organization_Information__c}" style="width:350px;height:100px;" styleClass="organizationinfo" rows="6" cols="75" onkeypress="return imposeMaxLength(event, this, 1500);" onkeyup="return imposeMaxLength(event, this, 1500);"/>
+            <apex:inputTextArea value="{!viewEVTTransaction.CnP_PaaS__Receipt_Header__c}" style="width:350px;height:100px;" richtext="false" styleClass="thankyou" rows="6" cols="75" onkeypress="return imposeMaxLength(event, this, 500);" onkeyup="return imposeMaxLength(event, this, 500);"/>
+            <apex:inputTextArea value="{!viewEVTTransaction.CnP_PaaS__Terms_Conditions__c}" style="width:350px;height:100px;" richtext="false" styleClass="TermsCondition" rows="6" cols="75" onkeypress="return imposeMaxLength(event, this, 1500);" onkeyup="return imposeMaxLength(event, this, 1500);"/>
+           
+         </apex:pageBlockSection>  
+      
+          <apex:pageBlockSection title="Accounts" columns="1">
+     <apex:outputPanel rendered="{!If(npspexist == false,true,false)}">
+         <apex:outputLabel ><b> Account Settings</b></apex:outputLabel>     
+         
+            <apex:selectRadio value="{!compare}" id="compare"  styleClass="radio" layout="pageDirection" >
+            <apex:actionSupport event="onchange" reRender="selectSection" action="{!HideOrg}"></apex:actionSupport>
+            <apex:selectOption itemvalue="noaccount" itemlabel="Do NOT create new Account for new Contacts" />
+            <apex:selectOption itemvalue="onetoone" itemlabel="Create an Account / Contact pair (1 to 1)" />
+            <apex:selectOption itemvalue="onetomany" itemlabel="Use one parent Account for all Contacts (1 to many)" />
+            
+           </apex:selectRadio>
+    </apex:outputPanel>
+
+        <!--####################Account Selection ##################-->
+        <apex:pageBlockSectionItem >
+          <apex:outputPanel id="selectSection">
+                  <apex:outputpanel style="padding-left:58px;" rendered="{!compare=='onetomany'}"> 
+                   Please select the parent Account:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:inputField value="{!acclpvalue.CnP_PaaS__cs_at_aid__c}" />
+                    <apex:actionSupport event="onchange" action="{!Hideoneandperson}" reRender="selectoption" />
+                  
+             </apex:outputpanel>
+             
+          </apex:outputPanel> 
+        </apex:pageBlockSectionItem>     
+       <apex:outputLabel > <b>Contact Record </b></apex:outputLabel>
+        <apex:pageBlockSectionItem >
+        <apex:outputPanel >
+                   <apex:inputCheckbox value="{!contactvalue}"  styleClass="checkbox"/>Create a new Contact if Contact does not exist.   <!--    <apex:outputPanel ><br/>
+                 <apex:inputCheckbox value="{!updatecontactvalue}"  id="Eventinfo_CInventory" styleClass="checkbox"/>Update contact information if contact exists.</apex:outputPanel>-->
+                 </apex:outputPanel>
+     </apex:pageBlockSectionItem>
+      
+           <!-- ########################3Opportunities#####################-->
+          
+            <apex:outputLabel > <b>Opportunity Settings </b></apex:outputLabel>
+      <apex:pageBlockSectionItem >
+        <apex:outputPanel Style="padding-left:35px;">
+          <apex:outputPanel >
+         
+               <apex:inputCheckbox value="{!oppvalue}" >             
+                   <apex:actionSupport event="onchange" reRender="product" action="{!HideOppor}" />           
+               </apex:inputCheckbox>Create an Opportunity for each transaction<br/>
+          </apex:outputPanel>  
+           <apex:outputPanel id="product">            
+               <apex:outputPanel Style="padding-left:60px;"  rendered="{!oppvalue==true}">
+                   <apex:inputCheckbox value="{!prodvalue}" styleClass="checkbox"/>  Use Products for each item in an Opportunity
+               </apex:outputPanel><br/>
+               <apex:outputPanel Style="padding-left:60px;" id="contactrole" rendered="{!oppvalue==true}">
+                   <apex:inputCheckbox value="{!contactrolevalue}" styleClass="checkbox"/> Create Contact Role for each Opportunity
+                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<apex:inputField value="{!ocrrole.Role}" required="false"/> 
+                </apex:outputPanel>
+                
+            </apex:outputPanel>
+           </apex:outputPanel> 
+          </apex:pageBlockSectionItem> 
+          <apex:outputLabel style="padding-left:38px;"> <b>Stage</b></apex:outputLabel> 
+           <apex:pageBlockSectionItem >
+            <apex:outputPanel style="padding-left:58px;" >
+            <apex:outputPanel ><!-- rendered="{!oppvalue==true}" >-->
+                <apex:outputLabel value="Authorized Transactions:" ></apex:outputLabel>     
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <apex:inputField value="{!OppField.StageName}" required="false"/> 
+            </apex:outputPanel>                         
+          </apex:outputPanel>
+     
+   </apex:pageBlockSectionItem> 
+      <apex:pageBlockSectionItem >
+            <apex:outputPanel style="padding-left:58px;" >
+            <apex:outputPanel ><!-- rendered="{!oppvalue==true}" >-->
+                <apex:outputLabel value="Declined Transactions:" ></apex:outputLabel>     
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <apex:inputField value="{!DeclinedField.StageName}" required="false"/> 
+            </apex:outputPanel>                         
+          </apex:outputPanel>
+      </apex:pageBlockSectionItem> 
+      
+               <apex:pageBlockSectionItem >
+            <apex:outputPanel style="padding-left:58px;" >
+            <apex:outputPanel ><!-- rendered="{!oppvalue==true}" >-->
+                <apex:outputLabel value="Invoice Transactions:" ></apex:outputLabel>     
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <apex:inputField value="{!InvoiceField.StageName}" required="false"/> 
+            </apex:outputPanel>                         
+          </apex:outputPanel>
+      </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            <apex:outputPanel style="padding-left:58px;" >
+            <apex:outputPanel ><!-- rendered="{!oppvalue==true}" >-->
+                <apex:outputLabel value="PurchaseOrder Transactions:" ></apex:outputLabel>     
+                  &nbsp;
+                  <apex:inputField value="{!POField.StageName}" required="false"/> 
+            </apex:outputPanel>                         
+          </apex:outputPanel>
+      </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            <apex:outputPanel style="padding-left:58px;" >
+            <apex:outputPanel ><!-- rendered="{!oppvalue==true}" >-->
+                <apex:outputLabel value="Free Transactions:" ></apex:outputLabel>     
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <apex:inputField value="{!FreeOption.StageName}" required="false"/> 
+            </apex:outputPanel>                         
+          </apex:outputPanel>
+      </apex:pageBlockSectionItem>
+      
+          
+   </apex:pageBlockSection> 
+    
+   </apex:pageBlock>
+     
+ </apex:form>
+ 
+</apex:page>

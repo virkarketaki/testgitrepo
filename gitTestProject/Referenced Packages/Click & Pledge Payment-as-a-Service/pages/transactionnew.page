@@ -1,0 +1,167 @@
+<apex:page controller="CnP_PaaS.CnP_Transaction_Detail_Controller" tabstyle="CnP_PaaS__CnP_Transaction__c" title="New C&P Transaction Manual Entry">
+  <apex:form id="form">
+ <script>      
+       
+function testScriptStmt()
+        {
+        
+           var v = document.getElementById('ordno').value;
+           alert(v);
+           var hasScript = false;
+           if(v.indexOf('<script') >= 0)
+             {
+               if(v.indexOf('</script' , v.indexOf('<script')) >= 0)
+                   {
+                       hasScript = true;
+                   }
+             }
+           
+        //   alert(hasScript);
+           return hasScript;
+        
+        }
+      </script>
+<apex:messages />
+   <apex:actionFunction name="getAPIParams" id="getAPIParams"  reRender="theForm" >
+         <apex:param name="sessionId" assignTo="{!apiSessionId}" value="{!$Api.Session_ID}" />
+         <apex:param name="serverURL" assignTo="{!apiServerURL}" value="{!$Api.Partner_Server_URL_190}" /> 
+         <apex:param name="currentPageURL" assignTo="{!currentPageURL}" value="{!$CurrentPage.Url}" /> 
+     </apex:actionFunction>
+     
+         <apex:pageblock title="New Transaction">
+        <apex:pageblockButtons >
+        
+         <apex:commandButton action="{!save}" value="Process Payment" onclick="testScriptStmt();"/>
+        <!--   <apex:commandButton action="{!cancelTransaction}" value="Cancel"/>-->
+            <apex:commandButton action="{!cancel}" value="Cancel" immediate="true"/>  
+         </apex:pageblockButtons>
+
+  <apex:pageBlockSection title="Transaction Information">
+  
+             <apex:inputField value="{!newTransaction.Name}"  required="true" id="ordno"/>
+             <apex:inputField value="{!newTransaction.CnP_PaaS__Contact__c}" required="true"/>
+             <apex:inputField value="{!newTransaction.CnP_PaaS__TransactionTimeZone__c}"/>     
+         <!--  <apex:outputField value="{!rtvalue.Name}"/>-->
+  </apex:pageBlockSection>  
+  <apex:pageBlockSection title="Amount" >
+      <apex:inputField value="{!newTransaction.CnP_PaaS__Payment_For__c}" required="true" />
+      <apex:inputField value="{!newTransaction.CnP_PaaS__Amount__c}" required="true"/>
+     <!--        <apex:inputField value="{!newTransaction.TotalCharged__c}" />                          -->
+             <apex:inputField value="{!newTransaction.CnP_PaaS__Deductible_Charge__c}"/>            
+             <apex:inputField value="{!newTransaction.CnP_PaaS__Shipping_Cost_Charge__c}"  />                          
+             <apex:inputField value="{!newTransaction.CnP_PaaS__Discount_Charge__c}"/>            
+             <apex:inputField value="{!newTransaction.CnP_PaaS__TaxAmount_Charge__c}"/> 
+
+   </apex:pageBlockSection>
+
+         <apex:pageblockSection title="Shipping Address"  id="ship"   rendered="{!ShowShippingAddress1}">
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingAddress1__c}" />   
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingAddress2__c}"/>         
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingCity__c}"/>   
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingState__c}"/> 
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingProvince__c}"/>         
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingCountry__c}"/>   
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingZipCode__c}"/>         
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingPhone__c}" />         
+         </apex:pageblockSection>
+ 
+   <!--   <apex:pageBlockSection title="Amount Due" rendered="{!IsRecurring}">             
+                 <apex:inputField value="{!newTransaction.TotalDue__c}"/> 
+                 <apex:inputField value="{!newTransaction.Shipping_Cost_Due__c}"/> 
+                 <apex:inputField value="{!newTransaction.Discount_Due__c}"/>                       
+                 <apex:inputField value="{!newTransaction.TaxAmount_Due__c}"/>  
+             </apex:pageBlockSection>   
+    
+         <apex:pageblockSection title="ACH Information"  rendered="{!IsACH}">                                      
+               
+             <apex:inputField value="{!newTransaction.Check_Number__c}"/>                   
+             <apex:inputField value="{!newTransaction.Name_On_card__c}"/>                                               
+             
+             <apex:inputField value="{!newTransaction.IdType__c}"/>
+             <apex:inputField value="{!newTransaction.IdNumber__c}"/>
+             <apex:inputField value="{!newTransaction.IdState__c}"/>                                                          
+         </apex:pageblockSection>
+
+         <apex:pageblockSection title="Purchase Order Information" rendered="{!IsPurchaseOrder}"   >                                      
+             <apex:inputField value="{!newTransaction.Purchase_Order_Number__c}"/>                               
+         </apex:pageblockSection>
+         
+         <apex:pageblockSection title="Invoice Information" rendered="{!IsInvoice}"   >                                      
+             <apex:inputField value="{!newTransaction.CnP_PaaS__Invoice_Check_Number__c}"/>
+         </apex:pageblockSection>
+                  
+         <apex:pageblockSection title="Cash Information" rendered="{!IsCash}"   >                                                         
+         </apex:pageblockSection>
+                           
+         <apex:pageblockSection title="Credit Card Information" id="CreditCardPanel" rendered="{!IsCreditCard}" >                                      
+            <apex:inputField value="{!newTransaction.Credit_Card_Name__c}" />                          
+            <apex:inputField value="{!newTransaction.CreditCard4x4__c}"  />                          
+            <apex:inputField value="{!newTransaction.Name_On_card__c}"/>                          
+            <apex:inputField value="{!newTransaction.CardExpiration__c}"/>                          
+         </apex:pageblockSection>
+     
+         <apex:pageblockSection title="Shipping Address" rendered="{!ShowShippingAddress1}">
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingAddress1__c}"/>   
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingAddress2__c}"/>         
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingCity__c}"/>   
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingState__c}"/> 
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingProvince__c}"/>         
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingCountry__c}"/>   
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingZipCode__c}"/>         
+             <apex:inputField value="{!newTransaction.CnP_PaaS__ShippingPhone__c}" />         
+         </apex:pageblockSection>   -->      
+         
+     <apex:pageblockSection title="Tracking Information"  >
+            <apex:inputField value="{!newTransaction.CnP_PaaS__Tracker__c}"/> 
+            <apex:inputField value="{!newTransaction.CnP_PaaS__sf_Campaign__c}"/>
+     
+        
+</apex:pageBlockSection>
+<apex:pageBlockSection title="Payment Method" columns="2">
+
+
+
+
+<apex:pageblocksectionItem >
+          <apex:outputlabel value="Received in" for="compare" />
+          <apex:selectradio value="{!compare}" id="compare" >
+              <apex:actionSupport event="onchange" reRender="newvalue" />
+              <apex:selectOptions value="{!comparison}" />
+          </apex:selectradio>
+      </apex:pageblocksectionItem>
+      <apex:pageblocksectionItem >
+      <apex:outputPanel >
+      <apex:outputlabel for="newval" />
+                  <b>Number</b></apex:outputPanel>
+      <apex:inputField value="{!newTransaction.CnP_PaaS__Invoice_Check_Number__c}" id="newval" />
+      </apex:pageblocksectionItem>        
+
+  <!-- <apex:outputpanel id="newvalue">
+             <apex:outputpanel rendered="{!compare=='Invoice'}">
+             <div style="position:relative;left:75px;">             
+                  <apex:outputlabel for="newval" />
+                  <b>Number</b>
+                  <apex:inputField value="{!newTransaction.CnP_PaaS__Invoice_Check_Number__c}" id="newval" />
+             </div>
+             </apex:outputpanel>
+        <apex:outputpanel rendered="{!compare=='Purchase Order'}">
+             <div style="position:relative;left:75px;">             
+                  <apex:outputlabel for="newval2" />
+                  <b>Purchase Order Number</b>
+                  <apex:inputField value="{!newTransaction.CnP_PaaS__Invoice_Check_Number__c}" id="newval2" />
+             </div>
+             </apex:outputpanel>
+                          <apex:outputpanel rendered="{!compare=='Cash'}">
+             <div style="position:relative;left:75px;">             
+                  <apex:outputlabel for="newval3" />
+                  <b>Receipt Number</b>
+                  <apex:inputField value="{!newTransaction.CnP_PaaS__Invoice_Check_Number__c}" id="newval3"/>
+             </div>
+             </apex:outputpanel>
+          </apex:outputpanel> -->            
+
+
+ </apex:pageBlockSection>  
+           </apex:pageBlock>      
+  </apex:form>
+</apex:page>

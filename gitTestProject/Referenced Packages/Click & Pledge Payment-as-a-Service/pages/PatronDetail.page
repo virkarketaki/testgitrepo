@@ -1,0 +1,177 @@
+<apex:page standardController="Contact" extensions="CnP_PaaS.CreditTransactions" showHeader="true" sidebar="true">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+ <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__DataTables,'js/jquery.dataTables.js')}"/>
+ <apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS__DataTables,'css/demo_table_jui.css')}"/>
+ <script>
+     function OppSettlement(type)
+     {      
+       
+        var logNum=$(".rowNumlog").val();
+        
+        var oppid='';
+        var v=0;
+        var count=0;
+        for(var i=0;i<logNum;i++)
+        {
+        
+             var datalist=$(".optid"+i).is(':checked');
+             if(datalist){
+                 v=1;
+                 oppid+=$(".optid"+i).val();
+                 oppid+="--";
+                 count++;
+             }
+             if(count>10 && type=='send')
+             {
+                  v=2;
+             }                      
+        }
+       if(v==1)
+        {
+                if(type=='send')
+                {  
+                   // if(confirm("Are you sure you want to settle this Opportunity(s)?")==true){    
+                     $("#light").attr('style','display:block');
+                     $("#fade").attr('style','display:block'); 
+                     var sfcontactid = $(".sfcontactid").val();  
+                     window.parent.location='/apex/VirtualTerminal?sfcontactid='+sfcontactid+'&optid='+oppid;                     
+                        //opportunitysettlement(oppid);
+                  //  }
+                }
+          
+        }else 
+        if(v==2 && type=='send'){
+               alert("Please Select Only 10 Records");
+               return false;
+        }else{
+            alert("Please Select at least one record");
+            return false;
+        }        
+ }
+ function doneprocess(){
+     var ids = $(".oppid").val();
+     alert(ids);
+     window.parent.location='/apex/VirtualTerminal?optid='+ids;
+    // window.location.assign('/apex/VirtualTerminal?optid='+ids)
+ }
+ </script>
+<script>
+function popitup(url) {    
+    newwindow=window.open(url,'name','height=500,width=450,scrollbars=yes');
+    if (window.focus) {newwindow.focus()}
+    return false;
+}
+</script>
+<apex:form >
+
+ 
+<apex:pagemessages />
+
+<apex:pageBlock title="Credit Card Payments" mode="maindetail">
+
+<apex:pageBlockTable value="{!Results}" var="transaction" rendered="{!resultvalue}" >
+
+<apex:inputhidden value="{!transaction.tranId}" id="transactid" />
+
+  <apex:column headerValue="Date Last Used" value="{!transaction.tDate2}" /> 
+    <apex:column headerValue="Last 4 digits" value="{!transaction.cardnum}"/> 
+    <apex:column headerValue="Credit Card Expiration" value="{!transaction.cardexp}"/> 
+  <apex:column headerValue="Credit Card Name" value="{!transaction.cardname}"/>
+
+    <apex:column >
+
+  <apex:outputLink value="/apex/VirtualTerminal" styleClass="btn" target="_top"  > Virtual Terminal
+     <apex:actionSupport event="onClick" action="{!Vterminal}" />
+               <apex:param name="id" value="{!transaction.tranId}" assignTo="{!para}" ></apex:param>
+               <apex:param name="expired" value="{!transaction.cardexp}" assignTo="{!expired}"></apex:param>                                              
+   </apex:outputLink>          
+
+    </apex:column>
+
+
+      <apex:column >
+ 
+     <apex:actionSupport event="onClick" action="{!Quickchargeform}" />
+               <apex:param name="id" value="{!transaction.tranId}" assignTo="{!para}" ></apex:param>
+               <apex:param name="expired" value="{!transaction.cardexp}" assignTo="{!expired}"></apex:param>    
+                                                       
+    <a href="javascript:void(0);" onclick="return popitup('../apex/Quickchargeform?id={!HTMLENCODE(transaction.tranId)}&qcf=1')"  style="text-decoration:none;postion:relative;" class="btn">Quick Charge Form</a>
+ 
+    </apex:column>
+    
+
+    
+</apex:pageBlockTable>
+</apex:pageBlock>
+ <apex:pagemessages />
+
+
+<apex:pageBlock title="eCheck Payments" rendered="{!resultvalue1}">
+
+<apex:pageBlockTable value="{!CheckResults}" var="checktransaction"  rendered="{!resultvalue1}">
+<apex:outputLabel ><b>eCheck Information:</b></apex:outputLabel>
+
+
+<apex:inputhidden value="{!checktransaction.chktranId}" id="chktranId" />
+
+
+  <apex:column headerValue="Date Last Used" value="{!checktransaction.tDate2}"  /> 
+    <apex:column headerValue="Check Number" value="{!checktransaction.icnum}" /> 
+        <apex:column headerValue="Payment Type" value="{!checktransaction.paytype1}"  /> 
+    <apex:column >
+    <apex:outputLink value="/apex/VirtualTerminal" styleClass="btn" target="_top"  > Virtual Terminal
+    <apex:actionSupport event="onClick" action="{!CheckVterminal}" />
+
+               <apex:param name="id" value="{!checktransaction.chktranId}" assignTo="{!chkpara}"></apex:param>
+               
+ 
+     </apex:outputLink>  
+    </apex:column>
+
+ <apex:column >
+
+     <apex:actionSupport event="onClick" action="{!Quickchargeform}" />
+               <apex:param name="id" value="{!checktransaction.chktranId}" assignTo="{!chkpara}"></apex:param>
+
+                                                       
+    <a href="javascript:void(0);" onclick="return popitup('../apex/Quickchargeform?id={!HTMLENCODE(checktransaction.chktranId)}&qcf=1')"  style="text-decoration:none;postion:relative;" class="btn">Qucik Charge Form 
+</a>
+
+    </apex:column>
+
+
+
+</apex:pageBlockTable>
+ </apex:pageBlock>
+<apex:pageBlock title="Opportunity Settlements" mode="maindetail" id="pg" rendered="{!oppsettlevalue}">
+  <apex:pageBlockButtons rendered="{!IF(xmlvalue[0].Opportunities__c == true && xmlvalue[0].Products__c == false, true,false)}">
+      <a href="javascript:void(0)" onclick="OppSettlement('send')" class="btn" style="text-decoration:none"><apex:outputText value="Opportunity Settlements" ></apex:outputText></a>
+     
+  </apex:pageblockbuttons>
+  <apex:outputLabel value="Opportunity Settlement is not available when Opportunity > Products is active (C&P Settings)" rendered="{!IF(xmlvalue[0].Opportunities__c == true && xmlvalue[0].Products__c == true, true,false)}" Style="font-weight:bold;font-size:12px;padding-left:280px;"/>  
+  <apex:actionFunction action="{!OpportunitySettlements}" name="opportunitysettlement" reRender="pg" oncomplete="doneprocess();">
+      <apex:param name="opportunitysettlementid" assignTo="{!opportunitysettlementid}" value="opportunitysettlementid"/>                                 
+  </apex:actionFunction> 
+ <apex:variable value="0" var="rowNumlog"/>
+  <apeX:pageblocktable value="{!oppsettlements}" var="oppitem">
+    <apex:column headerValue=""><input type="checkbox" value="{!oppitem.Id}" class="optid{!rowNumlog}"/>
+        <apex:variable var="rowNumlog" value="{!VALUE(rowNumlog) + 1}"/></apeX:column>
+    <apex:column headerValue="Name">   <apex:outputLink value="/{!oppitem.Id}" target="_top">{!oppitem.Name}</apex:outputLink>     </apex:column> 
+    <apex:column headerValue="Stage" value="{!oppitem.StageName}"/> 
+     <apex:column headerValue="Amount" value="{!oppitem.Amount}"/>
+      <apex:column headerValue="Probability" value="{!oppitem.Probability}"/>
+    <apex:column headerValue="Close Date" value="{!oppitem.CloseDate}"/> 
+ 
+</apex:pageblocktable>
+ <input type="hidden" value="{!rowNumlog}" class="rowNumlog" name="rowNumlog"/>  
+ <input type="hidden" value="{!opportunitysettlementid}" class="oppid"/>
+ <input type="hidden" value="{!ContactId}" class="sfcontactid" / >
+<!-- <apex:outputPanel id="hiddenblock">
+ </apex:outputPanel>-->
+  </apex:pageBlock>
+
+
+  </apex:form>
+
+
+</apex:page>

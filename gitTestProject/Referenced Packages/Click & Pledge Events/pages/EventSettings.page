@@ -1,0 +1,187 @@
+<apex:page standardController="CnP_PaaS_EVT__Event_settings__c" extensions="CnP_PaaS_EVT.EventSettings" tabStyle="Event_settings__tab">  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script> 
+<script>
+window.onload=function(){
+var CustomValue= document.getElementById('{!$Component.Settings.block.SelectPayOptions.CreditCardItem.CustomPayment}').checked;
+var temp=document.getElementById('{!$Component.Settings.block.SelectPayOptions.CreditCardItem.DisplayCustomPaymentName}');
+
+if(CustomValue==false){
+temp.style.display='none';
+}
+}
+$(function($) {
+        $(function(){
+          $(".save").click(function(){
+           var n = $(".actid").val();
+           var Custompayment=$(".CustomPayment").is(':checked');
+          var Custompaymentname=$(".CustomPayment_Name").val();
+           
+           
+           if(Custompaymentname.length > 50){
+          alert("Custom Payment Name Should Be 50 characters Only.");
+          $(".CustomPayment_Name").focus();
+          return false;
+          }
+           
+           if(Custompayment==false){
+           jQuery(".CustomPayment_Name").val('');
+           }
+            if(Custompayment==true && (Custompaymentname=="" || !Custompaymentname.indexOf(' ',0) || !reg_text.test(Custompaymentname))){
+          alert("Please Enter Custom Payment Name");
+          $(".CustomPayment_Name").focus();
+          return false;
+          }
+          
+          
+           var url = $(".EventsettingsInfo_url").val();
+           var reg = /^([0-9])+$/;
+           //var regurl = /https:\/\/[A-Za-z0-9\.-]{3,}\$/;
+           var regurl = /^(((ht){1}(tps:[/][/]){1})|((www.){1}))[-a-zA-Z0-9:%_\+.~?&//=]+$/;
+           if(reg.test(n)==false && n!="")
+           {
+                  alert('Please enter valid "C&P Account Number"');
+                  $(".actid").focus();
+                  return false;         
+          }
+          if(url!="" && regurl.test(url)==false){
+              alert('Please enter valid default site url');
+                  $(".EventsettingsInfo_url").focus();
+                  return false;
+          }
+        })
+        })
+    })
+function changedtohttps(url)
+{
+
+      url_1 = /^(((ht){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@:%_\+.~#?&//=]+$/;
+      if(url!="")
+      {
+             if(url.match(url_1))
+             {
+                 var re_place = url.replace('http:','https:'); 
+                // var re_place=re_place.replace('force.com','secure.force.com');                 
+                 $(".EventsettingsInfo_url").attr('value',re_place);
+             }
+      }
+}
+
+
+function popitup(url) {    
+    newwindow=window.open(url,'name','height=400,width=350,scrollbars=yes');
+    if (window.focus) {newwindow.focus()}
+    return false;
+}
+
+function CreditOptions(){
+var CreditValue= document.getElementById('{!$Component.Settings.block.SelectPayOptions.CreditCardItem.Credit_card}').checked;
+//alert(CreditValue);
+var temp=document.getElementById('{!$Component.Settings.block.SelectPayOptions.CreditCardItem.CreditCardOptions}');
+
+if(CreditValue==true){
+temp.style.display='block';
+}
+else if(CreditValue==false){
+temp.style.display='none';
+}
+
+var CustomValue= document.getElementById('{!$Component.Settings.block.SelectPayOptions.CreditCardItem.CustomPayment}').checked;
+var temp=document.getElementById('{!$Component.Settings.block.SelectPayOptions.CreditCardItem.DisplayCustomPaymentName}');
+
+if(CustomValue==false){
+
+temp.style.display='none';
+}
+if(CustomValue==true){
+temp.style.display='block';
+}
+}
+</script>
+<apex:form id="Settings">
+<apex:pageMessages />
+ <apex:pageBlock title="Settings" id="block">
+ 
+ <apex:pageBlockButtons >
+                         <apex:actionStatus id="mySaveStatus_2">
+                            <apex:facet name="stop">
+                        <apex:commandButton action="{!Save}" value="Update Settings" styleClass="save" />
+                        </apex:facet>
+        <apex:facet name="start">
+                 <apex:outputPanel >
+
+                 <apex:image value="/img/loading32.gif" style="height: 15px;"/>
+
+                 <apex:commandbutton value="Processing..." status="mySaveStatus_2" disabled="true"/>
+                 
+               </apex:outputPanel>
+
+           </apex:facet>
+        </apex:actionStatus>
+                </apex:pageBlockButtons>
+ <apex:pageBlockSection id="SelectPayOptions" columns="1" collapsible="false">
+ <apex:pageBlockSectionItem >
+ <apex:outputLabel value="Default Site URL" />
+ <apex:outputPanel >
+ <span  class="catlook">
+ <apex:inputField value="{!SettingRecord.CnP_PaaS_EVT__Default_Public_Site_Url__c}" id="EventsettingsInfo_url" styleclass="EventsettingsInfo_url" style="width:450px" onblur="changedtohttps(this.value);"/>
+<span><a href="javascript:void(0);" onclick="return popitup('../0DM/o?setupid=CustomDomain&retURL=%2Fui%2Fsetup%2FSetup%3Fsetupid%3DDevToolsIntegrate')" style="text-decoration:none;postion:relative;margin-left:5px" class="btn"><apex:outputText value="Get the Site URL"></apex:outputText></a>
+                </span> </span>
+                <br/><br/>
+                <apex:outputlabel value="e.g. https://yourdomain.SECURE.FORCE.COM/pagename" /><br />              
+                 <apex:outputlabel value="[for secure site change URL to .secure.force.com instead of .force.com]" /><br /><br />
+                 </apex:outputPanel>
+ </apex:pageBlockSectionItem>
+ <apex:pageBlockSectionItem > 
+ <apex:outputLabel value="Default C&P Account Number" />
+ <!--<apex:inputField value="{!SettingRecord.CnP_PaaS_EVT__Default_Account_Number__c}" id="EventsettingsInfo_cnpaccount" styleClass="actid"/>-->
+ 
+ <apex:selectList value="{!SettingRecord.CnP_PaaS_EVT__Default_Account_Number__c}" size="1" styleClass="actid">                             
+                                <Apex:selectOptions value="{!CnPAccount}"></Apex:selectOptions>
+                             </apex:selectList>
+ </apex:pageBlockSectionItem>
+ <apex:pageblocksectionItem id="CreditCardItem" >
+                                 <apex:outputLabel value="Default Payment Methods"/>
+                                 <apex:outputpanel >
+                                 
+                                        <apex:inputField value="{!SettingRecord.CnP_PaaS_EVT__Credit_Card__c}" id="Credit_card" onchange="CreditOptions();" styleclass="Credit_card">
+                                        
+                                        </apex:inputField>
+                                        <apex:outputLabel value="Show Credit Card Symbols For:"/><br />
+                                        <apex:outputpanel id="CreditCardOptions" style="position:relative;left:30px;">
+                                        <apex:outputpanel >
+                                        <apex:inputCheckbox value="{!SettingRecord.CnP_PaaS_EVT__Visa__c}" id="Visa_card" styleclass="Visa_card"/>
+                                        <apex:outputLabel value="Visa"/><br />
+                                        <apex:inputCheckbox value="{!SettingRecord.CnP_PaaS_EVT__Master_Card__c}" id="Master_card" StyleClass="Master_card"/>
+                                        <apex:outputLabel value="Master Card"/><br />
+                                        <apex:inputCheckbox value="{!SettingRecord.CnP_PaaS_EVT__Discover__c}" id="Discover" StyleClass="Discover"/>
+                                        <apex:outputLabel value="Discover"/><br />
+                                        <apex:inputCheckbox value="{!SettingRecord.CnP_PaaS_EVT__American_Express__c}" id="AmericanEx" StyleClass="AmericanEx"/>
+                                        <apex:outputLabel value="American Express"/><br />
+                                        
+                                        </apex:outputpanel>
+                                        </apex:outputpanel>
+                                        <apex:inputField value="{!SettingRecord.CnP_PaaS_EVT__eCheck__c}" id="e_check" StyleClass="e_check"/>
+                                        <apex:outputLabel value="eCheck"/><br />
+                                        <apex:inputField value="{!SettingRecord.CnP_PaaS_EVT__Invoice__c}" id="InVoice" StyleClass="InVoice"/>
+                                        <apex:outputLabel value="Invoice"/><br />
+                                        <apex:inputField value="{!SettingRecord.CnP_PaaS_EVT__Purchase_Order__c}" id="PurchaseOrder" StyleClass="PurchaseOrder"/>
+                                        <apex:outputLabel value="Purchase Order"/><br />
+                                        <apex:inputField value="{!SettingRecord.CnP_PaaS_EVT__Custom_Payment_Check__c}" id="CustomPayment" onchange="CreditOptions();" StyleClass="CustomPayment">
+                                        
+                                        </apex:inputField>
+                                        <apex:outputLabel value="Custom Payment"/><br />
+                                        <apex:outputpanel id="DisplayCustomPaymentName" style="position:relative;left:30px">
+                                        <apex:outputLabel value="Name"/>
+                                        <apex:inputField value="{!SettingRecord.CnP_PaaS_EVT__Custom_Payment_Name__c}" id="CustomPaymentName"  StyleClass="CustomPayment_Name" onblur="trimvalue(this.value,'CustomPayment_Name');"/>
+                                        </apex:outputpanel>
+                                       </apex:outputpanel>
+                         </apex:pageblocksectionItem>                 
+</apex:pageBlockSection>
+ <!--<apex:inputField value="{!SettingRecord.Event_categories__c}" id="EventsettingsInfo_categories"/>
+ </apex:pageBlockSection>
+ <apex:pageBlockSection id="LevelsettingsInfo" title="Registration Level" columns="1" collapsible="false">
+ <apex:inputField value="{!SettingRecord.Registered_Status_options__c}" id="LevelsettingsInfo_status"/>
+ </apex:pageBlockSection>-->
+ </apex:pageBlock>
+</apex:form>  
+</apex:page>

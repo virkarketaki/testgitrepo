@@ -1,0 +1,175 @@
+<apex:page controller="CnP_PaaS_EVT.EventRegistration" showHeader="false" standardStylesheets="false" action="{!checkcookie}">
+<style>
+     #cnp {
+
+            line-height:25px;
+            color:#CCC;
+            font-family:Arial, Helvetica, sans-serif;
+            font-size:11px;
+            max-width:700px;
+            text-align:center;
+            margin:0 auto;
+    
+    } 
+.detailList {
+    border-collapse: collapse;
+    font-family: 'Arial';
+    font-size: 12px;
+    margin-left: 3px;
+    margin-top: 15px;
+    text-align: left;
+    width: 50%;
+}
+</style>
+<apex:form >
+
+
+ <apex:pageBlock rendered="{!if(StyleRec.CnP_PaaS_EVT__Theme_Selection__c=='Standard Theme',true,false)}">
+ <apex:include pageName="CnP_PaaS_EVT__EventRegistrationLayout"/>
+ <div id="Main">
+  
+  <div id="Header" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Display_Banner__c==true,'block','none')}">
+    <div id="HeaderLeft"> <span class="Title"><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Upload_banner__c}" escape="false"/></span></div>
+   
+  </div>
+  <div id="ContentArea">
+  <div id="Right">
+    <apex:outputLink value="/servlet/servlet.FileDownload?file={!pdfId}" target="_blank" style="text-decoration:none">
+  <div align="right" class="DownloadAgenda" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Show_ajenda__c==true && pdfId!="",'block','none')}">
+         <div style="margin-top:2px;float:left;"><apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__pdf_icon)}" /></div>{!if(EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c!="",EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c,'Download Agenda')}
+        
+     </div>
+      </apex:outputLink>
+  <div id="ContentTop" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Display_Title_Information__c==true,'block','none')}">
+ 
+     <div>
+         <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Title_and_information__c}" escape="false"/>
+     </div> 
+    </div>
+        <div id="ContentBott">
+           <div class="Box">
+                              
+                            <div class="Top">
+                                   <!-- <div class="T-Left"></div>-->
+                                    <div class="Title1"  style="display:{!IF(StyleRec.Display_Title__c==true,'block','none')}">
+                                        <h3 class="t1"><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Section_Title__c}" escape="false" /></h3>
+                                        
+                                    </div>  
+                                   <!-- <div class="T-Right"></div>-->
+                            </div>
+                            <div class="ContMiddle">
+                            <div style="display:{!IF(StyleRec.Display_Description__c==true,'block','none')}">
+                            <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Section_Description__c}" escape="false" />
+                           </div>
+                            
+                                  <div class="summaryPage">      
+                 <apex:pageBlockSection columns="1"  collapsible="false">   
+
+                 <table width="590px" id="SummaryTable"><tr  ><td width="123px" style="text-align:left;padding-left:5px;max-width:123px;" >Attendee - Registered as </td><td width="72px" style="text-align:right;">Price</td><td width="42px" style="text-align:right;">Tax</td><td width="29px" style="text-align:right;">+Fee</td><td width="42px" style="text-align:center;">Total</td></tr></table>
+                 <apex:pageblocktable value="{!AttendeePaymentList}" headerClass="headerrow" width="590px"  var="accdet">
+                 <apex:column width="590px">
+                 <apex:pageblocktable border="1"  width="590px" value="{!accdet.Event_attendee_sessions__r}" var="tm">
+                 <apex:column width="140" style="padding-left:5px;text-align:left;max-width:140px;" >
+                               <apex:outputfield value="{!tm.ContactId__r.Name}"/>&nbsp;-&nbsp;<apex:outputfield value="{!tm.Registration_level__r.Name}"/>
+                               
+                               
+                         </apex:column>
+                         <!--<apex:column headerValue="Email">
+                               <apex:outputfield value="{!tm.ContactId__r.Email}"/>
+                         </apex:column>-->
+                         <apex:column headerValue="" width="46px" style="text-align:right;max-width:46px;">
+                         <apex:outputfield value="{!tm.Registration_level__r.CnP_PaaS_EVT__Price__c}" style="padding-right:25px;text-align:right;" />
+                               
+                         </apex:column>
+                         <apex:column headerValue="" width="45px" style="text-align:right;max-width:45px;">
+                         
+                               <apex:outputfield value="{!tm.Registration_level__r.CnP_PaaS_EVT__Name_on_the_form__c}"/>
+                         </apex:column>
+                         <apex:column headerValue="" width="40px" style="text-align:center;max-width:40px;">
+                               <apex:outputfield value="{!tm.Registration_level__r.CnP_PaaS_EVT__Additional_Fee__c}"/>
+                         </apex:column>
+                         <apex:column headerValue="" width="30px" style="text-align:center;max-width:30px;">
+                         
+                               <apex:outputfield value="{!tm.CnP_PaaS_EVT__Status__c}"/>
+                         </apex:column>
+                        
+                 </apex:pageblocktable>
+
+                 <table  class="DiscountBar" cellpadding="0"  cellspacing="0" width="590px"><tr><td width="508px" height="25px" >Discount</td><td style="text-align:right;padding-right:7px;"><apex:outputfield value="{!accdet.CnP_PaaS_EVT__Fee_label__c}"/></td></tr></table>  
+                 </apex:column>
+                                
+                 </apex:pageblocktable> <br />
+                 <apex:pageBlockSectionItem >
+
+                 <apex:outputLabel value="Total Fee" style="padding-left:5px;font-weight:bold;" ></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" style="padding-right:5px;text-align:right;font-weight:bold;"><apex:param value="{!GrossPrice}"/></apex:outputText>
+                 
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Total Discount" style="padding-left:5px;font-weight:bold;" ></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" style="padding-right:5px;text-align:right;font-weight:bold;">
+                 <apex:param value="{!TotalDiscount}"/>
+                 </apex:outputText>
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Grand Total" style="padding-left:5px;font-weight:bold;" ></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" style="padding-right:5px;text-align:right;font-weight:bold;">
+                 <apex:param value="{!NetPrice}"/>
+                 </apex:outputText>
+                 </apex:pageBlockSectionItem>
+                 
+                 
+                 <!--<apex:pageblocktable headerClass="headerrow" value="{!ApplicableDiscountsList}"  var="discount">
+                 <apex:column headerValue="Level name"><apex:outputfield value="{!discount.Registration_level__r.Name}"/></apex:column>                 
+                 <apex:column headerValue="Plan name"><apex:outputfield value="{!discount.Name}"/></apex:column>
+                 <apex:column headerValue="Discount %"><apex:outputfield value="{!discount.discount__c}"/></apex:column>
+                 <apex:column headerValue="Fixed discount"><apex:outputfield value="{!discount.fixed_discount__c}"/></apex:column>
+                 </apex:pageblocktable><br /><br />
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Total Fee"></apex:outputLabel>
+                 <apex:outputText value="{0, number,###,###,##0.00}"  style="text-align:right;padding-right:7px;"><apex:param value="{!GrossPrice}"/></apex:outputText>
+                 
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Total discount"></apex:outputLabel>
+                 <apex:outputText value="{!TotalDiscount}" style="text-align:right;padding-right:7px;"></apex:outputText>
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Grand Total"></apex:outputLabel>
+                 <apex:outputText value="{!NetPrice}"  style="text-align:right;padding-right:7px;"></apex:outputText>
+                 </apex:pageBlockSectionItem>
+                 <!-- <apex:commandButton value="Confirm and goto payment" action="{!GotoPayment}"/>  -->
+     </apex:pageBlockSection>   
+                         </div>
+         </div>
+                          <!--  <div class="Bottom">
+                                    <div class="B-Left"></div>
+                                    <div class="B-Middle"></div>
+                                    <div class="B-Right"></div>
+                            </div>-->
+                        </div>
+      </div>
+      <div id="ContentBot" style="display:{!IF(StyleRec.Show_terms_conditions__c==true,'block','none')}">      
+                <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Acknowledgement_mandatory__c==true,'block','none')}"/>                            
+                <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Terms_conditions__c}" escape="false"/>                
+        </div>
+        <apex:commandButton value="{!StyleRec.CnP_PaaS_EVT__Button_Label__c}" action="{!GotoPayment}" styleClass="Submit test1 next" id="Submit"  style="display:{!IF(StyleRec.CnP_PaaS_EVT__Acknowledgement_mandatory__c==true,'none','block')}" >
+                                  
+        </apex:commandButton>
+  </div>
+  </div>
+   <div id="Footer" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Display_Footer__c==true,'block','none')}">
+             <span><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Footer_information__c}" escape="false"/></span>
+       </div> 
+  </div>
+ 
+ </apex:pageBlock>
+
+  </apex:form>
+  <apex:pageBlock rendered="{!if(StyleRec.CnP_PaaS_EVT__Theme_Selection__c=='Custom Theme',true,false)}">
+   
+      <apex:include pageName="CnP_PaaS_EVT__RegistrationEngine"/>  
+   
+ </apex:pageBlock>
+ <div id="cnp">Powered by Click &amp; Pledge</div>
+</apex:page>

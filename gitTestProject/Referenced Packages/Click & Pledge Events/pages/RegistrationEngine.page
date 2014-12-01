@@ -1,0 +1,611 @@
+<apex:page controller="CnP_PaaS_EVT.EventRegistration" showHeader="false" standardStylesheets="false" >
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+
+    <script >
+     function disableBackButton()
+    {
+       window.history.forward();
+    }
+    setTimeout("disableBackButton()", 0);
+  function check(val)
+  {
+    //alert(val);
+     if(val==true)
+     {
+      // $(".Submit").attr('style','display:block');
+      $(".Submit").fadeIn(1000); 
+     }else{
+    //  $(".Submit").attr('style','display:none'); 
+      $(".Submit").fadeOut(1000); 
+     }
+     
+  }
+  
+
+</script>
+ <Title>{!EventRec.Event_title__c}</title>
+  <style>
+    #AttendeeInfo ul li {    
+            font-size:11px;
+            color:#ff0000;    
+    }
+     <apex:outputText value="{!StyleRec.CnP_PaaS_EVT__Engine_CSS__c}" escape="false"></apex:outputText> 
+  </style>
+   
+ <apex:form rendered="{!if(LayoutPageName=='Page1_Opening_Page',true,false)}">
+  
+   <apex:outputtext value="{!pdfcontent[0]}" escape="false" rendered="{!pdf}"/>
+           <div style="display:{!if(timeout==true,'block','none')}">
+                    <apex:outputtext value="{!EventRec.CnP_PaaS_EVT__Event_Ended__c}" escape="false"/> 
+           </div> 
+           <div style="display:{!if(eventsoldout==true,'block','none')}">
+                    <apex:outputtext value="{!EventRec.CnP_PaaS_EVT__Sold_Out__c}" escape="false"/> 
+           </div>
+           
+           <apex:outputLink value="/servlet/servlet.FileDownload?file={!pdfId}" target="_blank" style="text-decoration:none">
+              <div align="right" class="DownloadAgenda" id="{!pdfId}" style="display:{!IF(pdfshow=='true' && pdfId!="",'block','none')}">
+                    <div style="margin-top:2px;float:left;"><apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__pdf_icon)}" /></div>{!if(EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c!="",EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c,'Download Agenda')}
+            
+              </div>
+           </apex:outputLink>
+           <apex:outputtext value="{!themecontent[0]}" escape="false" />
+                <div>
+                <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(re==true && tc==true,'block','none')}"/>                           
+                <apex:outputtext value="{!termcontent[0]}" escape="false" /> 
+                </div>             
+   
+   <div style="display:{!if(timeout==true || eventsoldout==true,'none','block')}">  
+   <apex:commandButton value="Continue" action="{!Page_1_topage3}" styleClass="Submit test1" id="Submit" rendered="{!ck}" style="display:{!IF(re==true,'none','block')}">
+                                   <apex:param id="eventId" assignTo="{!eid}" value="{!EventRec.Id}"/>
+                                   <apex:param id="PageName" assignTo="{!LayoutPageName}" value="Page 2-Registrant Info"/>
+   </apex:commandButton>
+    </div>
+   <apex:outputtext value="{!themecontent[1]}" escape="false" />
+ </apex:form>
+ 
+ <apex:form rendered="{!if(LayoutPageName=='Page2_Registrant_Info',true,false)}">
+
+    <apex:outputtext value="{!pdfcontent[0]}" escape="false" rendered="{!pdf}" />
+    <div style="display:{!if(timeout==true,'block','none')}">
+                    <apex:outputtext value="{!EventRec.CnP_PaaS_EVT__Event_Ended__c}" escape="false"/> 
+           </div> 
+           <div style="display:{!if(eventsoldout==true,'block','none')}">
+                    <apex:outputtext value="{!EventRec.CnP_PaaS_EVT__Sold_Out__c}" escape="false"/> 
+           </div>
+            
+    <apex:outputLink value="/servlet/servlet.FileDownload?file={!mydocAjenda.Id}" target="_blank" style="text-decoration:none">
+              <div align="right" class="DownloadAgenda" id="{!mydocAjenda.Id}" style="display:{!IF(pdfshow=='true' && mydocAjenda.Id!="",'block','none')}">
+                    <div style="margin-top:2px;float:left;"><apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__pdf_icon)}" /></div>{!if(EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c!="",EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c,'Download Agenda')}
+            
+              </div>
+     </apex:outputLink>
+    <apex:outputtext value="{!themecontent[0]}" escape="false" />
+    <apex:outputPanel rendered="{!ck}">
+    <fieldset class="FormFields" >
+    <apex:pageBlockSection columns="1"  collapsible="false">
+    <apex:repeat value="{!availableContactFields}" var="field">
+    <apex:pageBlockSectionItem rendered="{!field.visable}">
+    <apex:OutputText value="{!field.Label}" />
+    <apex:inputField value="{!acc[field.Field]}" style="width:{!if(field.Label=="Title",'45px;','')}" onblur="trimvalue(this.value,'{!field.Field}');"  required="{!field.req}" styleClass="{!IF(field.req==true ,field.Field&' required',field.Field)}"/>
+    </apex:pageBlockSectionItem>
+    </apex:repeat>
+   <!-- <apex:pageBlockSectionItem >
+    <apex:OutputText value="Coupon code" />
+    <apex:inputText value="{!CouponCode}"/>
+    </apex:pageBlockSectionItem>-->
+    </apex:pageBlockSection>
+    </fieldset>
+    </apex:outputPanel>
+    <div>
+    <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(re==true && tc==true,'block','none')}"/>                           
+    <apex:outputtext value="{!termcontent[0]}" escape="false" />   
+    </div>
+    <apex:commandButton value="Continue" action="{!GotoPage_3}" styleClass="next Submit test1" id="Submit" rendered="{!ck}" style="display:{!IF(re==true,'none','block')}"/>
+    <apex:outputtext value="{!themecontent[1]}" escape="false" />
+ </apex:form>
+
+ <apex:form rendered="{!if(LayoutPageName=='Page3_Attendee_Info',true,false)}" styleClass="Formvalid" >
+ 
+<script type="text/javascript">
+
+$(document).ready(function () {
+
+    // if user clicked on button, the overlay layer or the dialogbox, close the dialog  
+    $('a.btn-ok, #dialog-overlay, #dialog-box').click(function () {     
+        $('#dialog-overlay, #dialog-box').hide();       
+        return false;
+    });
+    
+    // if user resize the window, call the same function again
+    // to make sure the overlay fills the screen and dialogbox aligned to center    
+    $(window).resize(function () {
+        
+        //only do it if the dialog box is not hidden
+        if (!$('#dialog-box').is(':hidden')) popup();       
+    }); 
+    
+    
+});
+
+//Popup dialog
+function popup(message) {
+    
+    //alert(message);
+    // get the screen height and width  
+    var maskHeight = $(document).height();  
+    var maskWidth = $(window).width();
+    
+    // calculate the values for center alignment
+    var dialogTop =  (maskHeight/3) - ($('#dialog-box').height());  
+    var dialogLeft = (maskWidth/2) - ($('#dialog-box').width()/2); 
+     if(message != "")
+    {
+    // assign values to the overlay and dialog box
+    $('#dialog-overlay').css({height:maskHeight, width:'100%'}).show();
+    $('#dialog-box').css({top:'100px',left:'25%'}).show();
+    
+    // $('#dialog-overlay').css({height:maskHeight, width:maskWidth}).show();
+   // $('#dialog-box').css({top:dialogTop, left:dialogLeft}).show();
+
+    $('body,html').animate({ scrollTop: 0 }, 0);
+    // display the message
+   
+    $('#dialog-message').html(message);
+    }
+         if(message == "")
+         {
+         // assign values to the overlay and dialog box
+    $('#dialog-overlay').css({height:maskHeight, width:'100%'}).show();
+    $('#dialog-box').css({top:'100px',left:'25%'}).show();
+    
+    // $('#dialog-overlay').css({height:maskHeight, width:maskWidth}).show();
+   // $('#dialog-box').css({top:dialogTop, left:dialogLeft}).show();
+
+    $('body,html').animate({ scrollTop: 0 }, 0);
+    // display the message
+   
+    $('#dialog-message').html('Sorry! No Description');
+         
+         
+         }
+            
+}
+
+</script>
+<apex:outputpanel rendered="{!levelcheck}">
+<div id="dialog-overlay" class="popupBackground"></div>
+<div id="dialog-box">
+    <div class="dialog-content">
+        <div id="dialog-message"></div>
+        <a href="#" class="button cls"></a>
+    </div>
+</div>      
+    <apex:outputtext value="{!pdfcontent[0]}" escape="false" rendered="{!pdf}"/>
+    <div style="display:{!if(timeout==true,'block','none')}">
+                    <apex:outputtext value="{!EventRec.CnP_PaaS_EVT__Event_Ended__c}" escape="false"/> 
+           </div> 
+           <div style="display:{!if(eventsoldout==true,'block','none')}">
+                    <apex:outputtext value="{!EventRec.CnP_PaaS_EVT__Sold_Out__c}" escape="false"/> 
+     </div>
+    <apex:outputLink value="/servlet/servlet.FileDownload?file={!mydocAjenda.Id}" target="_blank" style="text-decoration:none">
+              <div align="right" class="DownloadAgenda" id="{!mydocAjenda.Id}" style="display:{!IF(pdfshow=='true' && mydocAjenda.Id!="",'block','none')}">
+                    <div style="margin-top:2px;float:left;"><apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__pdf_icon)}" /></div>{!if(EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c!="",EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c,'Download Agenda')}
+            
+              </div>
+    </apex:outputLink>
+    
+    <apex:outputtext value="{!themecontent[0]}" escape="false" />
+    <apex:outputPanel id="NextAttendeeForm" rendered="{!ck}">
+    <apex:pageBlockSection columns="1"  collapsible="false">   
+     <apex:variable value="0" var="rowpop"/>  
+      <apex:dataTable columns="5" styleClass="displaylevel" value="{!availableLevelFields}" width="590px" border="0" bgcolor="white" style="text-align:center;" var="field" cellpadding="3px" cellspacing="2px">
+
+        <apex:inputHidden value="{!field.Id}"/> 
+        <apex:column headervalue="" style="text-align:center;width:70px">                    
+                       <apex:actionsupport event="onclick" rerender="consel,allcons" action="{!showPopup}" immediate="true">  
+                        <input type="button" name="test" class='add_btn' style="background:url({!URLFOR($Resource.PopupPage, if(field.Inventory_Sold__c==field.Limit_for_this_type__c,'soldout.png','add_text_btn.png'))}) no-repeat top">                                                                
+                            <apex:param name="conid" value="{!field.Id}" assignTo="{!LevelName}" />
+                            <apex:param name="EditAttendeeId" value="test" assignTo="{!EditAttendeeId}"/>
+                        </input></apex:actionsupport>  
+                                             
+                    </apex:column>        
+        <apex:column >
+                
+               <div style="text-align:left;display:block;">
+                 <a href="javascript:popup('{!field.Description__c}');"  class="linktip" >
+                <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__Tooltip)}" style="border:0;" styleClass="descimg" /> &nbsp; <apex:OutputText value="{!field.Name}" />
+                  </a>                
+               </div>
+                  
+        </apex:column>
+        
+        <apex:column headerValue="Price" style="text-align:right;">
+         
+        <apex:outputText value="{0, number,$###,###,##0.00}" style="text-align:center;display:block;">
+        <apex:param value="{!field.CnP_PaaS_EVT__Price__c}" /></apex:outputText>
+        </apex:column>
+        
+        <apex:column headerValue=" +Fee " style="text-align:right;">
+        <apex:outputText value="{0, number,$###,###,##0.00}" style="text-align:center;display:block;">
+        <apex:param value="{!field.CnP_PaaS_EVT__Additional_Fee__c}" /></apex:outputText>
+        </apex:column>
+        <apex:column headerValue="Tax Deductible Portion" style="text-align:right;">
+         <apex:outputText value="{0, number,$###,###,##0.00}"  style="text-align:center;display:block;">
+         <apex:param value="{!field.CnP_PaaS_EVT__Tax_Deductible__c}" /></apex:outputText>               
+         
+         <apex:variable var="rowpop" value="{!VALUE(rowpop) + 1}"/>
+         </apex:column>  
+        
+        </apex:dataTable>      
+        
+         
+        <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jquerygird, "media/js/jquery.dataTables.js")}"></script>
+          <script type="text/javascript">
+            $(document).ready(function() {
+            trlen = $(".displaylevel").attr('rows').length;
+              
+                   if (trlen <= 10 )
+                    {
+                        disp = false;
+                    }
+                     if (trlen >= 11 )
+                    {
+                    disp = true;
+                    }
+           
+                oTable = $('.displaylevel').dataTable({
+                    "bJQueryUI": true,
+                     "bFilter":disp ,
+                    "bPaginate" : disp ,
+                    aoColumnDefs: [
+                      { aTargets: [0], bSortable: false }]  
+                });
+            } );
+        </script>
+         <apex:outputPanel id="consel">
+         <apex:outputPanel rendered="{!LevelName!=null}">
+         <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopup}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopup}">
+             <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.datepicker, "datepicker/jquery.datepick.js")}"></script>   
+               <script>
+             $('.Birthdate').datepick({yearRange: 'c+0:1920',maxDate:-0,showTrigger: '<img src="{!URLFOR($Resource.datepicker, "datepicker/calendar.gif")}" alt="Calendar"></img>'});
+            // $('.Birthdate').attr('readonly',true);
+             $('.Close').click(function(){
+                     $('.custPopup').slideUp(1000);
+                     $('.popupBackground').fadeOut(2000);
+                     $('.overlay').fadeOut(2000);
+             });   
+              $('.Save').click(function(){
+                     $('.overlay').fadeOut(3000);
+             });   
+             $('.Update').click(function(){
+                     $('.overlay').fadeOut(3000);
+             }); 
+             $('.reqvalue').html("*") ;   
+             $('.reqvalue').attr("style","color:#CC0000;background-color:#FFF") ;    
+             $('.requiredBlock').html("*") ;
+             </script>
+              <apex:outputPanel rendered="{!leveltimeout}">
+                <apex:outputtext value="{!rlc.CnP_PaaS_EVT__End_date_message__c}" escape="false"/>
+             
+              </apex:outputPanel>
+         <apex:outputPanel rendered="{!levelsoldout}">
+                <apex:outputtext value="{!rlc.CnP_PaaS_EVT__Message_to_display_when_limit_is_reached__c}" escape="false"/>             
+         </apex:outputPanel>
+         <apex:outputPanel rendered="{!contdisplay}">
+         <div id="AttendeeInfo">
+         <apex:Messages />
+  <apex:pageBlockSection columns="1" title="Attendee Information" collapsible="false">
+      <apex:repeat value="{!availableAttendeeFields}" var="field">
+        <apex:pageBlockSectionItem rendered="{!field.visible}">
+          <apex:OutputText value="{!field.Label}" />
+          <apex:outputPanel >
+          <div style="margin-left:38px">
+            <apex:inputHidden value="{!acc.Id}" rendered="{!IF((EditAttendeeId!=null && EditAttendeeId!='test'),true,false)}"/>        
+             <apex:inputField value="{!acc[field.Field]}" onblur="trimvalue(this.value,'{!field.Field}');" style="width:{!if(field.Label=="Title",'45px;','')}" required="{!field.req}" styleClass="{!IF(field.req==true,field.Field&' required' ,field.Field)}"/>
+         </div></apex:outputPanel>
+         </apex:pageBlockSectionItem>   
+        </apex:repeat>
+        </apex:pageBlockSection>
+        </div>
+        <div id="AttendeeForm">
+        <apex:pageBlockSection collapsible="false"  columns="1">
+         <apex:variable value="0" var="rowNum"/>
+      <apex:repeat value="{!availableAttendeeCustomFields}" var="field1">
+     <apex:outputText value="{!field1.SectionName}" rendered="{!IF(field1.SectionName!=null,true,false)}" style="font-weight:900;width:100%;"></apex:outputText>
+      <apex:pageBlockSectionItem dataStyle="border-bottom:3px" rendered="{!field1.visible}">     
+        <apex:outputPanel >
+        
+        <apex:outputText value="{!field1.label}" rendered="{!IF(availableAttendeeCustomFields.size>0,true,false)}" ><apex:outputPanel rendered="{!field1.req}" styleClass="reqvalue"></apex:outputPanel></apex:outputText>
+        </apex:outputPanel>
+        <apex:outputPanel >
+                  
+        <apex:inputText value="{!field1.DefaultValue}"  rendered="{!IF(field1.FieldType=='Text box',true,false)}" required="{!field1.req}" styleClass="{!IF(field1.req==true,'textbox required','textbox')}"></apex:inputText>
+        <apex:inputTextarea value="{!field1.DefaultValue}" rendered="{!IF(field1.FieldType=='Text area',true,false)}"  required="{!field1.req}" styleClass="{!IF(field1.req==true,'textarea required','textarea')}"/>
+        <apex:selectRadio value="{!field1.DefaultValue}" layout="pageDirection" rendered="{!IF(field1.FieldType=='Radio button',true,false)}" required="{!field1.req}" styleClass="{!IF(field1.req==true,'radiobox'+rowNum,'test')}">
+        <apex:selectOptions value="{!field1.Fieldvalues}"/>
+        </apex:selectRadio>
+        <apex:selectList value="{!field1.DefaultValue}" style="width:155px" size="1" rendered="{!IF(field1.FieldType=='Select list',true,false)}" required="{!field1.req}" styleClass="{!IF(field1.req==true,'selectbox'+rowNum,'test')}">
+        <apex:selectOptions value="{!field1.Fieldvalues}"/>
+        </apex:selectList>
+        <apex:selectcheckboxes value="{!field1.checkedboxValues}" layout="pageDirection" rendered="{!IF(field1.FieldType=='Check box',true,false)}" required="{!field1.req}" styleClass="{!IF(field1.req==true,'checkbox'+rowNum,'test')}">
+        <apex:selectOptions value="{!field1.Fieldvalues}"/>
+        </apex:selectcheckboxes><br/>
+
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}"/>
+        </apex:repeat>
+        <input type="hidden" value="{!rowNum}" class="rowvalues" name="rowvalues"/> 
+        <apex:pageBlockSectionItem >
+        <apex:outputPanel >
+        <apex:actionStatus id="mySaveStatus2">
+        <apex:facet name="stop">
+       <!-- <center>-->
+        <apex:commandButton value="Save" action="{!AttendeeForm}" onclick="if(!FormValidation()) return false;" reRender="consel,RefreshAttendeeList_1,RefreshTotals_1,submitbuttondetail_1" styleClass="Submit Save" style="margin-bottom:10px;margin-left:173px;text-align:center;" status="mySaveStatus2">
+        <apex:param assignTo="{!AutoSelectRadio}" value="{!LevelName}"/> 
+        </apex:commandButton>
+        <!--</center>-->
+        </apex:facet>
+        <apex:facet name="start">
+                 <apex:outputPanel >
+
+                 <apex:image value="/img/loading32.gif" style="height: 15px;"/>
+
+                 <apex:commandbutton value="Processing..." status="mySaveStatus2" disabled="true"/>
+
+               </apex:outputPanel>
+
+        </apex:facet>
+        </apex:actionStatus>
+        <!--<apex:commandButton value="X" action="{!ClosePopUp}" reRender="consel,RefreshAttendeeList_1" immediate="true" styleClass="Submit Close" style="color:black"/>-->
+        <apex:commandButton value="Update" action="{!UpdateAttendee}" reRender="consel,RefreshAttendeeList_1" rendered="{!IF((EditAttendeeId!=null && EditAttendeeId!='test'),true,false)}" styleClass="Submit Update" style="color:black"/>     </apex:outputPanel>
+       </apex:pageBlockSectionItem>
+            
+      </apex:pageBlockSection>
+        </div>
+        </apex:outputPanel>
+        <!--<div class="Close"></div>-->
+        <apex:commandButton action="{!ClosePopUp}" reRender="consel,RefreshAttendeeList" immediate="true" styleClass="Close" style="color:black"/>
+        </apex:outputPanel>
+        </apex:outputPanel>
+        </apex:outputPanel>
+       
+        
+        
+       </apex:pageBlockSection>
+       <div id="EditAttendee">
+       <apex:pageBlockSection columns="1"  collapsible="false" rendered="{!ck}">
+       <apex:outputpanel id="RefreshAttendeeList_1" >
+       <apex:outputpanel rendered="{!IF(RegisteredAttensees.size>0,true,false)}">
+             <h3 style="margin:0px;padding:5px;">Registration Summary</h3>
+       </apex:outputpanel>
+       
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+             trlen = $(".display").attr('rows').length;
+              
+                   if (trlen <= 10 )
+                    {
+                        displ = false;
+                    }
+                     if (trlen >= 11 )
+                    {
+                    displ = true;
+                    }
+                oTable = $('.display').dataTable({
+                    "bJQueryUI": true,
+                     "bFilter":displ ,
+                    "bPaginate" : displ ,
+                    aoColumnDefs: [
+                      { aTargets: [0], bSortable: false }]  
+                    //"sPaginationType": "full_numbers"
+                });
+            } );
+        </script>
+        <div class="demo_jui">
+     <apex:dataTable columns="5" styleClass="display" cellpadding="3px" cellspacing="2px" value="{!RegisteredAttensees}" width="590px" border="0" bgcolor="white"  var="field" rendered="{!IF(RegisteredAttensees.size>0,true,false)}">
+     <apex:column headerValue="" style="text-align:center;width:24px">
+       
+        <apex:commandlink styleClass="Delete" value="" action="{!DaleteAttendee}" onclick="if(!window.confirm('Are you sure?')) return false;" rerender="RefreshAttendeeList_1,RefreshTotals_1,submitbuttondetail_1" ><apex:param name="DeleteAttendeeId" value="{!field.Id}" assignTo="{!DeleteAttendeeId}"/></apex:commandlink></apex:column>
+         <apex:column headerValue="" style="text-align:left;">
+         <apex:OutputText value="{!field.Registration_level__r.Name}" /> </apex:column>
+        
+       <apex:column headerValue="First Name">
+        <apex:OutputText value="{!field.CnP_PaaS_EVT__First_name__c}" /> </apex:column>
+        <apex:column headerValue="Last Name">
+        <apex:OutputText value="{!field.CnP_PaaS_EVT__Last_name__c}" /> </apex:column>
+       
+        <apex:column headerValue="Total" styleClass="TotalAlign" >
+         <apex:outputText value="{0, number,$###,###,##0.00}" style="text-align:right;display:block;margin-right:5px;">
+         <apex:param value="{!field.Registration_level__r.CnP_PaaS_EVT__Current_inventory__c}" /></apex:outputText> </apex:column>
+      </apex:dataTable>
+      </div>
+      <script>
+       $(".Edit").click(function(){
+           $('.overlay').fadeIn("fast");
+             }); 
+       </script>
+      </apex:outputpanel>
+       <br/>
+      <div style="border-bottom: 1px solid #CCC;width:97%; "></div>
+       <apex:outputpanel id="RefreshTotals_1">
+                 <apex:pageBlockSectionItem >
+
+                 <apex:outputLabel value="Total Fee" styleClass="summaryleft"></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" styleClass="summaryright"><apex:param value="{!GrossPrice}"/></apex:outputText>
+                 
+                 </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Total Discount" styleClass="summaryleft"></apex:outputLabel>
+                 <apex:outputText value="{0, number,-$###,###,##0.00}" styleClass="summaryright">
+                 <apex:param value="{!TotalDiscount}"/>
+                 </apex:outputText>
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Total Tax" styleClass="summaryleft"></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" styleClass="summaryright">
+                 <apex:param value="{!TotalTax}"/>
+                 </apex:outputText>
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Grand Total" styleClass="summaryleft"></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" styleClass="summaryright">
+                 <apex:param value="{!NetPrice}"/>
+                 </apex:outputText>
+                 </apex:pageBlockSectionItem>
+                <!-- <apex:pageBlockSectionItem datastyle="padding-left:5px;font-weight:bold;text-align:right;width: 440px;display:block;float:left; ">
+                 <apex:outputLabel value="Coupon Code" style="padding-left:5px;font-weight:bold;text-align:right;width: 440px;display:block;float:left; " />
+                 <apex:inputText id="CouponValue" value="{!CouponValue}" style="float:right;width:84px;margin-right: 18px;"/>
+                 </apex:pageBlockSectionItem>-->
+                 <apex:pageBlockSectionItem >
+                 <apex:dataTable columns="3" style="float:right;width:300px;margin-right: 15px;font-weight:bold;" value="{!CouponsList_page}" var="var">
+                 <apex:column style="color: #666666;text-align: right;vertical-align: top;width: 154px;" ><apex:outputLabel value="{!var.CouponName}" /> </apex:column>
+                 <apex:column ><apex:inputtext value="{!var.Couponval}" style=" border: 1px solid #DDDDDD; color: #888888;  margin-right: 24px;width: 64px;font-size: 11px;    padding: 5px;float:right" /> 
+                  <div style="clear:both;"></div>
+                 <apex:outputtext value="{!var.CouponError}" styleclass="{!If(var.CouponError=='Valid','Valid','Invalid')}"/> </apex:column>
+                  <!--<apex:column style="text-align:right;" ><apex:outputtext value="{!var.CouponError}" styleclass="{!If(var.CouponError=='Valid','Valid','Invalid')}"/> </apex:column>-->
+                 <apex:column ><apex:inputhidden value="{!var.Levelid}" /> </apex:column>
+                 </apex:dataTable>
+                 
+                 <apex:outputpanel >
+                 <apex:actionStatus id="mySaveStatus1">
+                 <apex:facet name="stop">
+                 
+                 <apex:commandLink value="Apply Coupon" styleClass="appcou" style="margin-right:36px;padding: 5px 8px" reRender="RefreshTotals_1" action="{!CountCoupons}" status="mySaveStatus1" rendered="{!IF(CouponsList_page.Size>0,true,false)}"/>
+                 </apex:facet>
+                 <apex:facet name="start">
+                 <apex:outputPanel >
+
+
+                 <apex:commandlink value="Processing..." styleClass="appcou" style="margin-right:36px;"  status="mySaveStatus1"/>
+                 <apex:image value="/img/loading32.gif"   style="height: 15px;float:right;clear:both;margin-right:50px;margin-top:5px;"/>
+
+               </apex:outputPanel>
+
+                </apex:facet>
+
+                 </apex:actionStatus>
+                 </apex:outputpanel>
+              </apex:pageBlockSectionItem>
+        </apex:outputPanel>
+        </apex:pageBlockSection>
+        </div>
+       </apex:outputPanel>
+       <apex:outputPanel id="submitbuttondetail_1" >
+           <div>
+            <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(re==true && tc==true && RegisteredAttensees.size>0,'block','none')}"/>                           
+             <apex:outputtext value="{!termcontent[0]}" escape="false" />
+            </div>
+           <div align="right" style="display:{!IF(RegisteredAttensees.size>0,'block','none')}">                
+           <apex:commandButton value="Continue" action="{!GotoPayment}" styleClass="next Submit test1" id="Submit" rendered="{!ck}" style="display:{!IF(re==true,'none','block')}" immediate="true">
+                                 
+           </apex:commandButton>
+           </div>
+        </apex:outputPanel>
+        <apex:outputtext value="{!themecontent[1]}" escape="false" />
+</apex:outputpanel>       
+ </apex:form>
+ <!--<apex:form rendered="{!if(LayoutPageName=='Page4_Payment_Page',true,false)}" >
+ <apex:repeat value="{!AttendeePaymentList}" var="field">
+</apex:repeat>
+   <apex:outputtext value="{!themecontent[0]}" escape="false" />
+             <apex:pageBlockSection >   
+
+                 <apex:outputLabel value="Total Fee"  style="padding-left:5px;font-weight:bold;text-align:left;display:block;float:left; " ></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" style="width:80px;17px;text-align:right;font-weight:bold;display:block;float:left;"><apex:param value="{!GrossPrice}"/></apex:outputText>
+            
+                 <apex:outputLabel value="Total Discount" style="padding-left:5px;font-weight:bold;text-align:left;display:block;float:left; " ></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" style="width:80px;text-align:right;font-weight:bold;display:block;float:left;">
+                 <apex:param value="{!TotalDiscount}"/>      </apex:outputText>
+            
+                 <apex:outputLabel value="Grand Total" style="padding-left:5px;font-weight:bold;text-align:left;display:block;float:left; " ></apex:outputLabel>
+                  <apex:outputText value="{0, number,$###,###,##0.00}" style="width:80px;text-align:right;font-weight:bold;display:block;float:left;">
+                 <apex:param value="{!NetPrice}"/>
+                 </apex:outputText>
+                 
+                 
+                  
+
+          </apex:pageBlockSection> 
+       <br/>
+       <div> 
+        <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(re==true && tc==true,'block','none')}"/>                           
+                 <apex:outputtext value="{!termcontent[0]}" escape="false" />
+           
+        </div>  
+              <div style="display:{!IF(re==true,'none','block')}" class="Submit test1">
+                 <apex:Iframe src="{!PaymentUrlframeMethod}" width="100%"/>
+              </div>
+      <apex:outputtext value="{!themecontent[1]}" escape="false" />
+   </apex:form>-->
+ <!--<apex:form rendered="{!if(LayoutPageName=='Page 4- Registration Summary',true,false)}" >
+  <apex:outputtext value="{!themecontent[0]}" escape="false" />
+              <div class="summaryPage">      
+                 <apex:pageBlockSection columns="1"  collapsible="false">   
+
+                 <table width="590px" id="SummaryTable"><tr  ><td width="123px" style="text-align:left;padding-left:5px;max-width:123px;" >Attendee - Registered as </td><td width="72px" style="text-align:right;">Price</td><td width="42px" style="text-align:right;">Tax</td><td width="29px" style="text-align:right;">+Fee</td><td width="42px" style="text-align:center;">Total</td></tr></table>
+                 <apex:pageblocktable value="{!AttendeePaymentList}" headerClass="headerrow" width="590px"  var="accdet">
+                 <apex:column width="590px">
+                 <apex:pageblocktable border="1"  width="590px" value="{!accdet.Event_attendee_sessions__r}" var="tm">
+                 <apex:column width="140" style="padding-left:5px;text-align:left;max-width:140px;" >
+                               <apex:outputfield value="{!tm.ContactId__r.Name}"/>&nbsp;-&nbsp;<apex:outputfield value="{!tm.Registration_level__r.Name}"/>
+                               
+                               
+                         </apex:column>
+                         
+                         <apex:column headerValue="" width="46px" style="text-align:right;max-width:46px;">
+                         <apex:outputfield value="{!tm.Registration_level__r.Price__c}" style="padding-right:25px;text-align:right;" />
+                               
+                         </apex:column>
+                         <apex:column headerValue="" width="45px" style="text-align:right;max-width:45px;">
+                         
+                               <apex:outputfield value="{!tm.Registration_level__r.Name_on_the_form__c}"/>
+                         </apex:column>
+                         <apex:column headerValue="" width="40px" style="text-align:center;max-width:40px;">
+                               <apex:outputfield value="{!tm.Registration_level__r.Additional_Fee__c}"/>
+                         </apex:column>
+                         <apex:column headerValue="" width="30px" style="text-align:center;max-width:30px;">
+                         
+                               <apex:outputfield value="{!tm.Status__c}"/>
+                         </apex:column>
+                        
+                 </apex:pageblocktable>
+
+                 <table  class="DiscountBar" cellpadding="0"  cellspacing="0" width="590px"><tr><td width="508px" height="25px" >Discount</td><td style="text-align:right;padding-right:7px;"><apex:outputfield value="{!accdet.Fee_label__c}"/></td></tr></table>  
+                 </apex:column>
+                                
+                 </apex:pageblocktable> <br />
+                 <apex:pageBlockSectionItem >
+
+                 <apex:outputLabel value="Total Fee" style="padding-left:5px;font-weight:bold;" ></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" style="padding-right:5px;text-align:right;font-weight:bold;"><apex:param value="{!GrossPrice}"/></apex:outputText>
+                 
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Total Discount" style="padding-left:5px;font-weight:bold;" ></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" style="padding-right:5px;text-align:right;font-weight:bold;">
+                 <apex:param value="{!TotalDiscount}"/>
+                 </apex:outputText>
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Grand Total" style="padding-left:5px;font-weight:bold;" ></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" style="padding-right:5px;text-align:right;font-weight:bold;">
+                 <apex:param value="{!NetPrice}"/>
+                 </apex:outputText>
+                 </apex:pageBlockSectionItem>
+                 
+         </apex:pageBlockSection>   
+                         </div>
+                              
+                 <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(re==true && tc==true,'block','none')}">                           
+                 <apex:outputtext value="{!termcontent[0]}" escape="false" />
+                 </apex:inputCheckbox>
+                 <apex:commandButton value="Continue" action="{!GotoPayment}" styleClass="Submit test1" id="Submit"  style="display:{!IF(re==true,'none','block')}" >
+                                  
+        </apex:commandButton>
+     
+     <apex:outputtext value="{!themecontent[1]}" escape="false" />  
+ </apex:form>-->
+ 
+</apex:page>

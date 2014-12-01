@@ -1,0 +1,16 @@
+<apex:page controller="CnP_PaaS.Relative_Yearly_growth_Amount" contentType="application/x-excel#annual_growth_of_receipts.xls" standardStylesheets="false"  language="english" readOnly="true">
+<h1>% Yearly growth $</h1>  
+Download Date and Time : <apex:outputLabel value="{!Dvalue}"></apex:outputLabel>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar">  
+        <apex:column headerValue="Year" value="{!ar.campaign}"/>           
+          <apex:column headerValue="Total Amount">
+           <apex:outputText value="{0, number,$###,###,##0.00}">
+            <apex:param value="{!ar.TotalAmount}" id="TotalAmount" />
+            </apex:outputText></apex:column> 
+           <apex:column headerValue="Percentage Change" value="{!ar.Difference} %"/>  
+      </apex:pageBlockTable>
+        {!IF(ResultSet.size==0,"NO records available.",NULL)}  
+      </apex:pageBlock>
+      
+      </apex:page>

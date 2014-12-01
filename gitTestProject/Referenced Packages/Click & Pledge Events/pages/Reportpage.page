@@ -1,0 +1,278 @@
+<apex:page standardController="CnP_PaaS_EVT__Event__c" extensions="CnP_PaaS_EVT.reportclass" >
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__ExtLibrary, 'bootstrap.js')}"/>
+ <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__ChartConfig, 'Pie.js')}"/> 
+<style>
+#ext-gen1021{
+    height:300px;
+    
+}
+a.reportlink{
+    color: #06C;
+    cursor: pointer;
+    display: block;
+    margin-top: 7px;
+    text-decoration: none;
+    text-align:left;
+}
+a.levellink{
+    color: #06C;
+    cursor: pointer;
+    display: block;
+    margin-top: 3px;
+    text-decoration: none;
+    text-align:left;
+    }
+.stats{
+    font-weight:bold;
+    top:5px;
+    padding-left:40px;
+    position:relative;
+}
+.clr{
+
+   clear:both;
+}
+.jqplot-grid-canvas {
+    display:none;
+     
+
+}
+table.jqplot-table-legend {
+    position:relative;
+    float:right;
+
+}
+.chartbg{
+    /*box-shadow: 0 0.1px 3px rgba(0, 0, 0, 0.4); 
+     -moz-box-shadow: 0 0.1px 3px rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow: 0 0.1px 3px rgba(0, 0, 0, 0.4);
+    border-radius:10px;
+     -moz-border-radius: 10px;
+    -webkit-border-radius: 10px; */
+    position:relative;
+
+}
+.ctitle{
+text-align:left;
+line-height:25px;
+font-weight:bold;
+font-size:14px;
+}
+</style>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__jqplot, 'js/jquery-1.3.2.min.js')}"/>
+
+ <script>
+
+
+ </script>
+
+<apex:form >
+
+<!--<apex:outputLabel value="Total" ></apex:outputLabel>-->
+<apex:pageBlock >
+<apex:messages id="errMsg"/>
+<div>
+<div style="float: left; width: 50%;">
+
+<apex:outputLabel value="Statistics" style="font-weight:bold;"></apex:outputLabel>
+<div class="clr"></div>
+<apex:outputLabel value="Registered:" styleClass="stats">&nbsp;
+<span style="font-weight:normal;"><apex:outputText value="{!totalattendee}"></apex:outputText></span>
+</apex:outputLabel>&nbsp;&nbsp;&nbsp;
+
+<br/> 
+
+<apex:outputLabel value="Revenue:" styleClass="stats">&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-weight:normal;"><apex:outputText value="{0, number,$###,###,##0.00}">
+<apex:param value="{!totalrevenue}"/></apex:outputText></span>
+
+</apex:outputLabel>
+
+</div>
+<div align="center" style="float: left; text-align: left;margin-left:30px;"  >
+<apex:outputLabel value="Reports" style="font-weight:bold;"></apex:outputLabel><br/>
+
+    <apex:outputLink value="/apex/Registrantpage" target="CnP_PaaS_Evt_Attendee" styleClass="reportlink">
+    &raquo;<apex:outputLabel value="Registrant Information" ></apex:outputLabel>
+    <apex:param name="id" value="{!id}" ></apex:param>
+    </apex:outputLink>
+    
+    <apex:outputLink value="/apex/Eventattendee" target="CnP_PaaS_Evt_Attendee" styleClass="reportlink">
+    &raquo;<apex:outputLabel value="Attendee Information" ></apex:outputLabel>
+    <apex:param name="id" value="{!id}" ></apex:param>
+    </apex:outputLink>
+    <apex:outputLink value="/apex/Revreg1" target="CnP_PaaS_Evt_Attendee" styleClass="reportlink">
+    &raquo;<apex:outputLabel value="Revenue/Registration by date"  ></apex:outputLabel>
+    <apex:param name="id" value="{!id}" assignTo="{!para}"></apex:param>
+    </apex:outputLink>
+    
+
+</div>
+</div>
+    <div class="clr"></div>
+    <br/>
+<!--<apex:outputLabel value="Registration Level"></apex:outputLabel><br/>-->
+<apex:pageBlockSection >
+<apex:pageblockSectionItem >
+
+<apex:pageblockTable value="{!ResultSet3}" var="reg"  id="regtable" styleClass="" >
+
+<apex:column >
+
+<apex:pageBlockTable value="{!reg.Name}" var="lel"  headerClass="color:{!reg.CnP_PaaS_EVT__Report_Color__c}">
+
+<apex:column >
+<apex:outputLabel value="{!reg.CnP_PaaS_EVT__Name_on_reports__c}" styleClass="regname" id="regname" style="font-weight:bold;padding-left:150px;"> </apex:outputLabel><br/>
+<apex:outputLabel value="Registered: " style="font-weight:bold; "></apex:outputLabel>
+<apex:outputText value="{0, number,###,###,##0}">
+<apex:param value="{!reg.CnP_PaaS_EVT__Current_inventory__c}" id="inventory" />
+</apex:outputText><br/>
+
+<apex:outputlabel value="Revenue:" style="font-weight:bold;"></apex:outputlabel>&nbsp;&nbsp;&nbsp;&nbsp;
+<apex:outputText value="{0, number,$###,###,##0.00}">
+<apex:param value="{!reg.CnP_PaaS_EVT__Additional_Fee__c}" id="price"/>
+</apex:outputText><br/>
+
+<apex:outputlabel value="Reports: " style="font-weight:bold;"></apex:outputlabel><br/>
+<apex:outputLink value="/apex/getattendee" target="CnP_PaaS_Evt_Attendee"  styleClass="levellink" >&raquo;&nbsp; Attendee Information
+<apex:param name="id" value="{!reg.Id}" assignTo="{!para}"></apex:param>
+</apex:outputLink>
+<apex:outputLink value="/apex/Revreg" target="CnP_PaaS_Evt_Attendee"  styleClass="levellink">&raquo;&nbsp; Revenue/Registration by date
+<apex:param name="id" value="{!reg.Id}" assignTo="{!para}"></apex:param>
+</apex:outputLink>
+</apex:column>
+
+</apex:pageBlockTable>
+</apex:column>
+</apex:pageblockTable>
+</apex:pageblockSectionItem>
+<apex:pageBlockSectionItem >
+
+<div style="position:relative;">
+ <div id="chart3" style="margin-top:20px; margin-left:20px; ">
+
+ </div>
+ </div>
+ <div style="clear:both;"></div>
+ <div style="position:relative;">
+ <div id="chart2" style="margin-top:20px; margin-left:20px;"></div>
+</div>
+
+</apex:pageBlockSectionItem>
+</apex:pageBlockSection>
+<apex:variable value="0" var="rowNum"/>
+<apex:pageblockTable value="{!ResultSet2}" var="rs" styleClass="regtable" style="display:none">
+  <apex:column ><apex:outputLabel value="{!rs.CnP_PaaS_EVT__Name_on_reports__c}" styleClass="regname{!rowNum}"></apex:outputLabel></apex:column>
+  <apex:column ><apex:outputLabel value="{!rs.CnP_PaaS_EVT__Additional_Fee__c}" styleClass="regprice{!rowNum}"></apex:outputLabel></apex:column> 
+  <apex:column ><apex:outputLabel value="{!rs.CnP_PaaS_EVT__Current_inventory__c}" styleClass="regcount{!rowNum}"></apex:outputLabel></apex:column>   
+  <apex:column ><apex:outputLabel value="{!rs.CnP_PaaS_EVT__Report_Color__c}" styleClass="regcolor{!rowNum}"></apex:outputLabel></apex:column>           
+  <apex:column ><apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}"/></apex:column>      
+</apex:pageBlockTable>
+</apex:pageBlock>
+<input type="hidden" id="rev" name="rev"/>
+
+</apex:form>
+<script>
+
+$(document).ready(function(){ 
+
+var i=0;
+              var data=[];
+              var data1=[]; 
+              var data_count=[]; 
+              var data_color=[];    
+              var size=$(".regtable tbody tr").length;
+             $(".regtable tbody tr").each(function(){       
+               var data1=[];
+               
+               var data2=[];               
+               var name = $(".regname"+i).text();              
+               var price = $(".regprice"+i).text();
+               var count = $(".regcount"+i).text();
+               var color = $(".regcolor"+i).text().trim(); 
+               data_color.push(color); 
+             
+             
+              data.push({name:name.replace('\n',''),data1:parseFloat(price.replace('\n',''))}); 
+          
+              
+
+              //if(count !=0){  
+               data_count.push({name:name.replace('\n',''),data1:parseInt(count.replace('\n',''))}); //  }       
+               i++;              
+
+ 
+      })
+
+              
+
+         Ext.require(['Ext.data.*']);              
+
+//Revenue Data
+    window.generateData = function(){ 
+    //alert(data);  
+    var data1 = data;
+   
+    return data1;
+    };
+//Attendee Data    
+    window.generateDataNegative = function(){
+         var data1 = data_count;   
+    window.piewidth = 550;
+    //alert(data1.length);
+ if (data1.length >= 0  && data1.length <= 9)
+    {
+    window.piepadd = 20;
+    window.pieheight=280;
+    }
+     if (data1.length >= 10  &&  data1.length <= 15)
+    {
+        window.piepadd = 50;
+        window.pieheight=420;
+    }
+    if (data1.length >= 16  &&  data1.length <= 20)
+    {
+    window.piepadd = 60;
+    window.pieheight= 600;
+    }
+     if (data1.length >= 21  &&  data1.length <= 25)
+    {
+    window.piepadd = 60;
+    window.pieheight= 750;
+    }
+    if (data1.length >= 25)
+    {
+    window.piepadd = 60;
+    window.pieheight= 900;
+    }
+         return data1 ;
+    };
+    window.store1 = Ext.create('Ext.data.JsonStore', {
+        fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9'],
+        data: generateData()
+    });
+    window.storeNegatives = Ext.create('Ext.data.JsonStore', {
+        fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9'],
+        data: generateDataNegative()
+
+    });  
+    window.colors = data_color;
+         });
+         
+ 
+
+ </script>       
+       
+       
+ <script>
+ $("#ext-sprite-1028").removeAttr("height");
+ 
+  $(svg).removeAttr("height");
+ 
+ </script>      
+       
+       
+
+
+</apex:page>

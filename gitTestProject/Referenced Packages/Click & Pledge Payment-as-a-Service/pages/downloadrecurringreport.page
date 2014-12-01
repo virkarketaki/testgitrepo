@@ -1,0 +1,105 @@
+<apex:page controller="CnP_PaaS.recurring_download"  contentType="application/x-excel#CustomReport.xls" standardStylesheets="false"  language="english" readOnly="true">
+<h1>{!reportname}</h1>
+Download Time:{!Dvalue}
+ <apex:pageBlock >
+  <apex:pageBlockTable value="{!rec_trans}" var="rect" id="testresult" styleClass="displaylevel" rendered="{!filterresult}">
+    
+     <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.Name}"/>
+ 
+     <apex:column value="{!rect.createddate}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Contact__r.Name}"/> 
+    <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Contact__r.Email}"/>
+      <apex:column headerValue="Contact Phone"  value=":{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Contact__r.phone}"/>
+
+ <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__RecurringMethod__c}"/>
+ <apex:column headerValue="Installment Amount">
+    <apex:outputText value="{0, number,$###,###,##0.00}">
+    <apex:param value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__Installment_Amount__c}"  />
+   </apex:outputText></apex:column>
+ 
+  <apex:column value="{!rect.CnP_PaaS__InstallmentNumber__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__InstallmentsMade__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__Installments__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__NextInstallment_Date__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__Periodicity__c}"/>
+  
+ <apex:column headerValue="Total">
+    <apex:outputText value="{0, number,$###,###,##0.00}">
+    <apex:param value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__Total__c}"  />
+   </apex:outputText></apex:column>
+ 
+  
+
+  
+   <apex:column headerValue="Upcoming_Receipts">
+    <apex:outputText value="{0, number,$###,###,##0.00}">
+    <apex:param value="{!rect.CnP_PaaS__Recurring_Transaction__r.CnP_PaaS__Upcoming_Receipts__c}"  />
+   </apex:outputText></apex:column>
+  
+  
+  <apex:column headervalue="Order Number" value=":{!rect.CnP_PaaS__TransactionId__r.Name}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Campaign__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__CardExpiration__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__CheckOutPage__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__CreditCard4x4__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Credit_Card_Name__c}"/>
+ 
+  <apex:column value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__Name_On_card__c}"/>
+ 
+ <apex:column headerValue="Total Charged">
+    <apex:outputText value="{0, number,$###,###,##0.00}">
+    <apex:param value="{!rect.CnP_PaaS__TransactionId__r.CnP_PaaS__TotalCharged__c}"  />
+   </apex:outputText></apex:column>
+ 
+ 
+   
+   
+  
+  </apex:pageBlockTable>
+ 
+ <apex:pageBlockTable value="{!rec_trans1}" var="que" id="results1" styleClass="displaylevel" rendered="{!groupresult}" >
+    
+      <apex:repeat value="{!fieldsforresult}" var="cc">
+      <apex:column headerValue="{!cc}">
+            <apex:outputtext value="{0,number}" rendered="{!IF(cc=='NoofInstallments',true,false)}">
+                     <apex:param value="{!que[cc]}"/>
+              </apex:outputtext>
+              
+             <apex:outputText value="{0,number,0}" rendered="{!IF(cc=='InstallmentsMade',true,false)}">
+               <apex:param value="{!que[cc]}"/>
+             </apex:outputText> 
+               <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='InstallmentAmount' && numericval==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,0}" rendered="{!If(cc=='InstallmentAmount' && numericval==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='Total' && numericval1==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value="{0, number,0}" rendered="{!If(cc=='Total' && numericval1==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='TotalCharged' && numericval2==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,0}" rendered="{!If(cc=='TotalCharged' && numericval2==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='UpcomingReceipts' && numericval3==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value="{0, number,0}" rendered="{!If(cc=='UpcomingReceipts' && numericval3==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value=":{!que[cc]}" rendered="{!IF(cc=='OrderNumber',true,false)}"></apex:outputText>
+              <apex:outputText value=":{!que[cc]}" rendered="{!IF(cc=='ContactPhone',true,false)}"></apex:outputText>
+              <apex:outputtext value="{!que[cc]}" rendered="{!IF(cc!='NoofInstallments' && cc!='InstallmentAmount' && cc!='InstallmentsMade' && cc!='Total' && cc!='TotalCharged' && cc!='UpcomingReceipts' && cc!='OrderNumber' && cc!='ContactPhone' ,true,false)}"/>    
+          </apex:column></apex:repeat>
+         
+          
+    
+     </apex:pageBlockTable>
+ 
+ </apex:pageBlock>
+</apex:page>

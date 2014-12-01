@@ -1,0 +1,13 @@
+<apex:page controller="CnP_PaaS.Misc_TopTen_Email_Domains_count" contentType="application/x-excel#Top_email_domains_in_number.xls" standardStylesheets="false"  language="english"> 
+<h1>Misc Top Email Domains #</h1> 
+Download Date and Time : <apex:outputLabel value="{!Dvalue}"></apex:outputLabel>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar">
+      <apex:column headerValue="Serial #" value="{!ar.Sno}" style="text-align:center;"/>   
+          <apex:column headerValue="Email Domain" value="{!ar.Email}"/>  
+           <apex:column headerValue="Number Of Transactions" value="{!ar.TotalAmount}"/>  
+      </apex:pageBlockTable>
+      {!IF(ResultSet.size==0,"NO records available.",NULL)} 
+      </apex:pageBlock>
+      
+      </apex:page>

@@ -1,0 +1,89 @@
+<apex:page controller="CnP_PaaS_EVT.Eventattendees" tabStyle="CnP_PaaS_EVT__Event__c" sidebar="true">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__jqplot, 'js/jquery-1.3.2.min.js')}"/>
+
+<script>
+     $(document).ready(function(){
+        $(".download").click(function(){
+            var offset = $(".offset").val();
+           
+            if(offset=='undefiend'){
+            var durl='/apex/eventdownload?id={!EventRecordId}';         
+           
+            $(".download").attr('href',durl+'&offset='+offset);             
+           }
+           else
+           {
+              var durl='/apex/eventdownload?id={!EventRecordId}';         
+           
+                $(".download").attr('href',durl+'&offset='+offset+'&limit='+{!limitval});  
+           }
+            return true;
+        
+        })
+     
+     })
+</script>
+<apex:pageblock >
+
+<apex:pagemessages ></apex:pagemessages>
+<apex:outputLabel value="{!eventname}" style="font-weight:bold;"></apex:outputLabel>
+
+<div ><apex:outputLink value="/{!EventRecordId}" style="text-decoration:none;display:block;border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 1px;
+    padding: 4px 4px;float:left;background-color:#FFFFFF;margin-bottom:10px;"  >Back</apex:outputLink></div>
+    
+<div align="right" style="padding-bottom:10px;" class="test">
+<apex:form >
+{!info}
+<apex:selectList value="{!downloadoption}" size="1" styleClass="offset" rendered="{!download}">
+ <apex:selectOptions value="{!downloadoptionslist}"></apex:selectOptions>
+</apex:selectList>
+</apex:form>
+<apex:outputLink value="/apex/eventdownload?id={!EventRecordId}" styleClass="download" style="text-decoration:none;display:block;border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 1px;
+    padding: 4px 4px;float:right;background-color:#FFFFFF;" target="CnP_PaaS_Evt_Download">Download
+   <!-- <apex:param value="{!downloadoption}" assignTo="{!getvalue}"/>-->
+    </apex:outputLink>
+</div><br/><br/>
+<h1> Attendee Information Report</h1><br/><br/>
+ 
+<apex:pageBlockTable value="{!eventattendee}" var="eve" >
+
+<apex:column headerValue="Registration">
+<apex:outputlink value="/{!eve.id}" target="CnP_PaaS_Evt_Attendee">
+<apex:outputLabel value="Details" style="color: blue;cursor:pointer;"></apex:outputLabel>
+</apex:outputlink>
+</apex:column>
+<apex:column headerValue="Contact">
+<apex:outputlink value="/{!eve.ContactId__r.id}" target="CnP_PaaS_Evt_Attendee">
+<apex:outputLabel value="{!eve.ContactId__r.Name}" style="color: blue;cursor:pointer;"></apex:outputLabel>
+</apex:outputlink>
+</apex:column>
+
+<apex:column headerValue="Email" value="{!eve.ContactId__r.Email}"/>
+<apex:column headerValue="Date Registered" value="{!eve.CreatedDate}"/>
+
+<apex:column headerValue="Registration Level" value="{!eve.Registration_level__r.Name}"/>
+<apex:column headerValue="Total $" >
+<apex:outputText value="{0, number,$###,###,##0.00}" style="font-weight:normal;">
+<apex:param value="{!eve.CnP_PaaS_EVT__Total_Amount__c}"/>
+</apex:outputText></apex:column>
+
+
+
+
+</apex:pageBlockTable>
+
+</apex:pageblock>
+
+</apex:page>

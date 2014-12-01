@@ -1,0 +1,88 @@
+<apex:page controller="CnP_PaaS.CnP_Import_controller" tabStyle="cnp_import__tab">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+
+<script type="text/javascript">
+//jQuery=$.noConflict(); 
+ function processing(){
+   
+      $("#light").attr('style','display:block');
+      $("#fade").attr('style','display:block');
+ }
+ function processingcomplete()
+ {
+     
+      $("#light").attr('style','display:none');
+      $("#fade").attr('style','display:none');
+      $(".selFile").hide();
+       $(".newimport").show();
+        $(".cancel").hide();
+      
+ }
+ 
+    </script>
+    <style>
+.reclab{
+    display:block;
+    
+    text-align:right;
+    font-size:11px;
+    font-weight:bold;
+    color: #333;
+}
+.black_overlay{
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 100%;
+background-color: black;
+z-index:1001;
+-moz-opacity: 0.8;
+opacity:.40;
+filter: alpha(opacity=80);
+}
+.white_content {
+display: none;
+position: absolute;
+text-align: center;
+top: 30%;
+left: 35%;
+/*width: 25%;
+height: 12%;*/
+padding: 16px;
+background-color: white;
+z-index:1002;
+overflow: auto;
+border-radius:20px;
+-webkit-border-radius: 20px;
+-moz-border-radius: 20px;
+border:1px solid #000;
+} 
+</style>
+  <apex:form >
+  <div id="light" class="white_content">   
+                <apex:image value="{!URLFOR($Resource.CnP_PaaS__LoaderImage)}" title="we are processing your request. please wait..." style="height: 15px;width: 20px;"  /><br/>
+               <apex:outputlabel value="we are processing your request. please wait...                  "  />
+              </div>
+        <div id="fade" class="black_overlay"></div>
+  <apex:outputPanel id="idetails">
+<apex:pageMessages escape="false"></apex:pageMessages>
+  </apex:outputPanel>
+
+   <apex:pageblock >
+  <apex:outputpanel >
+     <apex:pageBlockTable value="{!results}" var="row" >
+      <apex:repeat value="{!row}" var="cell" > 
+      <apex:column value="{!cell}"/>
+       </apex:repeat> 
+       </apex:pageBlockTable>
+       </apex:outputpanel>
+           <apex:pageBlockButtons >
+   <apex:commandButton action="{!readfile}"  styleClass="selFile" value="Import Now"  reRender="idetails" immediate="false" rendered="{!importdetails}"  onclick="processing();" oncomplete="processingcomplete();"/><!--onclick="cfile();",reRender="idetails", rendered="{!importdetails}" -->
+   <apex:commandButton value="New Import" action="{!previous}"  rendered="{!previousbut}" style="display:none;" styleClass="newimport"/>
+    <apex:commandButton value="Cancel" action="{!previous}"  rendered="{!importdetails}" styleClass="cancel"/>
+   </apex:pageBlockButtons>
+     </apex:pageblock>
+         </apex:form>
+</apex:page>

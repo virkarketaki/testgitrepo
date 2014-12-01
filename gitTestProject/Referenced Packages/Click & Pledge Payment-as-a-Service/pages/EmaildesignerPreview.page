@@ -1,0 +1,15 @@
+<apex:page showHeader="false" standardController="CnP_PaaS__CnP_Designer__c" extensions="CnP_PaaS.EmailDesigner">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+  
+<script type="text/javascript">
+    $(document).ready(function(){
+         var c=$(".emailcontent").text(); 
+                     
+         $(".emailcontentbody").html(c); 
+        
+    })
+</script>
+
+<apex:outputText value="{!emailcontentbody}" style="display:none" styleClass="emailcontent"></apex:outputText>
+                  <div class="emailcontentbody" ></div>
+</apex:page>

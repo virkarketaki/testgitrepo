@@ -1,0 +1,125 @@
+<apex:page name="MCATabPage" standardController="Opportunity" sidebar="false" showHeader="false">
+
+  <apex:includeScript value="{!urlfor($Resource.McaApp__MCATableSorter, 'jquery-1.11.1.min.js')}" />
+  <apex:includeScript value="{!urlfor($Resource.McaApp__MCATableSorter, 'jquery.tablesorter.min.js')}" />
+
+
+  <apex:outputPanel id="refreshComponent">
+  <script type="text/javascript">
+ 
+      t$ = jQuery.noConflict();
+     
+      t$(function () {
+  
+        t$('.records .tablesorting.tablesorter a').click(function(event) {
+          console.log("Table Sorting Field");
+          if (t$(this).attr('id').indexOf('lookup') != -1) {
+            event.preventDefault();
+            window.open(t$(this).attr('href'));
+          }
+        
+        });
+  
+     });
+      
+  </script>
+  </apex:outputPanel>
+
+  <style type="text/css">
+  
+    .pbSubheader.brandTertiaryBgr.tertiaryPalette {
+      background-color: transparent !important;
+    }
+  
+    .pbSubheader.brandTertiaryBgr.tertiaryPalette, .bPageBlock.brandSecondaryBrd.apexDefaultPageBlock.secondaryPalette {
+      border-color: transparent !important;    
+    }
+    
+    .pbSubheader.brandTertiaryBgr.first.tertiaryPalette h3, .pbSubheader.brandTertiaryBgr.tertiaryPalette h3 {
+      color: black;
+    }
+    
+    .loadingPanel {
+    
+      position: absolute;
+      top: 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      height: 100%;
+      width: 100%;
+    }
+    
+    .loadingPanelImage {
+    
+       margin-left: 50%;
+       margin-top: 5%;
+    }    
+    
+    
+    .records th {
+    
+      cursor: pointer;
+    }
+    
+    .records th.headerSortUp { 
+        background-image: url(/img/colTitle_uparrow.gif) !important;
+        background-repeat: no-repeat !important;
+        background-position: right center !important;  
+    }      
+   
+    .records th.headerSortDown { 
+        background-image: url(/img/colTitle_downarrow.gif) !important;  
+        background-repeat: no-repeat !important;
+        background-position: right center !important;
+       
+    }     
+    
+    .records .dataCell {
+      white-space: nowrap;
+    }
+  
+  </style>
+  
+<apex:pageBlock >  
+  
+  <apex:tabPanel switchType="client">
+  
+    
+    <!-- 
+    <apex:tab label="New Submissions"> <c:MCANestedSubmissionsTabComponent /> </apex:tab>
+     -->
+     
+    <apex:tab label="Submissions"> <c:MCASubmissionsTabComponent /> </apex:tab>
+    
+    <apex:tab label="Offers"> <c:MCAOffersTabComponent /> </apex:tab>
+    
+    <apex:tab label="Stips"> <c:MCAStipsTabComponent /> </apex:tab>
+    
+    <apex:tab label="Loan Balances"> <c:MCALoanBalanceTabComponent /> </apex:tab>
+    
+    <apex:tab label="Sales History"> <c:MCASalesHistoryTabComponent /> </apex:tab>
+    
+    <apex:tab label="Syndications"> <c:MCASyndicationTabComponent /> </apex:tab>
+    
+    <apex:tab label="Commissions"> <c:MCACommissionsTabComponent /> </apex:tab>    
+    
+    <apex:tab label="Contact Roles"> <c:MCAContactRolesTabComponent /> </apex:tab>
+    
+    <apex:tab label="Tasks"> <c:MCATasksTabComponent /> </apex:tab>
+
+  </apex:tabPanel>
+   
+  <apex:actionStatus id="loadingPanel"> 
+   <apex:facet name="start">
+   
+     <apex:outputPanel layout="block" styleClass="loadingPanel">
+     
+       <apex:image value="/img/loading32.gif" styleClass="loadingPanelImage"></apex:image>
+
+     </apex:outputPanel>
+  
+   </apex:facet>
+ </apex:actionStatus> 
+ 
+</apex:pageBlock> 
+
+</apex:page>

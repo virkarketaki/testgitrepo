@@ -1,0 +1,13 @@
+<apex:page controller="CnP_PaaS.Items_Top_Ten_Payment_names_Count" contentType="application/x-excel#Top_Ten_Payment_Names_Count.xls" standardStylesheets="false"  language="english">
+<h1>Items Label Top 10 #</h1>  
+Download Date and Time : <apex:outputLabel value="{!Dvalue}"></apex:outputLabel>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar">  
+      <apex:column headerValue="Serial #" value="{!ar.Sno}" style="text-align:center;"/>
+          <apex:column headerValue="Payment Name" value="{!ar.DonationsName}"/>  
+           <apex:column headerValue="Number Of Donations" value="{!ar.DonationsNumber}"/>  
+      </apex:pageBlockTable>
+      {!IF(ResultSet.size==0,"NO records available.",NULL)} 
+      </apex:pageBlock>
+      
+      </apex:page>

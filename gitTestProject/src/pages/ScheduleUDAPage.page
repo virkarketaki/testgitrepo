@@ -1,0 +1,129 @@
+<apex:page controller="ScheduleUDA" id="new1">
+<!--  <apex:includeScript value="{!URLFOR($Resource.Hospital_js_files,'JSFiles/jquery.js')}"  /> -->
+<!--      <apex:includeScript value="{!URLFOR($Resource.Hospital_js_files,'JSFiles/jquery.roundabout.js')}"  /> -->
+<!--      <apex:includeScript value="{!URLFOR($Resource.Hospital_js_files,'JSFiles/jquery.bgiframe.js')}"  /> -->
+<!--      <apex:includeScript value="{!URLFOR($Resource.Hospital_js_files,'JSFiles/jquery.dimensions.js')}"  /> -->
+<!--      <apex:includeScript value="{!URLFOR($Resource.Hospital_js_files,'JSFiles/jquery.tooltip.js')}"  /> -->
+<apex:includeScript value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/js/jquery-1.8.3.js')}"  />
+		<apex:includeScript value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.min.js')}" />
+		<apex:stylesheet value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/css/ui-lightness/jquery-ui-1.9.2.custom.css')}" />
+		
+<script> 
+
+
+      
+        
+        function checkAll1(cb)
+        {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf("checkedone1")!=-1)
+                inputElem[i].checked = cb.checked;
+            }
+        }
+    
+     function checkAll0(cb)
+        {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf("checkedone0")!=-1)
+                inputElem[i].checked = cb.checked;
+            }
+        }
+        
+        function checkAll2(cb)
+        {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                if(inputElem[i].id.indexOf("checkedone2")!=-1)
+                inputElem[i].checked = cb.checked;
+            }
+        }
+
+
+  </script> 
+<apex:form >
+<b><apex:outputLabel value="Rule Name"/></b>
+<apex:inputText style="width:200px"/>
+<br/>
+<b><apex:outputLabel value="Description"/></b>
+<apex:inputTextarea style="width:200px"/>
+<br/><br/>
+
+<table>
+<tr>
+
+
+
+<td>
+<b>
+<apex:outputlabel value="Hours"/></b>
+<apex:selectcheckboxes value="{!hours}" layout="pageDirection">
+<apex:selectOptions value="{!hour}"/>
+</apex:selectcheckboxes>
+</td>
+
+<td>
+<b>
+<apex:outputlabel value="Minutes"/></b>
+<apex:selectcheckboxes value="{!minutes}" layout="pageDirection">
+<apex:selectOptions value="{!minute}"/>
+</apex:selectcheckboxes>
+</td>
+
+<td>
+<b>
+<apex:outputlabel value="AM/PM"/></b>
+<apex:selectcheckboxes value="{!ampms}" layout="pageDirection">
+<apex:selectOptions value="{!ampm}"/>
+</apex:selectcheckboxes>
+</td>
+
+<td id="ch2">
+<b>
+<apex:outputlabel value="Month"/></b>
+<br/>
+<apex:inputCheckbox >
+                             <apex:actionSupport event="onclick" action="{!GetSelected}" onsubmit="checkAll1(this)" rerender="ch2"/>
+                             </apex:inputCheckbox> 
+                     <b>selectAll</b> 
+<apex:selectcheckboxes id="checkedone1" value="{!months}" layout="pageDirection">
+<apex:selectOptions value="{!month}"/>
+</apex:selectcheckboxes>
+</td>
+
+<td id="ch3">
+<b>
+<apex:outputlabel value="Date"/></b>
+<br/>
+<apex:inputCheckbox >
+                             <apex:actionSupport event="onclick" action="{!GetSelected}" onsubmit="checkAll2(this)" rerender="ch3"/>
+                             </apex:inputCheckbox> 
+                     <b>selectAll</b> 
+<apex:selectcheckboxes id="checkedone2" value="{!dates}" layout="pageDirection" style="height:100px;">
+<apex:selectOptions value="{!ddate}"/>
+</apex:selectcheckboxes>
+</td>
+
+<td id="ch1">
+<b>
+<apex:outputlabel value="days of week"/></b>
+<br/>
+<apex:inputCheckbox >
+                             <apex:actionSupport event="onclick" action="{!GetSelected}" onsubmit="checkAll0(this)" rerender="ch1"/>
+                             </apex:inputCheckbox> 
+                     <b>selectAll</b> 
+<apex:selectcheckboxes id="checkedone0" value="{!weekdays}" layout="pageDirection" style="height:100px;">
+<apex:selectOptions value="{!day}"/>
+</apex:selectcheckboxes>
+</td>
+
+</tr>
+</table>
+<apex:commandButton action="{!click}" value="Click"/>
+<apex:outputLabel value="{!cron}" />
+</apex:form>
+</apex:page>

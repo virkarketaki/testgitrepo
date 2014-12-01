@@ -1,0 +1,81 @@
+<apex:page controller="CnP_PaaS.CnP_Recurring_Detail_Controller">
+
+   
+     <apex:form >
+        
+         <apex:pageblock title="Recurring Detail">
+         
+         <apex:pageblockButtons >
+             <apex:commandButton action="{!saveRecurring}" value="Save"/>
+         </apex:pageblockButtons>
+                  
+             <apex:pageblockSection title="Transaction Info" >             
+                 <apex:outputField value="{!recurring.CnP_PaaS__OrderNumber__c}"/>
+                 <apex:outputField value="{!recurring.OwnerId}"/>   
+                 <apex:inputField value="{!recurring.CnP_PaaS__Account__c}"/>    
+                  <apex:inputField value="{!recurring.CnP_PaaS__Contact__c}"/>    
+                     <apex:outputField title="Recurring Method" value="{!recurring.CnP_PaaS__RecurringMethod__c}"/>
+                        <apex:outputField title="Installment Period" value="{!recurring.CnP_PaaS__Periodicity__c}" style="Color:Red"   />    
+                 <apex:outputField value="{!recurring.CnP_PaaS__Installment_Amount__c}"/>
+                    <apex:outputField title="# of Installments" value="{!recurring.CnP_PaaS__Installments__c}"/>            
+                    
+                <!-- <apex:outputField value="{!recurring.Total__c}"/>-->
+                 <apex:pageBlockSectionItem >
+                Total Commitment: <apex:outputText value="{!totalcommit}"></apex:outputText>
+                 </apex:pageBlockSectionItem>
+                             
+                       <apex:outputField title="Installment(s) Made" value="{!recurring.CnP_PaaS__InstallmentsMade__c}"/>
+                                   
+              
+                    <apex:outputField title="First Installment Date" value="{!recurring.CnP_PaaS__FirstChargeDate__c}"/>     
+                 <apex:outputField title="Next Installment Date" value="{!recurring.CnP_PaaS__NextInstallment_Date__c}"/>
+           <apex:outputField title="Upcoming Receipts" value="{!recurring.CnP_PaaS__Upcoming_Receipts__c}"/>
+                                           
+                 <apex:outputField title="Transaction Result" value="{!recurring.CnP_PaaS__Transaction_Result__c}"/>     
+
+             </apex:pageblockSection>  
+             <apex:pageBlockSection >
+  
+       </apex:pageBlockSection>
+         </apex:pageblock>                   
+     </apex:form>       
+ 
+  
+
+    <apex:pageblock title="Related Transaction(s) List" >
+        <apex:pageblockSection >  
+            <apex:pageBlockTable value="{!recurringtransactions}" var="cnptransaction" style="width:1000px;">         
+                <apex:column headerValue="Order Number">
+                    <apex:outputLink value="/{!cnptransaction.Id}">{!cnptransaction.Name}</apex:outputLink>                 
+                </apex:column>   
+                <apex:column headerValue="Date" >     
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__TransactionDate__c}"/>                                                                     
+                </apex:column>           
+                <apex:column headerValue="Total Charged" >                                
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__TotalCharged__c}"/>                          
+                </apex:column>           
+                <apex:column headerValue="Installment #" >   
+                    <apex:repeat value="{!cnptransaction.RecurringTransactions__r}" var="installment">
+                        <apex:outputField value="{!installment.CnP_PaaS__InstallmentNumber__c}" />    
+                    </apex:repeat>     
+                </apex:column>     
+                <apex:column headerValue="Result"  > 
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__Transaction_Result__c}"/>                          
+                </apex:column> 
+                <apex:column headerValue="Card Expiration Date"  > 
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__CardExpiration__c}"/>                          
+                </apex:column>     
+                 <apex:column headerValue="Credit Card Last 4 digits"  > 
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__CreditCard4x4__c}"/>                          
+                </apex:column>   
+                
+            </apex:pageBlockTable>    
+             
+        </apex:pageblockSection>  
+           
+            
+        
+    </apex:pageblock>
+   
+   
+</apex:page>

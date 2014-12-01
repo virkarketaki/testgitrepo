@@ -1,0 +1,135 @@
+<apex:page standardController="CnP_PaaS_EVT__Registration_level__c" Extensions="CnP_PaaS_EVT.reglevelinfo" >
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__ExtLibrary, 'bootstrap.js')}"/>
+
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__ChartConfig, 'LevelPie.js')}"/>
+
+
+<style>
+.ctitle{
+text-align:left;
+line-height:25px;
+font-weight:bold;
+font-size:14px;
+}
+a.reportlink{
+    color: #06C;
+    cursor: pointer;
+    display: block;
+    margin-top:4px;
+    text-decoration: none;
+    text-align:left;,
+}
+.stats{
+    font-weight:bold;
+    top:5px;
+    padding-left:40px;
+    position:relative;
+}
+.clr{
+
+   clear:both;
+}
+</style>
+<apex:form >
+<apex:pageBlock >
+<apex:pagemessages ></apex:pagemessages>
+<div>
+<div style="float: left; width: 50%;">
+
+<apex:outputLabel value="Statistics" style="font-weight:bold;"></apex:outputLabel>
+<div class="clr"></div>
+<apex:outputLabel value="Registered:" styleClass="stats">&nbsp;
+<span style="font-weight:normal;"><apex:outputText value="{!totalattendee}"></apex:outputText></span>
+</apex:outputLabel>&nbsp;&nbsp;&nbsp;
+
+<br/> 
+
+<apex:outputLabel value="Revenue:" styleClass="stats">&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-weight:normal;"><apex:outputText value="{0, number,$###,###,##0.00}">
+<apex:param value="{!totalrevenue}"/></apex:outputText></span>
+
+</apex:outputLabel>
+</div>
+
+<div align="center" style="float: left; text-align: left;margin-left:30px;"  >
+<apex:outputLabel value="Reports" style="font-weight:bold;"></apex:outputLabel><br/>
+    <apex:outputLink value="/apex/getattendee" target="CnP_PaaS_Evt_Attendee" styleClass="reportlink">
+    &raquo;<apex:outputLabel value="Attendee Information" ></apex:outputLabel>
+    <apex:param name="id" value="{!id}" ></apex:param>
+    </apex:outputLink>
+    <apex:outputLink value="/apex/Revreg" target="CnP_PaaS_Evt_Attendee" styleClass="reportlink">
+    &raquo;<apex:outputLabel value="Revenue/Registration by date"  ></apex:outputLabel>
+    <apex:param name="id" value="{!id}" assignTo="{!para}"></apex:param>
+    </apex:outputLink>
+</div>
+<div class="clr"></div><br/>
+</div>
+<apex:pageBlockSection >
+<apex:pageBlockSectionItem >
+<div id="chart2" style="width:400px;height:280px"></div>
+</apex:pageBlockSectionItem>
+<apex:pageBlockSectionItem >
+<div id="chart3" style="width:400px;height:280px"></div>
+</apex:pageBlockSectionItem>
+
+</apex:pageBlockSection>
+<div style="display:none">
+    <apex:outputText value="{!totalrevenue2}" styleClass="revenue1"></apex:outputText>
+    <apex:outputText value="{!totalrevenuereport}" styleClass="revenue2"></apex:outputText>
+    <apex:outputText value="{!levelattendee}" styleClass="attendee1"></apex:outputText>
+    <apex:outputText value="{!totalattendeereport}" styleClass="attendee2"></apex:outputText>
+    <apex:outputText value="{!eventcolor}" styleClass="color1"></apex:outputText>
+    <apex:outputText value="{!levelcolor}" styleClass="color2"></apex:outputText>
+    <apex:outputText value="{!levelname}" styleClass="Name"></apex:outputText>
+    <apex:outputText value="{!otherlevel}" styleClass="otherName"></apex:outputText>
+</div>
+
+</apex:pageBlock>
+</apex:form>
+<script>
+ Ext.require(['Ext.data.*']);              
+     var r1=$(".revenue1").text();    
+     var r2=$(".revenue2").text();
+     var a1=$(".attendee1").text();
+     var a2=$(".attendee2").text();
+     var c1=$(".color1").text();
+     var c2=$(".color2").text();
+     var Lname=$(".Name").text();
+     var oname=$(".otherName").text();
+     var data=[];
+     data.push({name:'$'+r1.replace('\n','')+'     '+'('+oname+')',data1:parseFloat(r1.replace('\n',''))}); 
+     data.push({name:'$'+r2.replace('\n','')+'     '+'('+Lname+')',data1:parseFloat(r2.replace('\n',''))});
+     var data_att=[];
+      data_att.push({name:a1.replace('\n','')+'    '+'('+oname+')',data1:parseFloat(a1.replace('\n',''))});
+      data_att.push({name:a2.replace('\n','')+'    '+'('+Lname+')',data1:parseFloat(a2.replace('\n',''))});
+    
+     
+//Revenue Data
+
+    window.generateData = function(){   
+  
+   var data1=data;
+    return data1;
+    };
+//Attendee Data    
+    window.generateDataNegative = function(){
+      
+       var data1=data_att;
+         return data1 ;
+    };
+    window.store1 = Ext.create('Ext.data.JsonStore', {
+        fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9'],
+        data: generateData()
+    });
+    window.storeNegatives = Ext.create('Ext.data.JsonStore', {
+        fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9'],
+        data: generateDataNegative()
+
+    });  
+    window.colors = [c1,c2];
+    
+ </script>       
+
+
+</apex:page>

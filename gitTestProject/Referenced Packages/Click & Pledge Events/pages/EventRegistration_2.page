@@ -1,0 +1,364 @@
+<apex:page controller="CnP_PaaS_EVT.EventRegistration" showHeader="false" standardStylesheets="false" action="{!checkcookie}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+ 
+  <link type="text/css" rel="stylesheet"  href="{!URLFOR($Resource.datepicker, "datepicker/jquery.datepick.css")}" />  
+  
+  <style>
+     #cnp {
+
+            line-height:25px;
+            color:#CCC;
+            font-family:Arial, Helvetica, sans-serif;
+            font-size:11px;
+            max-width:700px;
+            text-align:center;
+            margin:0 auto;
+    
+    } 
+    select {
+    margin-left:3px;
+
+}
+  .errorMsg{
+      color:#ff0000;
+      font-size:11px;
+
+    }
+    .dateFormat{
+      display:none;
+    }
+    .datepick-trigger{
+     Padding-left:2px;
+    }
+    .pbSubsection .requiredBlock {
+    background-color: transparent;
+    bottom: 1px;
+    height: 27px;
+    left: -4px;
+    position: absolute;
+    top: 4px;
+    width: 3px;
+    color: #CC0000;
+}
+</style>
+ <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.datepicker, "datepicker/jquery.datepick.js")}"></script> 
+  <script type="text/javascript">   
+    $(document).ready(function(){
+          $.noConflict();
+          $('.requiredBlock').html("*") ;
+         $('.Birthdate').datepick({yearRange: 'c+0:1920',maxDate:-0,showTrigger: '<img src="{!URLFOR($Resource.datepicker, "datepicker/calendar.gif")}" alt="Calendar"></img>'});
+         //$('.Birthdate').attr('readonly',true);
+         $(".next").click(function(){
+               var t=0;
+               $(".required").each(function(){                    
+                     var required_fields=$(this).val();
+                     if(required_fields=="")                      
+                     {    t=t+1;
+                          alert("Please enter required fields");
+                          $(this).focus();
+                          return false;   
+                     }               
+               })   
+              // return false;  
+              if(t==0){     
+               var fn = $(".FirstName").val();
+               var ln = $(".LastName").val();
+               var email = $(".Email").val();
+               var dob = $(".Birthdate").val();
+               var phone = $(".Phone").val();               
+               var an = $(".AssistantName").val();
+               var ap = $(".AssistantPhone").val();
+               var fax = $(".Fax").val();               
+               var dp = $(".Department").val();
+               var dis = $(".Description").val();
+               var HomePhone = $(".HomePhone").val();
+              // var CnP_PaaS_EVT__Languages__c = $(".CnP_PaaS_EVT__Languages__c").val();
+               var LeadSource = $(".LeadSource").val();
+              // var CnP_PaaS_EVT__Level__c = $(".CnP_PaaS_EVT__Level__c").val();
+               var MailingCity = $(".MailingCity").val();
+               var MailingCountry = $(".MailingCountry").val();
+               var MailingState = $(".MailingState").val();
+               var MailingStreet = $(".MailingStreet").val();
+               var MailingPostalCode = $(".MailingPostalCode").val();
+               var MobilePhone = $(".MobilePhone").val();
+               var OtherCity = $(".OtherCity").val();
+               var OtherCountry = $(".OtherCountry").val();
+               var OtherPhone = $(".OtherPhone").val();
+               var CnP_PaaS__Other_Province__c = $(".CnP_PaaS__Other_Province__c").val();
+               var OtherState = $(".OtherState").val();
+               var OtherStreet = $(".OtherStreet").val();
+               var OtherPostalCode = $(".OtherPostalCode").val();
+               var Salutation = $(".Salutation").val();
+               var Title_1 = $(".Title").val();
+               var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+               var reg_text=/^([a-zA-Z0-9\'\,\.\-\ ])+$/;
+               var reg_num=/^([0-9\.\-\(\)\ ])+$/;
+               var reg_zip=/^([A-Za-z0-9\.\-\ ])+$/;
+               var reg_Phone=/^([0-9+\.\-\(\)\ ])+$/;
+               if(fn!="" && ( reg_text.test(fn)==false || !fn.indexOf(' ',0)))
+               {
+                  t=t+1;
+                  alert("Please enter a valid data");
+                  $(".FirstName").focus();
+                  return false;
+               }
+               if(ln!="" && ( reg_text.test(ln)==false || !ln.indexOf(' ',0))){
+                  t=t+1;
+                  alert("Please enter a valid data");
+                  $(".LastName").focus();
+                  return false;
+               }               
+               if(email!="" &&  reg.test(email)==false && email!=undefined)
+               {
+                   t=t+1;
+                   alert("Please enter a valid Email");
+                   $(".Email").focus();
+                   return false;
+               }
+                reg_dob = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+               if(dob!="" && reg_dob.test(dob)==false && dob!=undefined)
+               {                  
+                    alert("Please enter the valid date ");
+                    $(".Birthdate").focus();
+                    return false;
+               }               
+              if(phone!="" && phone!=undefined && ( reg_Phone.test(phone)==false || !phone.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid phone number");
+                   $(".Phone").focus();
+                   return false;
+               }  
+                         
+               if(an!="" && an!=undefined && (reg_text.test(an)==false || !an.indexOf(' ',0))){
+                  t=t+1;
+                   alert("Please enter a valid data");
+                   $(".AssistantName").focus();
+                   return false;
+               }
+               
+              if(ap!="" && ap!=undefined  && ( reg_Phone.test(ap)==false || !ap.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid number");
+                   $(".AssistantPhone").focus();
+                   return false;
+               }    
+               if(fax!="" && fax!=undefined  && ( reg_num.test(fax)==false || !fax.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid number");
+                   $(".Fax").focus();
+                   return false;
+               }                 
+              if(dp!="" && dp!=undefined  && (reg_text.test(dp)==false || !dp.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".Department").focus();
+                   return false;
+               }
+               if(dis!="" && dis!=undefined  && (reg_text.test(dis)==false || !dis.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".Description").focus();
+                   return false;
+               }
+              if(HomePhone!="" && HomePhone!=undefined && ( reg_Phone.test(HomePhone)==false || !HomePhone.indexOf(' ',0))){
+                  t=t+1;
+                   alert("Please enter a valid number");
+                   $(".HomePhone").focus();
+                   return false;
+               }    
+              if(MailingCity!="" && MailingCity!=undefined  && (reg_text.test(MailingCity)==false || !MailingCity.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MailingCity").focus();
+                   return false;
+               }
+             if(MailingCountry!="" && MailingCountry!=undefined && (reg_text.test(MailingCountry)==false || !MailingCountry.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MailingCountry").focus();
+                   return false;
+               }
+              if(MailingState!="" && MailingState!=undefined && (reg_text.test(MailingState)==false || !MailingState.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MailingState").focus();
+                   return false;
+               }
+               if(MailingStreet!="" && MailingStreet!=undefined && (reg_text.test(MailingStreet)==false || !MailingStreet.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MailingStreet").focus();
+                   return false;
+               }
+              if(MailingPostalCode!="" && MailingPostalCode!=undefined && (reg_zip.test(MailingPostalCode)==false || !MailingPostalCode.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MailingPostalCode").focus();
+                   return false;
+               }
+              if(MobilePhone!="" && MobilePhone!=undefined && (reg_Phone.test(MobilePhone)==false || !MobilePhone.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MobilePhone").focus();
+                   return false;
+               }
+               if(OtherCity!="" && OtherCity!=undefined && (reg_text.test(OtherCity)==false || !OtherCity.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherCity").focus();
+                   return false;
+               }
+               if(OtherCountry!="" && OtherCountry!=undefined  && (reg_text.test(OtherCountry)==false || !OtherCountry.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherCountry").focus();
+                   return false;
+               }
+             if(OtherPhone!="" && OtherPhone!=undefined  && (reg_Phone.test(OtherPhone)==false || !OtherPhone.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherPhone").focus();
+                   return false;
+               }
+              if(CnP_PaaS__Other_Province__c!="" && CnP_PaaS__Other_Province__c!=undefined && (reg_text.test(CnP_PaaS__Other_Province__c)==false || !CnP_PaaS__Other_Province__c.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".CnP_PaaS__Other_Province__c").focus();
+                   return false;
+               }
+               if(OtherState!="" && OtherState!=undefined && (reg_text.test(OtherState)==false || !OtherState.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherState").focus();
+                   return false;
+               }
+               if(OtherStreet!="" && OtherStreet!=undefined && (reg_text.test(OtherStreet)==false || !OtherStreet.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherStreet").focus();
+                   return false;
+               }
+               if(OtherPostalCode!="" && OtherPostalCode!=undefined && (reg_zip.test(OtherPostalCode)==false || !OtherPostalCode.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherPostalCode").focus();
+                   return false;
+               }
+                                         
+               if(Title_1!="" && Title_1!=undefined && (reg_text.test(Title_1)==false || !Title_1.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".Title").focus();
+                   return false;
+               }
+              }
+               if(t==0)
+               {
+                   return true; 
+               }else{
+                   return false;
+               }  
+         })
+    
+    })     
+ function trimvalue(value,fieldclass)
+{
+     var replace=$.trim(value); 
+     $("."+fieldclass).attr('value',replace);
+}
+ </script>
+
+<apex:form >
+ <apex:pageBlock rendered="{!if(StyleRec.CnP_PaaS_EVT__Theme_Selection__c=='Standard Theme',true,false)}">
+  <apex:include pageName="CnP_PaaS_EVT__EventRegistrationLayout"/>
+   <apex:pagemessages />
+ <div id="Main">
+  
+  <div id="Header" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Display_Banner__c==true,'block','none')}">
+    <div id="HeaderLeft"> <span class="Title_Header"><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Upload_banner__c}" escape="false" /></span></div>
+   
+  </div>
+  <div id="ContentArea">
+  <div id="Right">
+     <apex:outputLink value="/servlet/servlet.FileDownload?file={!pdfId}" target="_blank" style="text-decoration:none">
+       <div align="right" class="DownloadAgenda" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Show_ajenda__c==true && pdfId!="",'block','none')}">
+         <div style="margin-top:2px;float:left;"><apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__pdf_icon)}" /></div>{!if(EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c!="",EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c,'Download Agenda')}
+        
+        </div>
+       </apex:outputLink> 
+  <div id="ContentTop" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Display_Title_Information__c==true,'block','none')}">
+      
+         <div>
+             <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Title_and_information__c}" escape="false" />
+         </div> 
+   </div>
+        <div id="ContentBott">
+            <div class="Box">
+                       <div class="Top">
+                                <!-- <div class="T-Left"></div>-->
+                                 <div class="Title1" style="display:{!IF(StyleRec.Display_Title__c==true,'block','none')}">
+                                       <h3 class="t1"><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Section_Title__c}" escape="false"/></h3>
+                                 </div>  
+                                <!-- <div class="T-Right"></div>-->
+                       </div>
+                        <div class="ContMiddle">
+                        <div style="display:{!IF(StyleRec.Display_Description__c==true,'block','none')}">
+                             <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Section_Description__c}" escape="false"/>
+                            </div>
+                             
+                              <fieldset class="FormFields">
+                             <apex:pageBlockSection columns="1"  collapsible="false">
+                              <apex:repeat value="{!availableContactFields}" var="field">                                
+                                <apex:pageBlockSectionItem rendered="{!field.visable}">                                 
+
+                              <apex:outputText value="{!field.Label}"  > </apex:outputText> 
+                                 
+                                 <apex:inputField value="{!acc[field.Field]}"   style="width:{!if(field.Label=="Title",'45px;','')}"  required="{!field.req}"  onblur="trimvalue(this.value,'{!IF(field.req==true ,field.Field,field.Field)}');"  styleClass="{!IF(field.req==true ,field.Field&' required',field.Field)}"    />
+                                
+                         
+
+                                  </apex:pageBlockSectionItem>                                  
+                                </apex:repeat>
+                                <!--<apex:pageBlockSectionItem >
+                                 <apex:OutputText value="Coupon code" />
+                                 <apex:inputText value="{!CouponCode}"/>
+                                  </apex:pageBlockSectionItem> -->
+                               <!-- <apex:commandButton value="Next" action="{!GotoPage_3}" styleClass="next Submit test1">
+                                
+                                </apex:commandButton>-->
+                               
+                               </apex:pageBlockSection>
+                        </fieldset>
+                        </div>
+                    <!--   <div class="Bottom">
+                                    <div class="B-Left"></div>
+                                    <div class="B-Middle"></div>
+                                    <div class="B-Right"></div>
+                       </div>
+                       -->
+               </div>     
+      </div>
+      <div id="ContentBot" style="display:{!IF(StyleRec.Show_terms_conditions__c==true,'block','none')}">      
+                <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Acknowledgement_mandatory__c==true,'block','none')}"/>                            
+                <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Terms_conditions__c}" escape="false"/>                
+        </div>
+        <apex:commandButton value="{!StyleRec.CnP_PaaS_EVT__Button_Label__c}" action="{!GotoPage_3}" styleClass="next Submit test1" id="Submit" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Acknowledgement_mandatory__c==true,'none','block')}" >
+                                  
+        </apex:commandButton>
+  </div>
+  </div>
+   <div id="Footer" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Display_Footer__c==true,'block','none')}">
+             <span><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Footer_information__c}" escape="false"/></span>
+       </div> 
+  </div>
+  
+  </apex:pageBlock> 
+  </apex:form>
+
+  <apex:pageBlock rendered="{!if(StyleRec.CnP_PaaS_EVT__Theme_Selection__c=='Custom Theme',true,false)}">
+   
+      <apex:include pageName="CnP_PaaS_EVT__RegistrationEngine"/>   
+   
+  </apex:pageBlock>
+  <div id="cnp">Powered by Click &amp; Pledge</div>
+</apex:page>

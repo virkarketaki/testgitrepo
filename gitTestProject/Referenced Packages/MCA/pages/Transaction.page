@@ -1,0 +1,239 @@
+<apex:page standardController="McaApp__Transaction__c" tabStyle="McaApp__Transaction__c" extensions="McaApp.TransactionController">
+    <apex:sectionHeader title="Transaction Edit" subtitle="New {!strTransName} Transaction"  />
+    <apex:form >
+    <apex:pageMessages />
+      <apex:pageBlock title="Transaction Details" id="mainBlock">
+            <apex:pageBlockSection title="Transaction" columns="2"> 
+                 <apex:outputField value="{!McaApp__Transaction__c.Name}" rendered="{!IF(!blnEditMode,true,false)}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="2">
+                 <apex:outputField value="{!McaApp__Transaction__c.McaApp__Account__c}" rendered="{!IF(!blnEditMode,true,false)}"/>
+                  <apex:inputField value="{!McaApp__Transaction__c.McaApp__Account__c}" rendered="{!IF(blnEditMode,true,false)}"/>
+                  <apex:outputField value="{!McaApp__Transaction__c.McaApp__Status__c}" rendered="{!IF(!blnEditMode,true,false)}"/>
+               </apex:pageBlockSection>
+          <apex:pageBlockSection columns="2">
+              <apex:repeat value="{!column1Fields}" var="f">
+                <apex:outputField value="{!merch[f.fieldPath]}" rendered="{!IF(!blnEditMode,true,false)}"/>
+                <apex:inputField value="{!merch[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}" rendered="{!IF(blnEditMode,true,false)}"/>
+              </apex:repeat> 
+          </apex:pageBlockSection>
+           <apex:pageBlockSection columns="1">
+              <apex:repeat value="{!column2Fields}" var="f">
+                <apex:outputField value="{!merch[f.fieldPath]}" rendered="{!IF(!blnEditMode,true,false)}"/>
+                <apex:inputField value="{!merch[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}" rendered="{!IF(blnEditMode,true,false)}"/>
+              </apex:repeat>         
+          </apex:pageBlockSection>
+          <apex:pageBlockSection columns="2"> 
+                <apex:outputField value="{!McaApp__Transaction__c.McaApp__Total_Transaction_Credits__c}" rendered="{!IF(!blnEditMode,true,false)}"/>
+                 <apex:outputField value="{!McaApp__Transaction__c.McaApp__Total_Transaction_Debits__c}" rendered="{!IF(!blnEditMode,true,false)}"/>
+           </apex:pageBlockSection>
+            <apex:pageBlockSection columns="2">
+              <apex:repeat value="{!column3Fields}" var="f">
+                <apex:outputField value="{!merch[f.fieldPath]}" rendered="{!IF(!blnEditMode,true,false)}"/>
+                <apex:inputField value="{!merch[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}" rendered="{!IF(blnEditMode,true,false)}"/>
+              </apex:repeat>  
+          </apex:pageBlockSection>
+          <apex:pageBlockButtons >
+             <apex:commandButton action="{!createCreditTranscations}" value="Create New Transaction Line Items" rendered="{!IF(!blnEditMode,true,false)}" rerender="creditTransBlock,debitTransBlock" status="panelStatus"/>
+             <apex:commandButton action="{!Edit_val}" value="Edit" rendered="{!IF(!blnEditMode,true,false)}" rerender="creditTransBlock,debitTransBlock,mainBlock"/>
+             <apex:commandButton action="{!Delete}" value="Delete" rendered="{!IF(!blnEditMode,true,false)}" />
+             <apex:commandButton action="{!ClonePage}" value="Clone" rendered="{!IF(!blnEditMode,true,false)}" />
+             <apex:commandButton action="{!save}" value="Save" rendered="{!IF(blnEditMode,true,false)}" />
+             <apex:commandButton action="{!cancelEdit}" value="Cancel" rendered="{!IF(blnEditMode,true,false)}" />
+           </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+<!--     </apex:outputpanel> -->
+    <apex:form >
+                 <apex:inputHidden value="{!McaApp__Transaction__c.McaApp__Account__c}" rendered="{!IF(blnEditMode,true,false)}"  required="true"/>
+    </apex:form>
+  
+  <apex:actionStatus id="panelStatus" stopText="">
+      <apex:facet name="start">
+          <img src="{!URLFOR('/img/loading.gif')}" />
+          <span style="font-weight: bold"> Processing</span>
+          <br />
+      </apex:facet>
+  </apex:actionStatus>
+    
+  <apex:outputpanel id="creditTransBlock" layout="block" >  
+  <apex:form >
+        <apex:pageBlock title="Create Transaction Line Items" rendered="{!blnCreditTransLineItems}">
+                <apex:outputpanel rendered="{!IF(invoices.size==0,true,false)}" layout="block">
+                    <apex:outputText >There are no Receivable records to be displayed for the Account '{!strAccountName}'</apex:outputText>
+                </apex:outputpanel>
+                <apex:outputpanel id="errorPanel">
+                    <apex:pageMessages />
+                </apex:outputpanel>         
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!processSelected}" rerender="mainBlock, creditTransBlock, errorPanel, TransBlock" status="panelStatus"/>
+                <apex:commandButton value="Reset" action="{!resetTransaction}" rerender="creditTransBlock, errorPanel" status="panelStatus"/>
+                <apex:commandButton value="Calculate Total" action="{!autopopulate}" rerender="creditTransBlock,test123" status="panelStatus"/>
+                <apex:commandButton value="Cancel" action="{!cancelCreditTranscations}" rerender="creditTransBlock" status="panelStatus"/>
+                
+                <apex:outputpanel id="test1234" style="float:right;">Total : {!totalAmount}</apex:outputpanel> 
+            </apex:pageBlockButtons>
+            <!-- In our table we are displaying the cContact records -->
+          
+           <apex:outputpanel layout="block" style="overflow:auto;height:500px;" rendered="{!IF(invoices.size>0,true,false)}">   
+            <apex:pageBlockTable value="{!invoices}" var="c" id="table">
+                <apex:column headerValue="Sel">
+                    <!-- This is our selected Boolean property in our wrapper class -->
+                    <apex:inputCheckbox value="{!c.selected}">
+                         <apex:actionsupport event="onchange" action="{!autoPopulate1}" rerender="creditTransBlock, test1234" status="panelStatus">
+                              <apex:param name="billPaidDate1" assignto="{!c.cred.McaApp__Date__c}" value="{!currentDate}"/>
+<!--                               value="{!currentDate}"/> -->
+                              <apex:param name="balanceAmt1" assignto="{!c.cred.McaApp__Amount__c}" value="{!c.invc.McaApp__Amount_Due__c}"/>   
+<!--                               <apex:param assignTo="{!totalTransactionAmount}" value="{!c.invc.McaApp__Amount_Due__c}" name="totalTransactionAmount"/>                            -->
+                         </apex:actionsupport>                   
+                    </apex:inputCheckbox> 
+                </apex:column>
+                <apex:inputHidden value="{!c.cred.McaApp__Transaction__c}"/>
+
+                <apex:column headerValue="Receivable">
+                    <apex:outputField value="{!c.cred.McaApp__Receivable__c}"/>
+<!--                    <script>document.getElementById('{!$Component.disableInput}').disabled = {!disableInput}; </script> -->
+                </apex:column>
+                
+                <apex:column headerValue="Account">
+                    <apex:outputField value="{!c.invc.McaApp__Due_From_Account__c}"/>
+                 </apex:column> 
+                
+                 <apex:column headerValue="Receivable Date">
+                    <apex:outputField value="{!c.invc.McaApp__Date_Sent__c}"/>
+                 </apex:column> 
+                 
+                <apex:column headerValue="Receivable Status">
+                    <apex:outputField value="{!c.invc.McaApp__Status__c}" id="invoiceStatus"/>
+<!--                    <script>document.getElementById('{!$Component.invoiceStatus}').disabled = {!disableInput}; </script> -->
+                </apex:column>
+                
+                <apex:column headerValue="Receivable Amount">
+                    <apex:outputField value="{!c.invc.McaApp__Amount__c}" id="invoiceAmount" />
+<!--                    <script>document.getElementById('{!$Component.invoiceAmount}').disabled = {!disableInput}; </script> -->
+                </apex:column>
+                <apex:column headerValue="Amount Due">
+                    <apex:outputField value="{!c.invc.McaApp__Amount_Due__c}" id="invoiceDueAmount" />
+                </apex:column>
+                <apex:column headerValue="Amount Paid">
+                    <apex:inputField value="{!c.cred.McaApp__Amount__c}"/> 
+<!--                     onblur="totalAmount1(this.value)"/>   -->
+                </apex:column>
+                
+                 <apex:column headerValue="Paid Date">
+                    <apex:inputField value="{!c.cred.McaApp__Date__c}"/>
+                 </apex:column> 
+
+                 <apex:column headerValue="Memo">
+                    <apex:inputField value="{!c.cred.McaApp__Memo__c}"/>
+                 </apex:column>
+            </apex:pageBlockTable>
+            </apex:outputpanel>
+        </apex:pageBlock>
+<!--         <apex:actionFunction name="totalAmount1" action="{!autoPopulate}" status="panelStatus" -->
+<!--          rerender="creditTransBlock,test1234">  -->
+<!--          <apex:param assignTo="{!totalTransactionAmount}" value="" name="totalTransactionAmount1"/> -->
+<!--         </apex:actionFunction> -->
+    </apex:form>
+   
+    <apex:relatedList list="Transaction_Line_Credit__r"  rendered="{!IF(strTransName == 'Credit',true,false)}"/>
+    <apex:relatedList list="OpenActivities" rendered="{!IF(strTransName == 'Credit',true,false)}"/>
+    <apex:relatedList list="ActivityHistories" rendered="{!IF(strTransName == 'Credit',true,false)}"/>
+    <apex:relatedList list="CombinedAttachments" rendered="{!IF(strTransName == 'Credit',true,false)}"/>
+    </apex:outputpanel>
+      
+  <apex:outputpanel id="debitTransBlock" layout="block">
+  <apex:form >
+        <apex:pageBlock title="Create Transaction Line Items" rendered="{!blnDebitTransLineItems}" >
+             <apex:outputpanel rendered="{!IF(bills.size==0,true,false)}" layout="block">
+                  <apex:outputText >There are no Payable records to be displayed for the Account '{!strAccountName}'</apex:outputText>
+             </apex:outputpanel>
+             
+            <apex:outputpanel id="errorPanel1">
+                <apex:pageMessages />
+            </apex:outputpanel>   
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!processSelectedDebits}" rerender="debitTransBlock, errorPanel1, TransBlock, mainBlock" status="panelStatus"/>
+                <apex:commandButton value="Reset" action="{!resetTransaction}"  rerender="debitTransBlock, errorPanel1" status="panelStatus"/>
+                <apex:commandButton value="Calculate Total" action="{!autopopulate}" rerender="debitTransBlock,test123" status="panelStatus"/>
+                <apex:commandButton value="Cancel" action="{!cancelCreditTranscations}" rerender="debitTransBlock" status="panelStatus"/>
+                
+               <apex:outputpanel id="test123" style="float:right;">Total : {!totalAmount}</apex:outputpanel> 
+            </apex:pageBlockButtons>
+            
+            <!-- In our table we are displaying the cContact records -->
+             <apex:outputpanel layout="block" style="overflow:auto;height:500px;" rendered="{!IF(bills.size>0,true,false)}">
+                
+                <apex:pageBlockTable value="{!bills}" var="c" id="table">
+                    <apex:column headerValue="Sel">
+                        <apex:inputCheckbox value="{!c.selected}">  
+                         <apex:actionsupport event="onchange" action="{!autoPopulate1}" rerender="debitTransBlock" status="panelStatus">
+                              <apex:param name="billPaidDate" assignto="{!c.debt.McaApp__Date__c}" value="{!currentDate}"/>
+                              <apex:param name="balanceAmt" assignto="{!c.debt.McaApp__Amount__c}" value="{!c.bill.McaApp__Bill_Amount_Due__c}"/>   
+<!--                               <apex:param assignTo="{!totalTransactionAmount}" value="{!c.bill.McaApp__Amount_Due__c}" name="totalTransactionAmount"/>                            -->
+                         </apex:actionsupport>                   
+                         </apex:inputCheckbox> 
+                    </apex:column>
+                    
+                    <apex:column headerValue="Payable">                        
+                        <apex:outputLink value="/{!c.bill.Id}" id="theLink">{!c.bill.Name}</apex:outputLink>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Account">                        
+                        <apex:outputField value="{!c.bill.McaApp__Account__c}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Payable Date">
+                        <apex:outputField value="{!c.bill.McaApp__Payable_Date__c}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Status">
+                        <apex:outputField value="{!c.bill.McaApp__Status__c}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Total Payable Amount">
+                        <apex:outputField value="{!c.bill.McaApp__Amount_Due__c}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Amount Paid">
+                        <apex:outputField value="{!c.bill.McaApp__Bill_Amount_Paid__c}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Total Amount Due">
+                        <apex:outputField value="{!c.bill.McaApp__Bill_Amount_Due__c}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Due Date">
+                        <apex:outputField value="{!c.bill.McaApp__Due_Date__c}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Amount">
+                        <apex:inputField value="{!c.debt.McaApp__Amount__c}" /> 
+<!--                         onblur="totalAmount(this.value)"/>                            -->
+                    </apex:column>
+                    
+                    <apex:column headerValue="Date">
+                        <apex:inputField value="{!c.debt.McaApp__Date__c}"/>
+                    </apex:column>
+               
+                    <apex:column headerValue="Memo">
+                        <apex:inputField value="{!c.debt.McaApp__Memo__c}"/>
+                    </apex:column>
+                    
+                    <apex:inputHidden value="{!c.debt.McaApp__Transaction__c}"/>
+                </apex:pageBlockTable>
+             </apex:outputpanel>
+        </apex:pageBlock>
+<!--         <apex:actionFunction name="totalAmount" action="{!autoPopulate}" status="panelStatus" -->
+<!--          rerender="debitTransBlock,test123">  -->
+<!--          <apex:param assignTo="{!totalTransactionAmount}" value="" name="totalTransactionAmount"/> -->
+<!--         </apex:actionFunction> -->
+    </apex:form>
+    <apex:relatedList list="Transaction_Line_Debit__r" rendered="{!IF(strTransName == 'Debit',true,false)}"/>
+    <apex:relatedList list="OpenActivities" rendered="{!IF(strTransName == 'Debit',true,false)}"/>
+    <apex:relatedList list="ActivityHistories" rendered="{!IF(strTransName == 'Debit',true,false)}"/> 
+    <apex:relatedList list="CombinedAttachments" rendered="{!IF(strTransName == 'Debit',true,false)}"/>
+    </apex:outputpanel>     
+    
+</apex:page>

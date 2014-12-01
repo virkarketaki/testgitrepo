@@ -1,0 +1,51 @@
+<apex:page controller="CnP_PaaS_EVT.registrant_controller" tabStyle="CnP_PaaS_EVT__Event__c" sidebar="true">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__jqplot, 'js/jquery-1.3.2.min.js')}"/>
+<apex:pagemessages ></apex:pagemessages><br/>
+<apex:outputLabel value="{!eventname}" style="font-weight:bold;"></apex:outputLabel>
+<div ><apex:outputLink value="/{!EventRecordId}" style="text-decoration:none;display:block;border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 1px;
+    padding: 4px 4px;float:left;background-color:#FFFFFF;margin-bottom:10px;"  >Back</apex:outputLink></div>
+    <div align="right" style="padding-bottom:10px;" class="test">
+<apex:outputLink value="/apex/downlaodregistrant?id={!EventRecordId}" style="text-decoration:none;display:block;border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 1px;
+    padding: 4px 4px;float:right;background-color:#FFFFFF;" target="CnP_PaaS_Evt_Download">Download</apex:outputLink>
+</div><br/><br/>
+
+<h1 > Registrant Information Report</h1><br/><br/>
+
+ <apex:pageblock >
+
+ <apex:pageBlockTable value="{!Results}" var="reg1">
+ <apex:column headerValue="Registration">
+<apex:outputlink value="/{!reg1.regid}" target="CnP_PaaS_Evt_Attendee">
+<apex:outputLabel value="Details" style="color: blue;cursor:pointer;"></apex:outputLabel>
+</apex:outputlink>
+</apex:column>
+ <apex:column headerValue="Contact">
+<apex:outputlink value="/{!reg1.AccName}" target="CnP_PaaS_Evt_Attendee">
+<apex:outputLabel value="{!reg1.contactfirstname}" style="color: blue;cursor:pointer;"></apex:outputLabel>
+</apex:outputlink>
+</apex:column>
+
+ <apex:column headerValue="Email" value="{!reg1.contactEmail}"/>
+ <apex:column headerValue="Date Registered" value="{!reg1.CreatedDate}"/>
+ <apex:column headerValue="# of Attendees Registered" value="{!reg1.noofatt}"/>
+ 
+ <apex:column headerValue="Total $" >
+<apex:outputText value="{0, number,$###,###,##0.00}" style="font-weight:normal;">
+<apex:param value="{!reg1.TotalAmount}"/>
+</apex:outputText></apex:column>
+ 
+ </apex:pageBlockTable>
+ </apex:pageblock> 
+</apex:page>

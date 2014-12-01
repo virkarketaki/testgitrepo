@@ -1,0 +1,418 @@
+<apex:page controller="CnP_PaaS_EVT.revenueandRegistration_Event" tabStyle="CnP_PaaS_EVT__Event__c"  >
+
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__jqplot, 'js/jquery-1.3.2.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__ExtLibrary, 'bootstrap.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__ChartConfig, 'Column.js')}"/>
+
+<style>
+    body .bPageBlock .pbBody .labelCol {
+
+width: 10px;
+}
+.bPageBlock .pbBody .dataCol {
+    border-right-color: transparent;
+    width: 190px;
+}
+.apexp .bPageBlock .detailList {
+margin:0px 0 10px 0;
+    width: 75%;
+
+}
+.detailList .last {
+   width:250px
+
+
+}
+   .dateFormat{
+       display:none;
+   }
+   .calenderIcon{    
+    
+    padding-left: 10px;
+    padding-top: 2px;
+}
+.requiredInput
+ {
+  float:left;
+ }
+</style>
+<style type="text/css" media="screen">
+    .jqplot-axis {
+      font-size: 0.85em;
+    }
+  </style>
+<apex:form >
+<apex:inputField value="{!evenlist.Name}" style="height:0px;border:none;width:0px;"/>
+<apex:pageBlock >
+
+<div ><apex:outputLink value="/{!EventRecordId}" style="text-decoration:none;display:block;border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 1px;
+    padding: 4px 4px;float:left;background-color:#FFFFFF;margin-bottom:10px;">Back</apex:outputLink></div>
+  
+<br/><br/>
+<apex:pagemessages /><br/>
+<apex:outputLabel value="Registration Report" style="font-weight:bold;"> </apex:outputLabel>&nbsp;
+<apex:outputLabel value="{!evenlist.Name}" style="font-weight:bold;"></apex:outputLabel><br/><br/>
+
+
+<apex:pageBlockSection columns="3">
+
+<apex:pageblockSectionItem >
+<apex:outputLabel value="From" />
+
+<apex:outputPanel styleClass="requiredInput" layout="block"  >
+ <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+       
+<apex:outputpanel >
+<div class="requiredInput">
+<apex:inputtext value="{!PublishDate}" onclick="DynamicDatePicker(this);" id="one1" styleClass="sdate"/> </div>
+
+<apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon,'Calendar-Lookup2.gif')}" styleClass="calenderIcon" /></apex:outputpanel>
+</apex:outputpanel>
+</apex:pageblockSectionItem>
+
+<apex:pageblockSectionItem >
+<apex:outputLabel value="To" />
+<apex:outputPanel styleClass="requiredInput" layout="block"  >
+<apex:outputPanel styleClass="requiredBlock" layout="block" />
+<apex:outputpanel >
+<div class="requiredInput">
+<apex:inputtext value="{!EendDate}" id="one2" onclick="DynamicDatePicker(this);" styleClass="edate" /> </div> 
+
+<apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon,'Calendar-Lookup2.gif')}" styleClass="calenderIcon" />
+</apex:outputpanel>
+</apex:outputpanel>
+</apex:pageblockSectionItem>
+
+<apex:pageBlockSectionItem >
+<apex:commandButton value="Get" action="{!getdata}" onclick="if(!Validationfordate()) return false;" /></apex:pageBlockSectionItem>
+</apex:pageBlockSection>
+
+<apex:outputPanel >
+<apex:outputLabel value="Total Revenue:" style="font-weight:bold;">&nbsp;&nbsp;&nbsp;&nbsp;
+<apex:outputText value="{0, number,$###,###,##0.00}" style="font-weight:normal;">
+<apex:param value="{!totalrevenue}"/>
+</apex:outputText></apex:outputLabel>
+</apex:outputPanel>
+
+
+<div id="chartdiv" style="margin-top:20px; margin-left:20px; width:800px; height:400px;"></div><br/>
+<div style="clear:both;"></div>
+
+<apex:outputPanel >
+<apex:outputLabel value="Total Registered:" style="font-weight:bold;"></apex:outputLabel>&nbsp;&nbsp;&nbsp;&nbsp;
+<apex:outputText value="{!totalattendee}" styleClass="maxattendee"></apex:outputText></apex:outputPanel><br/>
+<div id="chartdiv1" style="margin-top:20px; margin-left:20px; width:800px; height:400px;"></div>
+
+<apex:variable value="0" var="rowNum"/>
+<apex:pageBlockTable value="{!availableReportFields}" var="arr" styleClass="reporttable" style="display:none;">
+ <apex:column >
+ <!--<apex:outputText value="{0,date,M/d/yyyy}">
+ <apex:param value="{!arr.Cdate}"></apex:param>
+ </apex:outputText>-->
+ <!-- <c:Timeformate date_time_value="{!arr.Cdate}"></c:Timeformate> -->
+
+<apex:outputLabel value="{!arr.Cdate}" styleClass="reportdate{!rowNum}"></apex:outputLabel>
+
+</apex:column>
+ <apex:column ><apex:outputLabel value="{!arr.Total}" styleClass="reporttotal{!rowNum}"></apex:outputLabel></apex:column>
+  <apex:column ><apex:outputLabel value="{!arr.count}" styleClass="reportcount{!rowNum}"></apex:outputLabel></apex:column>
+ <apex:column ><apex:outputLabel value="{!rowNum}"></apex:outputLabel></apex:column>
+ 
+ <apex:column ><apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}"/></apex:column> 
+</apex:pageBlockTable>
+</apex:pageBlock>
+
+ <script>
+      $(document).ready(function(){ 
+          var sdate = $(".sdate").val();
+          var edate = $(".edate").val(); 
+          var maxatt = $(".maxattendee").html();
+        
+          if (Date.parse(edate) < Date.parse(sdate)) {
+                        alert("Invalid Date Range\nEnd Date cannot be before Start Date!")
+                        return false;
+                }      
+        var date_date=[];
+        var date_value=[]; 
+        var date_numbers=[];
+        //var data2=[];
+       // var data3=[];
+        var temp_data=[];
+        var i=0;
+        var size=$(".reporttable tbody tr").length;
+          $(".reporttable tbody tr").each(function(){ 
+             //  alert("Hi");
+             month=new Array(12);
+             month[0]="Jan";
+             month[1]="Feb";
+             month[2]="Mar";
+             month[3]="Apr";
+             month[4]="May";
+             month[5]="Jun";
+                month[6]="Jul";
+                month[7]="Aug";
+                month[8]="Sep";
+                month[9]="Oct";
+                month[10]="Nov";
+                month[11]="Dec";
+               var dates=$(".reportdate"+i).text();
+               var datee = new Date(dates);
+               fdate=datee.getDate();
+               fmonth=month[datee.getMonth()];
+               fyear=datee.getFullYear();
+               date = fmonth +" "+ fdate + " " + fyear ;
+              //alert(date);
+               var total=$(".reporttotal"+i).text();
+               var count=$(".reportcount"+i).text();
+            date_date.push(date.replace('\n',''));
+            date_value.push(date.replace('\n',''),parseFloat(total.replace('\n','')));
+            date_numbers.push(date.replace('\n',''),parseInt(count.replace('\n','')));
+            
+          //    date_value.push({name:date.replace('\n',''),data1:parseFloat(total.replace('\n',''))});
+        //       date_numbers.push({name:date.replace('\n',''),data1:parseInt(count.replace('\n',''))});
+                i++;  
+        });
+         
+                                                 
+        temp_data=removeDuplicateElement(date_date);
+       // alert(temp_data);
+         var data2=[];
+          var data4=[];
+       finalrevenue=finalarrayrevenue(temp_data,date_value);
+       //alert(finalrevenue);
+       finalattendee=finalarraycount(temp_data,date_numbers);
+       
+       
+                function removeDuplicateElement(date_date)
+                  {
+                      var newArray=new Array();
+                      label:for(var i=0; i<date_date.length;i++ )
+                      {  
+                          for(var j=0; j<newArray.length;j++ )
+                          {
+                              if(newArray[j]==date_date[i]) 
+                              continue label;
+                          }
+                          newArray[newArray.length] = date_date[i];
+                      }
+                          return newArray;
+                  }
+
+             
+           function finalarrayrevenue(temp_data,date_value)
+           {
+               var revenue=[];              
+               for(var k=0;k<temp_data.length;k++)
+                {      
+                    var t=0;
+                    total=0;
+                   
+                  
+                  
+                   for(var j=0;j<date_value.length;j++)
+                   {
+              
+                       var flag=0;
+                      
+                       if(date_value[j]==temp_data[k])
+                       {  
+                          
+                           var date=temp_data[k];
+                           total+=date_value[j+1];
+                         
+                           flag=1;
+                          // continue;
+                   
+                       }else
+                       {
+                           t=t+1;
+                  
+                       }          
+                   }
+          
+                   if(flag!=1)
+                   {
+                        if(t>1)
+                        {
+                        data2.push({name:date,data1:total});
+                       
+                    }else{
+                        data2.push({name:date,data1:total});
+                       
+                    }
+                   }
+          revenue.push(data2);        
+         
+            }
+              return revenue;        
+           }
+           
+            function finalarraycount(temp_data,date_numbers)
+           {              
+               var attendees=[];
+               for(var k=0;k<temp_data.length;k++)
+                {      
+                    var t=0;                    
+                    numattendees=0;
+                  
+                 
+                   for(var j=0;j<date_numbers.length;j++)
+                   {
+              
+                       var flag=0;                       
+                       if(date_numbers[j]==temp_data[k])
+                       {  
+                          
+                           var date=temp_data[k];                          
+                           numattendees+=date_numbers[j+1];
+                           flag=1;
+                           //continue;
+                   
+                       }else
+                       {
+                           t=t+1;
+                  
+                       }          
+                   }           
+                   if(flag!=1)
+                   {
+                        if(t>1)
+                        {
+                       
+                        data4.push({name:date ,data1:numattendees});
+                        
+                    }else{
+                       data4.push({name:date,data1:numattendees});
+                    }
+                   }         
+          attendees.push(data4);
+         
+            }
+              return attendees;   
+              
+           }
+ 
+   
+    Ext.require(['Ext.data.*']); 
+   
+//Revenue Data
+    window.generateData = function(){   
+    var data1 = finalrevenue;
+    return data1;
+    };
+//Attendee Data    
+    window.generateDataNegative = function(){
+         var data1 = finalattendee;         
+         return data1 ;
+    };
+  
+    window.maxreg = maxatt;
+    var tick=0;
+    if(maxatt==1)
+    {
+      tick=0;
+    }
+    else
+    { 
+       tick=1;
+    } 
+    //alert(tick); 
+    window.tickvalue= tick;
+    window.store1 = Ext.create('Ext.data.JsonStore', {
+        fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9'],
+        data: generateData()
+       
+    });
+    window.storeNegatives = Ext.create('Ext.data.JsonStore', {
+        fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9'],
+        data: generateDataNegative()
+       
+    });  
+    })
+    function DynamicDatePicker(d_id)
+    {
+
+DatePicker.pickDate(false,d_id.id,false);
+
+    }
+    function Validationfordate(){
+    
+            var sdate = $(".sdate").val();
+            var edate =$(".edate").val();
+            var validformat=/^\d{1,2}\/\d{1,2}\/\d{4}$/ //Basic check for format validity
+           
+           
+            
+           
+          if($(".sdate").val()==''){
+                  alert("You must enter a value")
+                  $(".sdate").focus();
+                  return false;
+          
+          }else if($(".sdate").val()!=''){
+                     if (!validformat.test(sdate)){
+                            alert("Invalid Date Format. Please correct and submit again.")
+                            $(".sdate").focus();
+                            return false;
+                     }else 
+                        {
+                            var monthfield=sdate.split("/")[0]
+                            
+                            var dayfield=sdate.split("/")[1]
+                            
+                            var yearfield=sdate.split("/")[2]
+                            
+                            var dayobj = new Date(yearfield, monthfield-1, dayfield)
+                            if ((dayobj.getMonth()+1!=monthfield)||(dayobj.getDate()!=dayfield)||(dayobj.getFullYear()!=yearfield))
+                            {
+                           
+                            alert("Invalid Day, Month, or Year range detected. Please correct and submit again.");
+                            jQuery(".sdate").focus();
+                            return false;
+                            
+                            }
+                        }
+         }
+          if($(".edate").val()==''){
+                  alert("You must enter a value")
+                  $(".edate").focus();
+                  return false;
+          
+          }else if($(".edate").val()!=''){
+                     if (!validformat.test(edate)){
+                            alert("Invalid Date Format. Please correct and submit again.")
+                            $(".edate").focus();
+                            return false;
+                     }else 
+                        {
+                            var monthfield=edate.split("/")[0]
+                            
+                            var dayfield=edate.split("/")[1]
+                            
+                            var yearfield=edate.split("/")[2]
+                            
+                            var dayobj = new Date(yearfield, monthfield-1, dayfield)
+                            if ((dayobj.getMonth()+1!=monthfield)||(dayobj.getDate()!=dayfield)||(dayobj.getFullYear()!=yearfield))
+                            {
+                           
+                            alert("Invalid Day, Month, or Year range detected. Please correct and submit again.");
+                            jQuery(".edate").focus();
+                            return false;
+                            
+                            }
+                        }
+         }
+          return true;
+    
+    
+    
+    }
+</script>
+</apex:form>
+</apex:page>

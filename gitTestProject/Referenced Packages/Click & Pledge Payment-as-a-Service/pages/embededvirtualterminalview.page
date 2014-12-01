@@ -1,0 +1,188 @@
+<apex:page standardController="CnP_PaaS__Embeded_Virtual_Terminal__c" extensions="CnP_PaaS.Embedded_VT_Controller"   tabstyle="CnP_PaaS__Embeded_Virtual_Terminal__c">
+<apex:includescript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+<script>
+  $(function(){
+          $(".video").mouseout(function(){
+             
+              $(this).fadeOut(8000);
+             
+          })
+          })  
+</script>
+ <style>
+    .helpLink {
+       position:relative;       
+    }
+
+    .video{
+      display:none;
+      width:12%;
+      height:auto;
+      background:#EEE;
+      border:1px solid #CCC;
+      position:absolute;     
+      z-index:10;
+      margin-left:950Px;
+    }
+   </style> 
+   
+ <apex:form >
+ 
+ 
+  <apex:pageMessage severity="INFO" rendered="{!checkingperson}" >
+
+  <span style="font-weight:normal;">Embedded Virtual Terminal Process is currently not available in the instances where Person Accounts are activated.</span><br />
+   <br />
+  
+    
+    </apex:pageMessage>
+                 
+                    <apex:outputLink styleClass="helpLink" rendered="{!subTab['eVT']['eVT'].display=='true'}" >  
+                              <Apex:outputLabel value="C&P Help for this Page" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block';" style="font-size:90%;margin-left:950Px;margin-right:5Px;"  />  
+                               <apex:image value="/s.gif" styleClass="helpIcon" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; "/>                        
+                         </apex:outputLink>
+                       
+                          <apex:outputPanel id="Foo1" styleClass="video"  >   
+                           <ul style="padding-left:4px;" >                       
+                              {!subTab['eVT']['eVT'].description} <br/> <br/>
+                              <apex:outputpanel rendered="{!subTab['eVT']['eVT'].ActiveLink=='true'}">
+                                 <li><a href="{!subTab['eVT']['eVT'].link}" target="_blank" >{!subTab['eVT']['eVT'].strlink}</a> <br/></li></apex:outputpanel>
+                             <apex:outputpanel rendered="{!subTab['eVT']['eVT'].ActiveVideo=='true'}">
+                                 <li> <a href="{!subTab['eVT']['eVT'].video}" onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subTab['eVT']['eVT'].strVideo}</a></li></apex:outputpanel>
+                           </ul>
+                          </apex:outputPanel>
+                     
+                          
+ <apex:pageBlock title=" Embedded Virtual Terminal (eVT)" rendered="{!IF(checkingperson==false,true,false)}">
+       <apex:pageBlockButtons >
+           <apex:commandButton action="{!editeVT}" value="Edit"/>
+           <apex:commandButton action="{!deleteeVT}" value="Delete" onclick="return confirm('Are you sure you want to delete this Record permanently?')"/>
+       </apex:pageBlockButtons>
+ <apex:pageBlockSection title="Application Information" columns="1">
+            <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Application_Name__c}" style="width:250px"/>
+            <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Version_Number__c}" style="width:250px"/>
+            <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Identification_Number__c}" style="width:250px"/>
+       </apex:pageBlockSection>
+
+         
+       <apex:pageBlockSection title="Page Information" columns="1">
+
+            <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Page_Name__c}" style="width:250px"/>
+            <apex:outputfield value="{!viewEVTTransaction.CnP_PaaS__Base_URL__c}"/>
+            <apex:pageBlockSectionItem >
+            <apex:outputLabel >URL Parameters Help</apex:outputLabel>
+           <apex:outputLink value="http://manual.clickandpledge.com/Salesforce-Embedded-Virtual-Terminal.html" id="theLink" target="CnP_PaaS" >http://manual.clickandpledge.com/Salesforce-Embedded-Virtual-Terminal.html</apex:outputLink>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem labelStyle="font-weight:bold;font-size:12px;">
+       Form CSS  <apex:inputTextarea value="{!formcss}" style="width:450px;height:100px;" id="formcss" disabled="true" />
+       
+       </apex:pageBlockSectionItem>
+       </apex:pageBlockSection>
+       
+       
+         <apex:pageBlockSection id="SelectPayOptions" title="Select Payment Options" columns="1">
+                         <apex:pageblocksectionItem id="AccountIdItem" helpText="Your Click & Pledge Account Number to be found in C&P admin portal [Account Info>Your Profile>Account Number]">
+                         <apex:outputLabel value="C&P Account Number"/>
+                          <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Click_Pledge_Account_Id__c}"/>
+                         </apex:pageBlockSectionItem>
+                              <apex:outputLabel value="Terms & Conditions"></apex:outputLabel>      
+                          <apex:pageBlockSectionItem >
+                           <apex:outputPanel >
+                             <apex:outputPanel Style="padding-left:200px;">
+                               <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Show_terms__c}"   styleClass="checkbox" />
+                                        <apex:outputLabel value="Show Terms and Conditions"/><br />
+                             </apex:outputPanel>
+                             <apex:outputPanel Style="padding-left:200px;">
+                               <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Acknowledgement__c}"   styleClass="checkbox"/>
+                                        <apex:outputLabel value="Show Acknowledgement Mandatory"/><br />
+                             </apex:outputPanel>
+                            
+                             </apex:outputPanel>    
+                              
+                           </apex:pageBlockSectionItem>
+                           <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Terms_Conditions_Text__c}"/>
+                  
+                  
+                          <apex:outputLabel value="Payment Methods"></apex:outputLabel>
+                         <apex:pageblocksectionItem helpText="Accepted payment options – refer to your Click & Pledge admin portal for accepted cards [Accepted Cards]" id="CreditCardItem" >
+                                 <apex:outputLabel value="Online Options"/>
+                                 <apex:outputpanel >
+                         
+<apex:outputLabel value="Credit Card Types"/><br />
+                                        <apex:outputpanel id="CreditCardOptions">
+                                        <apex:outputpanel style="position:relative;left:30px;">
+                                        <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Visa__c}" id="Visa_card" />
+                                        <apex:outputLabel value="Visa"/><br />
+                                        <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Master_Card__c}" id="Master_card" />
+                                        <apex:outputLabel value="Master Card"/><br />
+                                        <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Discover__c}" id="Discover" />
+                                        <apex:outputLabel value="Discover"/><br />
+                                        <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__American_Express__c}" id="AmericanEx" />
+                                      <apex:outputLabel value="American Express"/><br />
+                                        <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__JCB__c}" id="jcb" />
+                                        <apex:outputLabel value="JCB"/><br />
+                                        
+                                        </apex:outputpanel>
+                                        </apex:outputpanel>
+                                        <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__e_Check__c}" id="e_check"/>
+                                        <apex:outputLabel value="eCheck"/><br />
+                                        <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Invoice_PO__c}" id="InVoice"/>
+                                        <apex:outputLabel value="Invoice"/><br />
+                                        <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Purchase_Order__c}" id="PurchaseOrder"/>
+                                        <apex:outputLabel value="Purchase Order"/><br />
+                                       </apex:outputpanel>
+                         </apex:pageblocksectionItem>  
+               
+              
+                          
+                      <apex:outputLabel value="Messages"/>
+                        <apex:pageBlockSectionItem >                                                                           
+                         <apex:outputLabel value="Thank you" />
+                              <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Thank_you__c}"/>                
+                         </apex:pageBlockSectionItem>
+                         <apex:pageBlockSectionItem >
+                         <apex:outputLabel value="Payment Declined" />
+                             <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Payment_Declined__c}"/>
+                         </apex:pageBlockSectionItem>
+              </apex:pageBlockSection>
+          <apex:pageBlockSection title="Receipt Customization" columns="1">
+           <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Organization_Information__c}" style="width:350px;height:100px;"/>
+
+               <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Receipt_Header__c}" style="width:350px;height:100px;"/>
+               <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Terms_Conditions__c}" style="width:350px;height:100px;"/>
+          </apex:pageBlockSection>  
+          
+          <apex:pageBlockSection title="Object Settings" columns="1">
+          
+       
+          <apex:pageBlockSection columns="1" rendered="{!If(npspexist == false,true,false)}">
+          <apex:outputLabel > <b>Account Settings</b></apex:outputLabel>
+          
+          
+              <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_at_na__c}" />
+              <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_at_ca__c}" style="width:1000px;height:100px;"/>
+               <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_at_aid__c}" />
+         </apex:pageBlockSection>
+
+      
+          <apex:outputLabel > <b>Contact Settings </b></apex:outputLabel>
+                   <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_cr_cc__c}"  styleClass="checkbox"/>
+<!--                   <apex:outputField value="{!viewEVTTransaction.cs_cr_uc__c}"  styleClass="checkbox"/>
+           <br/>-->
+            <apex:outputLabel > <b>Opportunity Settings</b></apex:outputLabel>
+                   <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_os_co__c}"  styleClass="checkbox"/>
+                   <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_os_cp__c}"   styleClass="checkbox"/>
+                    <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_os_cr__c}"   styleClass="checkbox"/>
+                    <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__Contact_Role__c}"/>
+                    <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_os_at__c}"/>
+                    <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_os_dt__c}"/>
+                    <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_os_ins__c}"/>
+                    <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_os_pos__c}"/>
+                    <apex:outputField value="{!viewEVTTransaction.CnP_PaaS__cs_os_fs__c}"/>
+                    
+       </apex:pageBlockSection>   
+   </apex:pageBlock>
+     
+ </apex:form>
+ 
+</apex:page>

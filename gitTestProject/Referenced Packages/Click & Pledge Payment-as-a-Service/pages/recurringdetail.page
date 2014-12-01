@@ -1,0 +1,145 @@
+<apex:page tabstyle="CnP_PaaS__CnPRecurring__c" controller="CnP_PaaS.CnP_Recurring_Detail_Controller" action="{!errorPage}"  title="C&P Recurring Detail">
+   <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/> 
+   <style>
+    .helpLink {
+       position:relative;       
+    }
+
+    .video{
+      display:none;
+      width:12%;
+      height:auto;
+      background:#EEE;
+      border:1px solid #CCC;
+      position:absolute;     
+      z-index:10;
+      margin-left:950Px;
+    }
+   </style> 
+   <script>
+     $(function(){
+          $(".video").mouseout(function(){
+             
+              $(this).fadeOut(8000);
+             
+          })
+          })  
+ </script>
+
+     <apex:form >
+         <apex:outputLink styleClass="helpLink" rendered="{!subTab['Recurring']['RecurringView'].display=='true'}">  
+                              <Apex:outputLabel value="C&P Help for this Page" style="font-size:90%;margin-left:950Px;margin-right:5Px;" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; "/>  
+                               <apex:image value="/s.gif" styleClass="helpIcon" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; "/>                        
+                         </apex:outputLink>
+                          <apex:outputPanel id="Foo1" styleClass="video"  >   
+                           <ul style="padding-left:4px;" >                       
+                              {!subTab['Recurring']['RecurringView'].description} <br/> <br/>
+                              <apex:outputpanel rendered="{!subTab['Recurring']['RecurringView'].ActiveLink=='true'}">
+                                 <li><a href="{!subTab['Recurring']['RecurringView'].link}" target="_blank" >{!subTab['Recurring']['RecurringView'].strlink}</a> <br/></li></apex:outputpanel>    
+                              <apex:outputPanel rendered="{!subTab['Recurring']['RecurringView'].ActiveVideo=='true'}">
+                                 <li> <a href="{!subTab['Recurring']['RecurringView'].video}" onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subTab['Recurring']['RecurringView'].strVideo}</a></li></apex:outputPanel>
+                           </ul>
+                          </apex:outputPanel>
+               <apex:pageblock title="Recurring Detail">
+                        
+         <apex:pageblockButtons >
+         <apex:commandButton action="{!editRecurring}" value="Edit"/>
+             <apex:commandButton action="{!DeleteRecurring}" value="Delete" onclick="return confirm('Are you sure you want to delete this Recurring record permanently?')"/>
+         </apex:pageblockButtons>
+             
+             <apex:pageblockSection title="Transaction Info" >             
+                 <apex:outputField value="{!recurring.CnP_PaaS__OrderNumber__c}"/>
+                 <apex:outputField value="{!recurring.OwnerId}"/>   
+                  <apex:outputField title="Account" value="{!recurring.CnP_PaaS__Account__c}"/>
+                  <apex:outputField title="Contacts" value="{!recurring.CnP_PaaS__Contact__c}"/>  
+                   <apex:outputField title="First Installment Date" value="{!recurring.CnP_PaaS__FirstChargeDate__c}"/>     
+                 <apex:pageBlockSectionItem > 
+                  <apex:outputlabel value="Next Installment Date" / >
+                   <apex:outputtext title="Next Installment Date" value="{!ddd}"/> 
+                  </apex:pageBlockSectionItem>
+                  <!-- <apex:outputfield title="Next Installment Date" value="{!recurring.NextInstallment_Date__c}"/> -->
+                     <apex:outputField title="Recurring Method" value="{!recurring.CnP_PaaS__RecurringMethod__c}" />
+                        <apex:outputfield title="Installment Period" value="{!recurring.CnP_PaaS__Periodicity__c}" style="Color:Red"   />    
+                 <apex:outputField value="{!recurring.CnP_PaaS__Installment_Amount__c}"/>
+                    <apex:outputField title="# of Installments" value="{!recurring.CnP_PaaS__Installments__c}"/>            
+                    
+                <!-- <apex:outputField value="{!recurring.Total__c}"/>-->
+                 <apex:pageBlockSectionItem >
+                Total Commitment:    <apex:outputText value="{0, number,$###,###,##0.00}" >
+        <apex:param value="{!totalcommit}" /></apex:outputText>
+
+                 
+               
+              
+                 </apex:pageBlockSectionItem>
+                      
+                       <apex:outputField title="Installment(s) Made" value="{!recurring.CnP_PaaS__InstallmentsMade__c}"/>
+                                   
+                <apex:outputField title="Total Made" value="{!recurring.CnP_PaaS__Total_Made__c}"/> 
+               <apex:inputHidden />   
+           <apex:outputField title="Upcoming Receipts" value="{!recurring.CnP_PaaS__Upcoming_Receipts__c}"/>
+                                           
+                 <apex:outputField title="Transaction Result" value="{!recurring.CnP_PaaS__Transaction_Result__c}"/>     
+
+             </apex:pageblockSection>  
+             <apex:pageBlockSection >
+  
+       </apex:pageBlockSection>
+         </apex:pageblock>                   
+     </apex:form>       
+ 
+  
+
+    <apex:pageblock title="Related Transaction(s) List" >
+        <apex:pageblockSection >  
+            <apex:pageBlockTable value="{!recurringtransactions}" var="cnptransaction" style="width:1000px;">         
+                <apex:column headerValue="Order Number">
+                    <apex:outputLink value="/{!cnptransaction.Id}">{!cnptransaction.Name}</apex:outputLink>                 
+                </apex:column>   
+                <apex:column headerValue="Date" >     
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__TransactionDate__c}"/>                                                                     
+                </apex:column>           
+                <apex:column headerValue="Total Charged" >                                
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__TotalCharged__c}"/>                          
+                </apex:column>           
+                <apex:column headerValue="Installment #" >   
+                    <apex:repeat value="{!cnptransaction.RecurringTransactions__r}" var="installment">
+                        <apex:outputField value="{!installment.CnP_PaaS__InstallmentNumber__c}" />    
+                    </apex:repeat>     
+                </apex:column>     
+                <apex:column headerValue="Result"  > 
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__Transaction_Result__c}"/>                          
+                </apex:column> 
+                <apex:column headerValue="Card Expiration Date"  > 
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__CardExpiration__c}"/>                          
+                </apex:column>     
+                 <apex:column headerValue="Credit Card Last 4 digits"  > 
+                    <apex:outputField value="{!cnptransaction.CnP_PaaS__CreditCard4x4__c}"/>                          
+                </apex:column>   
+                
+            </apex:pageBlockTable>    
+             
+        </apex:pageblockSection>  
+           
+          
+    </apex:pageblock>
+    
+    
+     <apex:pageblock title="Related Opportunities" >
+        <apex:pageblockSection columns="1">  
+            <apex:pageBlockTable value="{!opportunitylist}" var="opportunity" width="100%" >         
+                <apex:column headerValue="Name" width="30%">
+                    <apex:outputLink value="/{!opportunity.Id}">{!opportunity.Name}</apex:outputLink>                 
+                </apex:column>   
+                <apex:column headerValue="Amount" width="30%">        
+                    <apex:outputField value="{!opportunity.Amount}"/>                                                    
+                </apex:column>           
+                <apex:column headerValue="Stage" width="40%">    
+                    <apex:outputField value="{!opportunity.StageName}"/>                            
+                </apex:column>           
+            </apex:pageBlockTable>      
+        </apex:pageblockSection>
+    </apex:pageBlock>
+    
+
+</apex:page>

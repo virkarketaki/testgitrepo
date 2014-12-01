@@ -1,0 +1,23 @@
+<apex:page extensions="CnP_PaaS.TemporaryObjectController" standardController="CnP_PaaS__Temporary_Contact__c">
+ <apex:form >
+ <apex:pageBlock title="Processing Result">
+     <apex:pageBlockSection title="Processing Result" columns="2" rendered="{!if(transactions.size>0,true,false)}">
+  
+<b>Transaction Result</b> &nbsp;&nbsp;  <apex:outputText value="Transaction Processed Successfully"/>
+ <b>Order Number</b>&nbsp;&nbsp;  <apex:outputLabel value="{!transactions[0].Name}"/>
+<b>Authorization Code</b>&nbsp;&nbsp;  <apex:outputLabel value="{!transactions[0].AutorizationCode__c}"/>
+  
+  <b>Vault GUID</b> &nbsp;&nbsp;  <apex:outputLabel value="{!transactions[0].VaultGuid__c}"/>
+   <b>Gateway Transaction Number</b>&nbsp;&nbsp;  <apex:outputLabel value="{!transactions[0].GatewayTransactionNumber__c}"/>
+   <b>Updated/Created Contact</b>&nbsp;&nbsp;      <apex:outputLink value="/{!transactions[0].Contact__c}">{!transactions[0].Contact__r.Name}</apex:outputLink>   
+   
+    </apex:pageBlockSection>
+     
+    
+    
+ </apex:pageBlock>
+ <div align="center">
+    <apex:commandButton action="{!cancelItem}" value="   Back   "/>
+  </div>
+</apex:form>
+</apex:page>

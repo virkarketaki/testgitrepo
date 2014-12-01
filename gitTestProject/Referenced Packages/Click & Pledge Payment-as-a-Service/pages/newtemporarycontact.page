@@ -1,0 +1,3 @@
+<apex:page standardController="CnP_PaaS__Temporary_Contact__c"  extensions="CnP_PaaS.TemporaryObjectController" action="{!redirecttemp}">
+ 
+</apex:page>

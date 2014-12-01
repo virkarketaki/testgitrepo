@@ -1,0 +1,44 @@
+<apex:page standardController="CnP_PaaS__CnPBatchUpload__c" extensions="CnP_PaaS.BatchUploadController"  contentType="application/vnd.ms-excel#Processed-{!CnP_PaaS__CnPBatchUpload__c.Name}.xls" tabstyle="CnP_PaaS__CnPBatchUpload__c">
+
+<apex:pageBlock >
+ 
+    {!CnP_PaaS__CnPBatchUpload__c.Name}
+
+    <table class="mGrid">
+    <thead>
+    <tr class="mGrid">
+    <apex:repeat value="{!ListValues}" var="lv">
+       <th><apex:outputText value="{!lv.fileheader}" styleClass="mGrid"></apex:outputText></th>
+    </apex:repeat>
+    </tr>
+    </thead>
+    <tbody>
+   <!-- {!ListValues1.size}
+    {!filevalues.size}-->
+   <apex:variable value="1" var="rowNum"/>
+   <apex:repeat value="{!filevalues}" var="fv" rendered="{!IF(VALUE(rowNum) < filevalues.size && VALUE(rowNum) != filevalues.size,true,false)}">
+       <apex:outputPanel rendered="{!IF(VALUE(rowNum) < filevalues.size && VALUE(rowNum) != filevalues.size,true,false)}">
+         <tr>         
+           <apex:variable var="rowNum1" value="0"/>
+           <apex:repeat value="{!ListValues}" var="lv1" >
+               <td>
+                <apex:outputPanel rendered="{!IF(VALUE(rowNum1) < ListValues.size && VALUE(rowNum1) != ListValues.size,true,false)}">               
+                  <apex:outputText value="{!acctIdToOppsMap[rowNum][VALUE(rowNum1)].filevalue}" rendered="{!If(ListValues.size-2!=VALUE(rowNum1),true,false)}"></apex:outputText>
+                  <apex:outputText value=":{!acctIdToOppsMap[rowNum][VALUE(rowNum1)].filevalue}"  rendered="{!If(ListValues.size-2==VALUE(rowNum1),true,false)}"></apex:outputText>
+                </apex:outputPanel>
+              </td>
+               <apex:variable var="rowNum1" value="{!VALUE(rowNum1) + 1}"/>
+             </apex:repeat> 
+           
+           
+        </tr>
+        <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}"/>
+        </apex:outputPanel>
+   </apex:repeat>
+       
+    </tbody>
+    </table>
+ 
+</apex:pageBlock>
+
+</apex:page>

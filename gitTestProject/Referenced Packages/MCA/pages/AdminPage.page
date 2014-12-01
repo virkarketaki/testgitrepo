@@ -1,0 +1,49 @@
+<apex:page controller="McaApp.AdminPageController">
+<apex:form >
+	<apex:pageBlock title="Administration Page">
+		<table width="100%">
+			<col width="25%" />
+		    <col width="25%" />
+		    <col width="25%" />
+		    <col width="25%" />
+			<tr>
+				<th style="padding-left:40px;">  <apex:image url="{!URLFOR($Resource.AdminPageImg,
+																  'Report.gif')}" width="25" height="20"/> Reports
+				</th>
+				<th style="padding-left:40px;"> <apex:image url="{!URLFOR($Resource.AdminPageImg,
+ 													'Pipeline.jpg')}" width="25" height="20"/> Pipeline  </th> 
+				<th style="padding-left:40px;"> <apex:image url="{!URLFOR($Resource.AdminPageImg,
+ 												'Accounting.png')}" width="25" height="20"/>Accounting</th> 
+				<th style="padding-left:40px;"> <apex:image url="{!URLFOR($Resource.AdminPageImg,
+ 												'setup.png')}" width="25" height="20" />Setup</th>
+			</tr>
+			<tr>
+				<td>
+					<apex:dataList value="{!lstReportNames}" var="name" > 
+							<apex:outputLink value="{!mapReportSetting[name].URL__c}" target="_blank">{!mapReportSetting[name].Name}</apex:outputLink>
+ 					</apex:dataList>
+				</td>
+				
+				<td>
+					<apex:dataList value="{!lstPipelineNames}" var="name" > 
+							<apex:outputLink value="{!mapPipelineSetting[name].URL__c}" target="_blank">{!mapPipelineSetting[name].Name}</apex:outputLink>
+ 					</apex:dataList>
+				</td>
+				
+				<td>
+					<apex:dataList value="{!lstAccountingNames}" var="name" > 
+							<apex:outputLink value="{!mapAccountingSetting[name].URL__c}" target="_blank">{!mapAccountingSetting[name].Name}</apex:outputLink>
+ 					</apex:dataList>
+				</td>
+				
+				<td>
+					<apex:dataList value="{!lstSetupNames}" var="name" > 
+							<apex:outputLink value="{!mapSetupSetting[name].URL__c}" target="_blank">{!mapSetupSetting[name].Name}</apex:outputLink>
+ 					</apex:dataList>
+				</td>
+			</tr>
+		</table>		
+	</apex:pageBlock>
+</apex:form>
+
+</apex:page>

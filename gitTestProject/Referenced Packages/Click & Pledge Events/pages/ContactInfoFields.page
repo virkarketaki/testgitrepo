@@ -1,0 +1,457 @@
+<apex:page standardController="CnP_PaaS_EVT__Contact_information_fields__c" extensions="CnP_PaaS_EVT.ContactInfoFieldClass" id="TestingPageName">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+
+<script>
+function LoadFunction(){
+
+window.location.reload();
+}
+
+function CheckSaveData()
+{
+      
+      var rowvalue=$(".rowvalues").val();
+      var t=0;
+      var ename=$(".LookupEvent").val();
+      if(ename==""){
+      t=t+1;
+      alert("Please select an event.");
+      return false;
+      }
+      
+      for(var i=0;i<rowvalue;i++)
+      {
+            var label = $(".LabelName"+i).val();
+            var req = $(".required"+i).is(':checked');
+            var visible = $(".visable"+i).is(':checked');
+            var def = $(".default"+i).val();
+            var mapped = $(".mapped"+i).val();  
+           
+            var reg_text=/^([a-zA-Z0-9\'\,\.\-\ ])+$/;
+            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            reg_dob = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+            var reg_num=/^([0-9\.\-\(\)\ ])+$/;
+            var reg_zip=/^([A-Za-z0-9\.\-\ ])+$/;
+           // alert(mapped);
+            if(mapped=="First Name" || mapped=="Last Name" || mapped=="Mailing Street" || mapped=="Other City" || mapped=="Lead Source" || mapped=="Mailing State/Province" || mapped=="Assistant's Name" || mapped=="Contact Description" || mapped=="Department" || mapped=="Mailing City" || mapped=="Other Country" || mapped=="Mailing Country" || mapped=="Other Province" || mapped=="Other State/Province" || mapped=="Other Street" || mapped=="Title" )
+            {
+               
+                if(!reg_text.test(def) && def!="")
+                {
+                      t=t+1;
+                      alert("Please Enter The Valid Data");
+                      $(".default"+i).focus();
+                      return false;
+                }
+            }
+            if(mapped=="Email")
+            {
+                 if(!reg.test(def) && def!="")
+                 {
+                     t=t+1;
+                     alert("Please Enter a valid Email");
+                     $(".default"+i).focus();
+                     return false;
+                 }
+            }
+            if(mapped=="Birthdate")
+            {               
+                if(!reg_dob.test(def) && def!="")
+                {
+                    t=t+1;
+                    alert("Please Enter Valid Birth Date");
+                    $(".default"+i).focus();
+                    return false;
+                }
+            }
+            if(mapped=="Mobile Phone" || mapped=="Asst. Phone" || mapped=="Business Phone" || mapped=="Home Phone")
+            {
+                if(!reg_num.test(def) && def!="")
+                {
+                    t=t+1;
+                    alert("Please Enter a valid mobile number");
+                    $(".default"+i).focus();
+                    return false;
+                }  
+            }
+            if(mapped=="Business Fax")
+            {
+                 if(!reg_num.test(def) && def!="")
+                {
+                    t=t+1;
+                    alert("Please Enter a valid fax number");
+                    $(".default"+i).focus();
+                    return false;
+                }    
+            }
+            if(mapped=="Mailing Zip/Postal Code" || mapped=="Other Zip/Postal Code" )
+            {
+                if(!reg_zip.test(def) && def!="")
+                {
+                    t=t+1;
+                    alert("Please Enter a valid zip/postal code");
+                    $(".default"+i).focus();
+                    return false;
+                }        
+            }
+            reg_text=/^([a-zA-Z0-9\'\,\.\-\ ])+$/;
+            if(label=='' || !label.indexOf(' ',0))
+            {
+                 t=t+1;
+                alert("Please Enter The Field Label");
+                $(".LabelName"+i).focus();
+                return false;
+            }else if(!reg_text.test(label)){
+                 t=t+1;
+                 alert("Please Enter a valid data");
+                 $(".LabelName"+i).focus();
+                 return false;
+            }
+            if(req==true && visible==false && def=="")
+            {
+                   t=t+1;
+                  alert('Please Enter "Default Value"');
+                  $(".default"+i).focus();
+                  return false;
+            }
+             var order = $(".orderno"+i).val();
+             for(var j=i+1;j<rowvalue;j++)
+            {
+                var mapped_dup = $(".mapped"+j).val();
+                var label_dup = $(".LabelName"+j).val();
+                var order_dup = $(".orderno"+j).val();
+                
+                if(mapped == mapped_dup)
+                {
+                     alert("Error:  Duplicate field mapping! Field Labels: " + label  + ',' + label_dup);
+                     $(".mapped"+j).focus();
+                     return false;
+                } 
+                if(parseInt(order)==parseInt(order_dup))
+                {
+                     alert("Error:  Duplicate field order! Field Labels: " + label  + ',' + label_dup);
+                     $(".orderno"+j).focus();
+                     return false;
+                }
+            }         
+             
+      } 
+      if(t==0)
+      {
+           return true;
+      }else{
+           return false;
+      }     
+}
+
+function CheckVisible(value,no)
+{
+  //alert(value);
+      if(value)
+      {
+          //alert(no);
+          $(".visable"+no).attr('checked',true);
+      }
+}
+function CheckRequired(value,no)
+{
+     if(!value)
+     {
+       // $(".required"+no).attr('checked',false);
+       //$(".default"+no).attr('style','display:block');
+       $(".default"+no).show();
+         var def=$(".default"+no).val();
+          if(def=="")
+          {
+             alert('Please Enter "Default Value"');
+             $(".default"+no).focus();
+             return false;
+          }
+          
+     }
+     if(value)
+     {
+         //alert("testing");
+        // $(".default"+no).attr('style','display:none');
+        $(".default"+no).hide();
+     }
+}
+function checkdefault(no)
+{
+     var req=$(".required"+no).attr('checked');
+     var visible =$(".visable"+no).attr('checked');
+     var def=$(".default"+no).val();
+     if(req==true && visible==false && def=="")
+     {
+          alert('Please Enter "Default Value"');
+          $(".default"+no).focus();
+          return false;
+     }
+     
+}
+function trimvalue(value,fieldclass)
+{
+     var replace=value.trim();
+     $("."+fieldclass).attr('value',replace);
+}
+
+function ValidateEvent(){
+//alert("naresh");
+var Eventname= document.getElementById('{!$Component.CreateCustomQuestions.block.EventNameInfo.EventNameItem.Eventinfo_Name}').value;
+
+var RegistrantId= document.getElementById('{!$Component.CreateCustomQuestions.block.EventNameInfo.RegistrantItems.RegistrantFieldId}').checked;
+var AttendeeId= document.getElementById('{!$Component.CreateCustomQuestions.block.EventNameInfo.AttendeeItems.AttendeeFieldId}').checked;
+//alert();
+if((RegistrantId==true && Eventname=="") || (AttendeeId==true && Eventname=="")){
+alert('Please select the "event"');
+return false;
+}
+
+}
+
+function newfieldsJS(){
+//alert("naresh1");
+Lookupname();
+}
+</script>
+<style>
+.labelCol  {
+
+   height: 0;
+
+    margin: 0;
+    padding: 0;
+
+
+
+}
+.labelCol  label{
+
+   padding:0px;
+   margin:0px;
+
+
+}
+</style>
+         <apex:form id="CreateCustomQuestions" >
+                 <apex:pageblock id="block">
+                 <apex:actionfunction name="Lookupname" action="{!newfields}" rerender="CreateCustomQuestions"/>
+                         <apex:pageBlockSection id="EventNameInfo" title="Event Details" columns="1" collapsible="false">
+                               <apex:pageMessage severity="info" strength="1" summary="Mapping to rich textarea,multi picklist,geo location fields is disabled. For security reasons aliases will be created with new information and NOT updated in the contact records." />  
+                                 <apex:pageBlockSectionItem rendered="{!IF(EventName!=null,true,false)}">
+                                         <apex:outputLabel value="Event Name"/>
+                                         <apex:outputPanel >
+                                         <a href="{!EventIdLink}" target="_self"><apex:outputText value="{!EventName}" /></a></apex:outputPanel>
+                                 </apex:pageBlockSectionItem>
+                                 
+                                 <apex:pageBlockSectionItem rendered="{!IF(RegistrationLevelName!=null,true,false)}">
+                                         <apex:outputLabel value="Level Name"/>
+                                       <apex:outputPanel > 
+                                       <a href="../{!LevelId}" target="_self"><apex:outputText value="{!RegistrationLevelName}" /></a></apex:outputPanel>
+                                 </apex:pageBlockSectionItem> 
+                                 
+                                 <apex:pageBlockSectionItem rendered="{!IF(EventName==null,true,false)}">
+                                 <apex:outputLabel value="Event Name"/>
+                                 <apex:inputField value="{!CreateContactInfoField.CnP_PaaS_EVT__Event_name__c}" styleclass="LookupEvent"   onchange="newfieldsJS();" required="true"/>
+                                 </apex:pageBlockSectionItem>
+                                 <apex:pageBlockSectionItem rendered="{!IF((EventName==null && RegistrationLevelName==null),true,false)}">
+                                 <apex:outputLabel value="Registration Level Name"/>
+                                 <apex:inputField value="{!CreateContactInfoField.CnP_PaaS_EVT__Registration_level__c}" styleclass="LookupLevel" onchange="newfieldsJS();"/>
+                                 </apex:pageBlockSectionItem>
+                                    
+                                 <apex:pageBlockSectionItem rendered="{!IF(EventName!=null,true,false)}">
+                                 <apex:outputLabel value="Starts On"/>
+                                 <apex:outputField value="{!EventDetails.CnP_PaaS_EVT__Start_date_and_time__c}"/>
+                                 </apex:pageBlockSectionItem>
+                                 <apex:pageBlockSectionItem rendered="{!IF(EventName!=null,true,false)}">
+                                 <apex:outputLabel value="Ends On"/>
+                                 <apex:outputField value="{!EventDetails.CnP_PaaS_EVT__End_date_and_time__c}"/>
+                                 </apex:pageBlockSectionItem>
+                                 <apex:pageBlockSectionItem rendered="{!IF(EventName!=null,true,false)}">
+                                 <apex:outputLabel value="Publish Date"/>
+                                 <apex:outputField value="{!EventDetails.CnP_PaaS_EVT__Publish_date__c}"/>
+                                 </apex:pageBlockSectionItem>                                
+                                                                                                                               
+                                 <apex:pageBlockSectionItem dataStyle="visibility:hidden" id="RegistrantItems" rendered="{!IF((EventName!=null && RegistrationLevelName==null),true,false)}"> 
+                                         <apex:inputCheckbox style="visibility:hidden" value="{!AddRegistrantInfoFields}" disabled="true" id="RegistrantFieldId" onclick="return ValidateEvent();"><apex:actionSupport event="onchange" reRender="RegistrantInfoFieldsId" status="statusId"/></apex:inputCheckbox>
+                                         <apex:outputLabel style="font-weight:bold" value="Add registrant information fields"/>
+                                 </apex:pageBlockSectionItem>
+ 
+                                 <apex:pageBlockSectionItem dataStyle="visibility:hidden" id="AttendeeItems"  rendered="{!IF((RegistrationLevelName!=null && EventName!=null),true,false)}"> 
+                                         <apex:inputCheckbox style="visibility:hidden" value="{!AddAttendeeInfoFields}" id="AttendeeFieldId" disabled="true" onclick="return ValidateEvent();"><apex:actionSupport event="onchange" reRender="AttendeeInfoFieldsId" status="statusId1"/></apex:inputCheckbox>
+                                         <apex:outputLabel style="font-weight:bold" value="Add attendee information fields"/>
+                                 </apex:pageBlockSectionItem>
+ 
+                         </apex:pageBlockSection>
+                         
+                         
+                         <apex:outputPanel id="RegistrantInfoFieldsId">
+                         <apex:actionstatus id="statusId" startText="Please wait....">
+                         <apex:facet name="stop">
+                         <apex:outputPanel rendered="{!AddRegistrantInfoFields==true}">
+ 
+                         <apex:pageBlockSection id="RegistrantFieldInfo" title=" Registrant Information Fields" columns="1" collapsible="false">         
+                                 <apex:pageblocksectionItem id="ShowBlockItem">                            
+                                         <apex:outputPanel id="RefreshBlock">                                                                                                   
+                                             <apex:variable value="0" var="rowNum"/>
+                                             
+                                                    <apex:dataTable columns="7" value="{!FieldValueslist}" var="item" cellspacing="-10px">
+                                                            <!--<apex:column headerValue="Item" style="height:25px">
+                                                            <apex:outputtext value="{!VALUE(rowNum) + 1}." style="width:30px"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>-->
+                                                            <apex:column headerValue="Order">
+                                                            <apex:inputText value="{!item.Sno}" styleClass="orderno{!rowNum}" style="width:20px"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+                                                            <apex:column headerValue="">
+                                                            <apex:inputHidden value="{!item.RecordId}"/></apex:column>
+                                                            <apex:column headerValue="Field Label">
+                                                            <apex:inputText value="{!item.Label }" styleClass="LabelName{!rowNum}" onblur="trimvalue(this.value,'LabelName{!rowNum}');"  style="width:200px"/>&nbsp;&nbsp;&nbsp;</apex:column>
+                                                            <apex:column headerValue="Mapped to">
+                                                            <apex:selectlist value="{!item.Field_mapping}" styleClass="mapped{!rowNum}" disabled="{!IF((item.Field_mapping=='First Name' || item.Field_mapping=='Last Name' || item.Field_mapping=='Email'  || item.Field_mapping=='Mailing Street' || item.Field_mapping=='Mailing City' || item.Field_mapping=='Mailing State/Province' || item.Field_mapping=='Mailing Zip/Postal Code' || item.Field_mapping=='Mailing Country'),true,false)}"  size="1" style="width:150px">             
+                                                            <apex:selectOptions value="{!showFields}" />
+                                                            </apex:selectlist>&nbsp;&nbsp;&nbsp;
+                                                            </apex:column>
+                                                            <apex:column headerValue="Required">
+                                                            <apex:inputCheckbox value="{!item.Required}" disabled="{!IF((item.Field_mapping=='First Name' || item.Field_mapping=='Last Name' || item.Field_mapping=='Email' || item.Field_mapping=='Mailing Street' || item.Field_mapping=='Mailing City' || item.Field_mapping=='Mailing State/Province' || item.Field_mapping=='Mailing Zip/Postal Code' || item.Field_mapping=='Mailing Country'),true,false)}" onchange="return CheckVisible(this.checked,{!rowNum})" styleClass="required{!rowNum}" >
+                                                            </apex:inputCheckbox>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+                                                            
+                                                            <apex:column headerValue="Visible">
+                                                            <apex:inputCheckbox value="{!item.Visible}" disabled="{!IF((item.Field_mapping=='First Name' || item.Field_mapping=='Last Name' || item.Field_mapping=='Email' || item.Field_mapping=='Mailing Street' || item.Field_mapping=='Mailing City' || item.Field_mapping=='Mailing State/Province' || item.Field_mapping=='Mailing Zip/Postal Code' || item.Field_mapping=='Mailing Country'),true,false)}"  styleClass="visable{!rowNum}" onchange="return CheckRequired(this.checked,{!rowNum})">
+                                                            </apex:inputCheckbox>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+                                                            
+                                                            <apex:column headerValue="Default Value">
+                                                            <apex:inputText value="{!item.DefaultValue}" styleClass="default{!rowNum}" style="display:{!if(item.visible==true,"none","block")}" />&nbsp;&nbsp;&nbsp;</apex:column>
+                                                              
+                                                            <apex:column headerValue="Delete">
+                                                            <apex:commandButton value="Delete" action="{!delCont}" styleClass="Delete" reRender="RefreshBlock" status="statusIdForDelete" style="display:{!IF((item.Field_mapping=='First Name' || item.Field_mapping=='Last Name' || item.Field_mapping=='Email' || item.Field_mapping=='Mailing Street' || item.Field_mapping=='Mailing City' || item.Field_mapping=='Mailing State/Province' || item.Field_mapping=='Mailing Zip/Postal Code' || item.Field_mapping=='Mailing Country'),'none','')};height:22px" >
+                                                            <apex:param name="contIdParam" value="{!rowNum}" assignTo="{!DeleteId}"/>
+                                                            <apex:param name="contIdParam1" value="{!item.RecordId}" assignTo="{!DeleteFromObjectId}"/>
+                                                            </apex:commandButton><br />
+                                                            <apex:actionstatus id="statusIdForDelete" startText="Please wait..">                                
+                                                            <apex:facet name="stop">
+                                                    
+                                                            </apex:facet>
+                                                            </apex:actionstatus> 
+                                                            &nbsp;&nbsp;&nbsp;</apex:column>  
+                                                     <apex:column ><apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}"/></apex:column> 
+                                                    </apex:dataTable> 
+                                                           
+
+                                                    <input type="hidden" value="{!rowNum}" class="rowvalues" name="rowvalues"/>                                                                                      
+                                                    <apex:commandButton action="{!addItem}"  value="Add Next Field" reRender="RefreshBlock" status="NextRowStatus"/>
+                                                    <apex:actionstatus id="NextRowStatus" startText="Please wait....">                                
+                                                    <apex:facet name="stop">
+                                                    
+                                                    </apex:facet>
+                                                    </apex:actionstatus>  
+                                         </apex:outputPanel> 
+                                 </apex:pageblocksectionItem>
+                                 <apex:outputPanel > 
+                                        <apex:variable value="Registrant fields" var="RegInfo"/>
+                                        <apex:actionstatus id="SavingStatus">
+                                
+                                <apex:facet name="stop">
+                                        <apex:commandButton action="{!Fields_Save}" reRender="RefreshBlock" status="SavingStatus" value="Save" onclick="if(!CheckSaveData()) return false"  oncomplete="Loadfunction();">
+                                        <apex:param name="RecordParamR" value="{!RegInfo}" assignTo="{!RecordType}"/>
+                                                                                                                                            
+                                        </apex:commandButton>                                                                                                                                                                
+                               
+                                </apex:facet>
+                                <apex:facet name="start">
+                 <apex:outputPanel >
+
+                 <apex:image value="/img/loading32.gif" style="height: 15px;"/>
+
+                 <apex:commandbutton value="Processing..." status="SavingStatus" disabled="true"/>
+                 
+               </apex:outputPanel>
+
+           </apex:facet>
+                                </apex:actionstatus> 
+                                </apex:outputPanel>                                                              
+                         </apex:pageBlockSection>
+                         </apex:outputPanel>
+                         </apex:facet>
+                         </apex:actionstatus>
+                         </apex:outputPanel>
+                         
+                         <apex:outputPanel id="AttendeeInfoFieldsId">
+                         <apex:actionstatus id="statusId1" startText="Please wait....">
+                         <apex:facet name="stop">
+                         <apex:outputPanel rendered="{!AddAttendeeInfoFields==true}">
+                         <apex:pageBlockSection id="AttendeeFieldInfo" title=" Attendee Information Fields" columns="1" collapsible="false">         
+                                 <apex:pageblocksectionItem id="ShowBlockItem">                            
+                                         <apex:outputPanel id="RefreshBlockA">              
+                                             
+                                             <apex:variable value="0" var="rowNum"/>
+                                                    <apex:dataTable columns="7" value="{!FieldValueslist}" var="item" >
+                                                            <!--<apex:column headerValue="Item" style="height:25px">
+                                                            <apex:outputtext value="{!VALUE(rowNum) + 1}." style="width:30px"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>-->
+                                                            <apex:column headerValue="Order" >
+                                                            <apex:inputText value="{!item.Sno}"  style="width:20px"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+                                                            <apex:column headerValue="">
+                                                            <apex:inputHidden value="{!item.RecordId}"/></apex:column>
+                                                            <apex:column headerValue="Field Label">
+                                                            <apex:inputText value="{!item.Label }" styleClass="LabelName{!rowNum}" style="width:200px"/>&nbsp;&nbsp;&nbsp;</apex:column>
+                                                            <apex:column headerValue="Mapped to">
+                                                            <apex:selectlist value="{!item.Field_mapping}" disabled="{!IF((item.Field_mapping=='First Name' || item.Field_mapping=='Last Name' || item.Field_mapping=='Email'),true,false)}" styleClass="mapped{!rowNum}"  size="1" style="width:150px">             
+                                                            <apex:selectOptions value="{!showFields}"/>
+                                                            </apex:selectlist>&nbsp;&nbsp;&nbsp;
+                                                            </apex:column>
+                                                            <apex:column headerValue="Required">
+                                                            <apex:inputCheckbox value="{!item.Required}" disabled="{!IF((item.Field_mapping=='First Name' || item.Field_mapping=='Last Name' || item.Field_mapping=='Email'),true,false)}" onchange="return CheckVisible(this.checked,{!rowNum})" styleClass="required{!rowNum}">
+                                                            </apex:inputCheckbox>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+                                                            
+                                                            <apex:column headerValue="Visible">
+                                                            <apex:inputCheckbox value="{!item.Visible}" disabled="{!IF((item.Field_mapping=='First Name' || item.Field_mapping=='Last Name' || item.Field_mapping=='Email'),true,false)}"  styleClass="visable{!rowNum}" onchange="return CheckRequired(this.checked,{!rowNum})">
+                                                            </apex:inputCheckbox>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+                                                            
+                                                            <apex:column headerValue="Default value">
+                                                            <apex:inputText value="{!item.DefaultValue}" styleClass="default{!rowNum}" style="display:{!if(item.visible==true,"none","block")}" />&nbsp;&nbsp;&nbsp;</apex:column>
+                                                              
+                                                            <apex:column headerValue="Delete">
+                                                            <apex:commandButton value="Delete" action="{!delCont}" reRender="RefreshBlockA" status="statusIdForDeleteA" style="display:{!IF((item.Field_mapping=='First Name' || item.Field_mapping=='Last Name' || item.Field_mapping=='Email'),'none','')};height:22px">
+                                                            <apex:param name="contIdParam" value="{!rowNum}" assignTo="{!DeleteId}"/>
+                                                            <apex:param name="contIdParam1" value="{!item.RecordId}" assignTo="{!DeleteFromObjectId}"/>
+                                                            </apex:commandButton><br />
+                                                            <apex:actionstatus id="statusIdForDeleteA" startText="Please wait..">                                
+                                                            <apex:facet name="stop">
+                                                    
+                                                            </apex:facet>
+                                                            </apex:actionstatus>
+                                                            &nbsp;&nbsp;&nbsp;</apex:column>  
+                                                            <apex:column ><apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}"/></apex:column>     
+                                                    </apex:dataTable>
+                                                    <input type="hidden" value="{!rowNum}" class="rowvalues" name="rowvalues"/>   
+                                                    <apex:commandButton action="{!addItem}" value="Add Next Field" reRender="RefreshBlockA" status="NextRowStatusA"/>
+                                                    <apex:actionstatus id="NextRowStatusA" startText="Please wait....">                                
+                                                    <apex:facet name="stop">
+                                                    
+                                                    </apex:facet>
+                                                    </apex:actionstatus>  
+                                             
+                                         </apex:outputPanel> 
+                                 </apex:pageblocksectionItem>
+                                 <apex:outputPanel > 
+                                        <apex:variable value="Attendee fields" var="RegInfo"/>
+                                        <apex:actionstatus id="SavingStatusA" startText="processing...">
+                                
+                                <apex:facet name="stop">
+                                        <apex:commandButton action="{!Fields_Save}" value="Save"  onclick="if(!CheckSaveData()) return false;" styleClass="Save" reRender="RefreshBlockA" status="SavingStatusA" oncomplete="LoadFunction();">
+                                        <apex:param name="RecordParamA" value="{!RecordType}" assignTo="{!RecordType}"/>
+                                        </apex:commandButton>                                                                       
+                                </apex:facet>
+                                <apex:facet name="start">
+                 <apex:outputPanel >
+                 <apex:image value="/img/loading32.gif" style="height: 15px;"/>
+                 <apex:commandbutton value="Processing..." status="SavingStatusA" disabled="true"/>                 
+               </apex:outputPanel>
+           </apex:facet>
+                                </apex:actionstatus> 
+                                </apex:outputPanel> 
+                         </apex:pageBlockSection>
+                         </apex:outputPanel>
+                         </apex:facet>
+                         </apex:actionstatus>
+                         </apex:outputPanel>
+                 </apex:pageblock>
+         </apex:form> 
+</apex:page>

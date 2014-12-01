@@ -1,0 +1,90 @@
+<apex:page controller="CnP_PaaS.product_download"  contentType="application/x-excel#CustomReport.xls" standardStylesheets="false"  language="english" readOnly="true">
+<h1>{!reportname}</h1>
+Download Time:{!Dvalue}
+ <apex:pageBlock >
+ <apex:pageBlockTable value="{!rec_trans}" var="opp" id="testresult" styleClass="displaylevel" rendered="{!filterresult}" >
+ 
+  <apex:column headervalue="Opportunity Name" value=":{!opp.Opportunity.Name}"/>
+  <apex:column value="{!opp.PricebookEntry.Name}"/>
+  <apex:column value="{!opp.PricebookEntry.ProductCode}"/>
+   <apex:column value="{!opp.Quantity}"/> 
+  <apex:column headerValue="Total Price">
+    <apex:outputText value="{0, number,$###,###,##0.00}">
+    <apex:param value="{!opp.TotalPrice}" />
+   </apex:outputText></apex:column>
+   
+  <apex:column headerValue="Unit Price">
+    <apex:outputText value="{0, number,$###,###,##0.00}">
+    <apex:param value="{!opp.UnitPrice}" />
+   </apex:outputText></apex:column>
+   
+   
+ 
+ 
+  <apex:column headerValue="Amount">
+    <apex:outputText value="{0, number,$###,###,##0.00}">
+    <apex:param value="{!opp.Opportunity.Amount}" />
+   </apex:outputText></apex:column> 
+ 
+  <apex:column headervalue="Order Number" value=":{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.Name}"/>
+  <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__CnPAccountID__c}"/>
+  <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__CnP_Account_ID__c}"/>
+  <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__Contact__r.Name}"/>
+   <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__Contact__r.Email}"/>
+    <apex:column headerValue="Phone"  value=":{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__Contact__r.Phone}"/>
+  <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__Name_On_card__c}"/>
+  <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__CreditCard4x4__c}"/>
+  <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__Credit_Card_Name__c}"/>
+  <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__Check_Number__c}"/>
+  <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__Invoice_Check_Number__c}"/>
+  <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__Custom_Payment_Type_Name__c}"/>
+  <apex:column value="{!opp.Opportunity.CnP_PaaS__CnP_OrderNumber__r.CnP_PaaS__TransactionDate__c}"/>
+   
+  </apex:pageBlockTable> 
+  <apex:pageBlockTable value="{!rec_trans1}" var="que" id="results1"  styleClass="displaylevel" rendered="{!groupresult}" >
+       
+       <apex:repeat value="{!fieldsforresult}" var="cc">
+      <apex:column headerValue="{!cc}">
+         <apex:outputtext value="{0,number,00000}" rendered="{!IF(cc=='ClickAndPledgeAccountID',true,false)}">
+                     <apex:param value="{!que[cc]}"/>
+              </apex:outputtext>
+                <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='ExpectedRevenue' && numericval1==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value="{0, number,0}" rendered="{!If(cc=='ExpectedRevenue' && numericval1==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='Amount' && numericval==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value="{0, number,0}" rendered="{!If(cc=='Amount' && numericval==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='TotalPrice' && numericval2==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,0}" rendered="{!If(cc=='TotalPrice' && numericval2==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value="{0, number,$###,###,##0.00}" rendered="{!If(cc=='UnitPrice' && numericval3==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+               <apex:outputText value="{0, number,0}" rendered="{!If(cc=='UnitPrice' && numericval3==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value="{0, number,0}" rendered="{!If(cc=='Quantity',true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputText value=":{!que[cc]}" rendered="{!IF(cc=='OrderNumber',true,false)}"></apex:outputText>
+              <apex:outputText value=":{!que[cc]}" rendered="{!IF(cc=='OpportunityName',true,false)}"></apex:outputText> 
+              <apex:outputText value=":{!que[cc]}" rendered="{!IF(cc=='ContactPhone',true,false)}"></apex:outputText>
+              <apex:outputtext value="{!que[cc]}" rendered="{!IF(cc!='ClickAndPledgeAccountID' && cc!='ExpectedRevenue' && cc!='TotalPrice' && cc!='UnitPrice' && cc!='Quantity' && cc!='OrderNumber' && cc!='OpportunityName' && cc!='ContactPhone' && cc!='Amount' ,true,false)}"/>                    
+             
+        </apex:column>
+      </apex:repeat>
+     
+     </apex:pageBlockTable>
+ 
+ </apex:pageBlock> 
+  
+</apex:page>

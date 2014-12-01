@@ -1,0 +1,266 @@
+<apex:page title="C&P Reports" tabStyle="C_P_Reports__tab" extensions="CnP_PaaS.Template_controller" controller="CnP_PaaS.CustomReport_controller">
+ <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+<apex:sectionHeader title="C&P Reports" subtitle="Reports"/>
+<style>
+.helpLink {
+       position:relative;       
+    }
+
+    .video{
+      display:none;
+      width:12%;
+      height:auto;
+      background:#EEE;
+      border:1px solid #CCC;
+      position:absolute;     
+      z-index:10;
+      margin-left:950Px;
+    }
+</style>
+
+ <script type="text/javascript">
+ jQuery=$.noConflict();
+ jQuery(function(){
+          jQuery(".video").mouseout(function(){             
+              jQuery(this).fadeOut(8000);             
+          })
+          })  
+          
+function reportdelete()
+{
+  if(confirm("Are you sure you want to permanently delete this record?")==true)
+  {
+    return true;
+  }
+}
+</script> 
+
+
+<apex:tabPanel >
+                                     
+<apex:tab label="Custom Reports" name="Custom Reports">
+      <apex:outputLink styleClass="helpLink" rendered="{!subTab['Reports']['Custom Reports'].display=='true'}"  >  
+                                
+                                 <Apex:outputLabel value="C&P Help for this Page" style="font-size:100%;margin-left:920Px;margin-right:5Px;" onmouseover="document.getElementById('{!$Component.Foo}').style.display='block'; "/> 
+                                 <apex:image value="/s.gif" styleClass="helpIcon"  onmouseover="document.getElementById('{!$Component.Foo}').style.display='block'; " />                         
+                          </apex:outputLink>
+                          <apex:outputPanel id="Foo" styleClass="video"  >   
+                           <ul style="padding-left:5px;" >                       
+                              {!subTab['Reports']['Custom Reports'].description} <br/> <br/>
+                              <apex:outputpanel rendered="{!subTab['Reports']['Custom Reports'].ActiveLink=='true'}">
+                                 <li><a href="{!subTab['Reports']['Custom Reports'].link}" target="_blank" >{!subTab['Reports']['Custom Reports'].strlink}</a> <br/></li></apex:outputpanel>
+                             <apex:outputpanel rendered="{!subTab['Reports']['Custom Reports'].ActiveVideo=='true'}">
+                                 <li> <a href="{!subTab['Reports']['Custom Reports'].video}" onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subTab['Reports']['Custom Reports'].strVideo}</a></li></apex:outputpanel>
+                           </ul>
+                          </apex:outputPanel>    
+<apex:form >
+<div style="padding-left:450px;">
+<apex:outputLink value="/apex/Reportpage" style="text-decoration:none;display:block;border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom:10px;
+    padding: 4px 4px;float:left;background-color:#FFFFFF;" target="CnP_PaaS_Evt_Download" >New Report</apex:outputLink>
+ </div>
+
+    <apex:pageBlock >
+ <apex:pageBlockSection title="Custom Reports" columns="1">
+
+<apex:pageblockTable value="{!dreports}" var="drep" >
+<apex:column headerValue="Action"  >
+<apex:outputLink value="/apex/{!drep.CnP_PaaS__PageName__c}?id={!drep.id}" target="_blank" >
+ <apex:outputLabel value="Edit" style="cursor: pointer;" ></apex:outputLabel></apex:outputLink>
+|
+ 
+  <apex:commandLink value="Del" action="{!deleteReport}" onclick="if(!reportdelete()) return false;" >
+ <apex:param name="repid" value="{!drep.id}" />
+ 
+ </apex:commandLink>
+</apex:column>
+<apex:column headerValue="Report Name" >
+ <apex:outputLink value="/apex/{!drep.CnP_PaaS__PageName__c}?id={!drep.id}" target="_blank" >
+ <apex:outputLabel value="{!drep.Name}"></apex:outputLabel></apex:outputLink>
+</apex:column>
+</apex:pageblockTable>
+
+</apex:pageBlockSection> 
+</apex:pageBlock>
+</apex:form>
+
+</apex:tab>
+ 
+<apex:tab label="Reports" name="Reports">
+<apex:outputLink styleClass="helpLink" rendered="{!subTab['Reports']['Reports'].display=='true'}"  >  
+                                
+                                 <Apex:outputLabel value="C&P Help for this Page" style="font-size:100%;margin-left:920Px;margin-right:5Px;" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; "/> 
+                                 <apex:image value="/s.gif" styleClass="helpIcon"  onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; " />                         
+                          </apex:outputLink>
+                          <apex:outputPanel id="Foo1" styleClass="video"  >   
+                           <ul style="padding-left:5px;" >                       
+                              {!subTab['Reports']['Reports'].description} <br/> <br/>
+                              <Apex:outputPanel rendered="{!subTab['Reports']['Reports'].ActiveLink=='true'}">
+                             <li><a href="{!subTab['Reports']['Reports'].link}" target="_blank" >{!subTab['Reports']['Reports'].strlink}</a> <br/></li></apex:outputpanel>
+                             <Apex:outputPanel rendered="{!subTab['Reports']['Reports'].ActiveVideo=='true'}">
+                             <li> <a href="{!subTab['Reports']['Reports'].video}" onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subTab['Reports']['Reports'].strVideo}</a></li></apex:outputpanel>
+                           </ul>
+                          </apex:outputPanel>
+  <apex:pageblock id="block" >
+  
+ 
+  <apex:pageblockSection title="Contact Reports"  columns="1" collapsible="false" >
+   
+   <apex:pageblocksectionItem >
+         <a HREF="javascript:void(0)" onclick="window.open('/apex/CampaignTopContacts','welcome')">Top 10 Contacts per Transaction Campaign Amount</a>
+                                    
+    </apex:pageblocksectionItem>
+   <apex:pageblocksectionItem >
+         <a HREF="javascript:void(0)" onclick="window.open('/apex/checkoutPageTopContacts','welcome')">Top 10 Contacts per CheckoutPage Amount</a>
+                                    
+    </apex:pageblocksectionItem>
+    
+    <apex:pageblocksectionItem >
+         <a HREF="javascript:void(0)" onclick="window.open('/apex/TrackerTopContacts','welcome')">Top 10 Contacts per Tracker Amount</a>
+                                    
+    </apex:pageblocksectionItem> 
+    
+  </apex:pageblockSection>
+ 
+ 
+<!-- <apex:pageblockSection title="Custom Question" collapsible="false">
+   
+   <apex:pageblocksectionItem >
+         <a HREF="javascript:void(0)" onclick="window.open('/apex/customquestionReport','welcome')">Custom Question</a>
+                                    
+    </apex:pageblocksectionItem>
+  </apex:pageblockSection>-->
+ 
+ <apex:pageBlockSection title="Relative Analysis" columns="1" collapsible="false">
+ 
+              
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/RelativeYearlyGrowthAmount','welcome')">% annual growth of receipts</a>
+                                    
+                            </apex:pageblocksectionItem>
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/PercentMonthlyGrowth_ThisYear','welcome')">% monthly growth of volume year-to-date</a>
+                                    [ month-to-month relative analysis ]
+                            </apex:pageblocksectionItem>
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/PercentYearlyGrowthCount','welcome')">% annual growth of volume</a>
+                                   
+                            </apex:pageblocksectionItem>
+</apex:pageBlockSection>
+<apex:pageBlockSection title="Recurring Payments" columns="1" collapsible="false">
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/UpcomingMonthlyVolume','welcome')">This month receipts</a>
+                                  
+                            </apex:pageblocksectionItem>
+                          <!--  <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/UpcomingDailyVolume','welcome')">Upcoming daily receipts</a>
+                                   
+                            </apex:pageblocksectionItem>-->
+                            
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/All_Recurring_payments','welcome')">All Recurring Payments (active)</a>
+                                    
+                            </apex:pageblocksectionItem>
+                            
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/Completed_Recurring_payments','welcome')">Completed Recurring Payments</a>
+                                    
+                            </apex:pageblocksectionItem>
+                            
+                            
+                             <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('apex/Cardexpiringthiry','welcome')">Cards Expiring in Current Month</a>
+                                    
+                            </apex:pageblocksectionItem>
+                            
+                            
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('apex/Cardsexpiringpriortonextinstallment','welcome')">Cards expiring prior to next installment</a>
+                                    
+                            </apex:pageblocksectionItem>
+                            
+                            
+                            
+</apex:pageBlockSection>
+
+<apex:pageBlockSection title="Items Reports" columns="1" collapsible="false">
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/TopTenPaymentNames','welcome')">Top ten payment items</a>
+                                   [ Amount ] 
+                            </apex:pageblocksectionItem>
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/TopTenPaymentNamesCount','welcome')">Top ten payment items</a>
+                                     [ number ] 
+                            </apex:pageblocksectionItem>
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/TopTenContactsInContactNames','welcome')">Top ten contacts per items</a>
+                                   
+                            </apex:pageblocksectionItem>
+                            <apex:pageblocksectionItem >
+                                    <a HREF="javascript:void(0)" onclick="window.open('/apex/ItemCampaignTopContacts','welcome')">Top ten contacts per items campaigns </a>
+                                   [ Amount ] 
+                            </apex:pageblocksectionItem>
+ </apex:pageBlockSection>
+
+<apex:pageBlockSection title="Miscellaneous Reports" columns="1" collapsible="false">
+                            <apex:pageblocksectionItem >
+                                 <a HREF="javascript:void(0)" onclick="window.open('/apex/TopEmailDomains','welcome')">Top email domains in amount</a>
+                                 [ how much total payments ]
+                            </apex:pageblocksectionItem>
+                            <apex:pageblocksectionItem >
+                                <a HREF="javascript:void(0)" onclick="window.open('/apex/TopEmailDomains_count','welcome')">Top email domains in number</a>
+                                [ how many payments ]
+                            </apex:pageblocksectionItem>
+                            <apex:pageblocksectionItem >
+                                <a HREF="javascript:void(0)" onclick="window.open('/apex/TopFirstNames','welcome')">Top first names in amount</a>
+                               
+                            </apex:pageblocksectionItem>
+                            <apex:pageblocksectionItem >
+                                <a HREF="javascript:void(0)" onclick="window.open('/apex/TopFirstNames_count','welcome')">Top first names in number</a>
+                               
+                            </apex:pageblocksectionItem>
+</apex:pageBlockSection>
+</apex:pageblock>
+</apex:tab>
+<apex:tab label="Templates" name="Templates">
+
+<apex:outputLink styleClass="helpLink" rendered="{!subTab['Reports']['Templates'].display=='true'}"  >  
+                                
+                                 <Apex:outputLabel value="C&P Help for this Page" style="font-size:100%;margin-left:920Px;margin-right:5Px;" onmouseover="document.getElementById('{!$Component.Foo2}').style.display='block'; "/> 
+                                 <apex:image value="/s.gif" styleClass="helpIcon"  onmouseover="document.getElementById('{!$Component.Foo2}').style.display='block'; " />                         
+                          </apex:outputLink>
+                          <apex:outputPanel id="Foo2" styleClass="video"  >   
+                           <ul style="padding-left:5px;" >                       
+                              {!subTab['Reports']['Templates'].description} <br/> <br/>
+                              <apex:outputpanel rendered="{!subTab['Reports']['Templates'].ActiveLink=='true'}">
+                                 <li><a href="{!subTab['Reports']['Templates'].link}" target="_blank" >{!subTab['Reports']['Templates'].strlink}</a> <br/></li></apex:outputpanel>
+                              <apex:outputpanel rendered="{!subTab['Reports']['Templates'].ActiveVideo=='true'}">
+                                 <li> <a href="{!subTab['Reports']['Templates'].video}" onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subTab['Reports']['Templates'].strVideo}</a></li></apex:outputpanel>
+                           </ul>
+                          </apex:outputPanel>
+<!--<apex:sectionHeader title="C&P Templates" subtitle="Templates"/>-->
+<apex:pageBlock >
+ <apex:pageBlockSection title="Templates" columns="1" collapsible="false">
+ <apex:pageblockTable value="{!templatelist}" var="temp">
+<apex:column headerValue="Template Name" >
+ <apex:outputLink value="/apex/{!temp.Reportpagename}?tid={!temp.templateid}" target="_blank" >
+ <apex:outputLabel value="{!temp.Reporttemplatename}"></apex:outputLabel></apex:outputLink>
+</apex:column>
+</apex:pageblockTable>
+</apex:pageBlockSection>
+</apex:pageBlock>
+</apex:tab>
+
+
+
+
+
+
+
+</apex:tabPanel>
+</apex:page>

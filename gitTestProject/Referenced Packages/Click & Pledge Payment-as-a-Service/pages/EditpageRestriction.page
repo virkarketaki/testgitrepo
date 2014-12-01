@@ -1,0 +1,19 @@
+<apex:page standardController="CnP_PaaS__CnP_Auto_Responder_Queue__c" extensions="CnP_PaaS.LogDetailsController">
+   <apex:sectionHeader title="Auto Responder Queue Edit" subtitle="Options"/>
+   <apex:form >
+      <apex:pageBlock >
+         <apex:outputLabel value="Messages in the queue may only be edited by changing the Responder or the Template used for the message. Please click below to edit the Responder."></apex:outputLabel>
+         <ul>
+         <li><apex:outputLabel value="Edit the Responder  [Click on Auto Responder sub-tab]."></apex:outputLabel></li>
+         
+         <li><a href="/{!templateid}" target="_blank"><apex:outputLabel value="Edit the Template."></apex:outputLabel></a></li>
+         </ul>        
+         <i><apex:outputLabel value="Please note: Changes to the Responder & the Template will affect all emails queued to use the responder and the template." style="color:red;"></apex:outputLabel></i>
+         
+          <br/>
+            <br/>
+              <br/>
+           <apex:commandLink value="Back" action="/{!backcontactid}" styleclass="btn" style="text-decoration:none"/>
+      </apex:pageBlock>
+    </apex:form>
+</apex:page>

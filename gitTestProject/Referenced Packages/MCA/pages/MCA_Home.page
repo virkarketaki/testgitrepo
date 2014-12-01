@@ -1,0 +1,203 @@
+<apex:page Controller="McaApp.MCAHomeController">
+    <apex:form >
+    
+        <apex:PageBlock >
+            <br />
+            <br />
+            <br />
+            
+            <table width='100%'>
+                <tr>
+                    <td width="5%" />
+                    <td width="25%"><apex:outputLink value="/{!$Label.mcaapp__DashboardIdeas_CampaignsUrl}" id="OpenCampaigns"
+                            title="Campaigns" target="_blank"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgCampaigns"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'campaigns.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+                    <td width="25%"><apex:outputLink value="/{!$Label.mcaapp__DashboardIdeas_Lead}" id="OpenLeads"
+                            title="Leads" target="_blank"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgLeads"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'leads.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+
+                    <td width="25%" style="padding-left:13px"><apex:outputLink value="{!$Label.mcaapp__DashboardIdeas_DealsDashboard}"
+                            id="OpenOpportunites" target="_blank" title="Deals"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgOpportuniies"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'opportunities.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+                    <td width="25%"><apex:outputLink value="{!$Label.mcaapp__Dashbaord_Renewal_Path_Url}" id="OpenRenewals"
+                            target="_blank" style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgRenewal" title="Renewals"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'renewals.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+                    
+                </tr>
+
+                <tr>
+                    <th width="5%" />
+                    <th><apex:outputLabel value="Campaigns" for="OpenCampaigns" />
+                    </th>
+                    <th style="padding-left: 15px"><apex:outputLabel value="Leads"
+                            for="OpenLeads" />
+                    </th>
+                    <th style="padding-left: 31px"><apex:outputLabel value="Deals"
+                            for="OpenOpportunites" />
+                    </th>
+                    <th style="padding-left: 8px"><apex:outputLabel value="Renewals" for="OpenRenewals" />
+                    </th>
+                    
+                </tr>
+                
+            </table>
+            <br />
+            <br />
+            <br />
+            
+            <table width='100%'>
+                <tr>
+                    <td width="5%" />
+                    <td width="25%"><apex:outputLink value="{!$Label.mcaapp__DashbaordIdeas_Commissions_Path_Url}"
+                            id="OpenCommissions" target="_blank" title="Commissions"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgCommissions"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'commissions.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+
+                    <td width="25%"><apex:outputLink value="{!$Label.mcaapp__DashboardIdeas_Syndication_Dashboard}"
+                            id="OpenSyndication" target="_blank" title="Syndication"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgSyndication"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'syndication.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+
+                    <td width="25%" style="padding-left:13px"><apex:outputLink value="/{!$ObjectType.McaApp__Program__c.keyPrefix}" id="OpenBanks"
+                            target="_blank" title="Bank Programs"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgBanks"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'banks.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+                    <td width="25%" ><apex:outputLink value="/{!$ObjectType.McaApp__Transaction__c.keyPrefix}"
+                            id="Opentransaction" target="_blank" title="Transactions"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgTransaction"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'transactions.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+
+                    
+                </tr>
+                <tr>
+                    <th width="5%" />
+                    <th><apex:outputLabel value="Commissions"
+                            for="OpenCommissions" />
+                    </th>
+                    <th><apex:outputLabel value="Syndication"
+                            for="OpenSyndication" />
+                    </th>
+                    <th><apex:outputLabel style="width:5%" value="Bank Programs"
+                            for="OpenBanks" /></th>
+                    <th><apex:outputLabel value="Transactions"
+                            for="Opentransaction" /></th>
+                    
+                </tr>
+            </table>
+            <br />
+            <br />
+            <br />
+            
+            <table width='100%'>
+                <tr>
+                <td width="5%" />
+                <td width="25%"><apex:outputLink value="{!$Label.mcaapp__DashbaordIdeas_Dashboard_Path_Url}"
+                            target="_blank" id="Opendashboard" title="Dashboards"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgdashboard"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'dashboard.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+                    
+                    <td width="25%"><apex:outputLink value="{!$Label.mcaapp__MCA_Home_Task_Activities_Management_Dashboard}" id="OpenActivities"
+                            title="Tasks" target="_blank"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgActivities"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'activities.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+
+                    <td width="25%" style="padding-left:13px"><apex:outputLink value="{!$Label.mcaapp__DashboardIdeas_MyInbox}" id="OpenMyInbox"
+                            target="_blank" title="My Inbox"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgMyInbox"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'inbox.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+                    <td width="25%"><apex:outputLink value="/{!$Label.mcaapp__DashboardIdeas_Admin}" id="OpenAdmin"
+                            title="Admin" target="_blank"
+                            style="float:left;width:100px;height:-1px">
+                            <apex:image id="imgadmin"
+                                url="{!URLFOR($Resource.McaApp__Dashboard_page_Images,'admin.png')}"
+                                style="float:left;height:68px" />
+                        </apex:outputLink>
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <th width="5%" />
+                    <th><apex:outputLabel value="Dashboards" for="Opendashboard" />
+                    </th>
+                    <th style="padding-left: 10px"><apex:outputLabel value="Tasks" for="OpenActivities" /></th>
+                    <th style="padding-left: 21px"><apex:outputLabel value="My Inbox" for="OpenMyInbox" />
+                    </th>
+                    <th style="padding-left: 17px"><apex:outputLabel value="Admin"
+                            for="OpenAdmin" />
+                    </th>
+                    
+                </tr>
+            </table>
+            <br />
+            <br />
+        </apex:PageBlock>
+
+        <apex:pageBlock >
+            <apex:pageblockSection title="Statistics" columns="1">
+                <apex:outputText label="Total Funded (#) This Month"
+                    value="{!TotalFundedThisMonth}" />
+                <apex:outputText label="Total Funded ($) This Month"
+                    value="{0,number,$###,###}">
+                    <apex:param value="{!TotalFundedAmtThisMonth}" />
+                </apex:outputText>
+                <apex:outputText label="# Unread Leads" value="{!UnreadLeads}" />
+                <apex:outputText label="# New Leads This Week"
+                    value="{!NewLeadsThisWeek}" />
+                <apex:outputText label="# Deals In Underwriting"
+                    value="{!UnderwriterOpp}" />
+                <apex:outputText label="# Deals In Approval"
+                    value="{!ApprovedOpp}" />
+                <apex:outputText label="# Deals In Signed Contract"
+                    value="{!signedContractOpp}" />
+            </apex:pageblockSection>
+        </apex:pageBlock>
+
+    </apex:form>
+</apex:page>

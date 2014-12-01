@@ -1,0 +1,234 @@
+<apex:page standardController="CnP_PaaS_EVT__Discount_plan__c" extensions="CnP_PaaS_EVT.DiscountPlan">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<style>
+ .dateFormat {
+    /* padding: 0 50px;*/
+     display:none;
+ }
+ .calenderIcon{    
+    float:left;
+    padding-left: 5px;
+    padding-top: 3px;
+    padding-right:10px;
+}
+.requiredBlock {
+      background-color: #CC0000;
+    bottom: 1px;
+    height: 27px;
+    left: -4px;
+    position: absolute;
+    top: 4px;
+    width: 3px;
+}
+}
+.requiredInput {
+height:100%;
+position:relative;
+}
+ </style>
+<script>
+function validate()
+{
+//alert("hello");
+          // var price = document.getElementById('{!$Component.CreateDiscountPlan.CouponRecord.CouponInfo.AmountItem.Eventinfo_Price1}').value;
+          
+         // var total_dis=document.getElementById('{!$Component.CreateDiscountPlan.CouponRecord.CouponInfo.AmountItem.Eventinfo_TotalDisc}').value; 
+          var sd = $(".sdate").val();
+          var ed = $(".edate").val(); 
+          var PdiscValue= $(".PDisc").val(); 
+          var FXdiscValue= $(".FXDisc").val();
+          var name=$(".PlanName").val();
+          var TotalInventory=$(".Inventory").val();
+          var Minnum=$(".MinNum").val();
+          var Maxnum=$(".MaxNum").val();
+          var levelname=$(".LevelName").val();
+          var couponcode=$(".CouponCode").val();
+          reg=/^[-+]?\d{3,5}(\.\d{1,3})?$/;
+         //alert(name);
+         
+         if(name==""){
+         alert("Enter a valid Discount Name");
+         
+         return false;
+         }
+         
+        if(levelname=='--Select--'){
+        alert("Select level name");
+         return false;
+        }
+        
+         if(isNaN(PdiscValue) || PdiscValue=="" || parseFloat(PdiscValue)>100 || parseFloat(PdiscValue)< 0 || !/^[-+]?\d{0,3}(\.\d{1,2})?$/.test(PdiscValue)){
+                 alert("Enter a Valid discount %");                
+                 return false;                 
+         }        
+         
+         if(isNaN(FXdiscValue) || FXdiscValue=="" || parseFloat(FXdiscValue)< 0 || !/^[-+]?\d{0,3}(\.\d{1,2})?$/.test(FXdiscValue)){
+             alert("Enter a Valid fixed discount");
+             return false;
+         }
+         
+         if(((PdiscValue!="" && PdiscValue==0) || PdiscValue=="" ) && ((FXdiscValue!="" && FXdiscValue==0) || FXdiscValue==""))
+         {
+             alert("Please Enter a Discount % or a Fixed Amount");
+             return false;
+         }
+         if (sd=="" || ed=="") {
+                alert("Must have a Start and End date for all discounts!")
+                return false;
+          }
+          if (Date.parse(sd) > Date.parse(ed)) {
+                alert("Invalid Date Range\nStart Date cannot be after End Date!")
+                return false;
+          } 
+          
+          if(TotalInventory<0){
+          alert("Inventory is invalid.");
+          $(".Inventory").focus();
+          return false;
+          }
+         
+          if(Minnum!="" || Maxnum!=""){
+            if(isNaN(Minnum)==true || isNaN(Maxnum)==true || parseInt(Minnum)<0 || parseInt(Maxnum)<0 || parseFloat(Minnum)!=parseInt(Minnum) || parseFloat(Maxnum)!=parseInt(Maxnum)){
+            alert("Enter valid Minimum Number and Maximum Number");
+            return false;
+            } 
+            }  
+             if (parseInt(Minnum) > parseInt(Maxnum)) {
+                alert("Minimum number cannot be greater than maximum number")
+                return false;
+          } 
+          if(couponcode.length>50){
+          alert("Coupon Code Should Be 50 Characters Only.");
+           return false;
+          }   
+         
+          /* if(parseFloat(FXdiscValue) > parseFloat(price))
+          {
+                alert("Fixed Discount not exceed to Price");
+                document.getElementById('{!$Component.CreateDiscountPlan.CouponRecord.CouponInfo.AmountItem.Eventinfo_Price1}').focus();
+                return false;
+          }
+          if(parseFloat(total_dis) > parseFloat(price))
+          {
+                alert("Total Discount not exceed to Price");
+                document.getElementById('{!$Component.CreateDiscountPlan.CouponRecord.CouponInfo.AmountItem.Eventinfo_TotalDisc}').focus();
+                return false;
+          }*/
+          // return false;
+ }  
+ 
+     
+
+</script>
+<apex:form id="CreateDiscountPlan">
+        
+        <apex:pageBlock id="CouponRecord" title="Discount Plan">
+        
+        <apex:pagemessages ></apex:pagemessages>
+                <apex:pageBlockButtons >
+                        <apex:commandButton action="{!save}" value="Save" styleClass="save" onclick="return validate();"/>
+                       
+                        <!--<apex:commandButton action="{!SaveAndNew}" value="Save and new"/>-->
+                        <apex:commandButton action="{!cancel}" value="Cancel"/>
+                       <!-- <apex:commandButton action="{!UploadCouponfile}" value="Upload a Discount File"/>-->
+                </apex:pageBlockButtons>
+                <apex:actionRegion >
+                <apex:pageBlockSection id="CouponInfo" title="Plan Details" columns="1" collapsible="false">
+                        <apex:pageBlockSectionItem rendered="{!IF(EventName!=null,true,false)}">
+                                <apex:outputLabel value="Event Name"/>
+                                <apex:outputText value="{!EventName}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem rendered="{!if((RegistrationLevelName!=null && EventName!=null),true,false)}">
+                                <apex:outputLabel value="Registration Level Name"/>
+                                <apex:outputText value="{!RegistrationLevelName}"/>
+                        </apex:pageBlockSectionItem>                                               
+                       <!-- <apex:pageBlockSectionItem rendered="{!IF(CreateDiscountPlan.Event_name__c!=null,true,false)}">
+                                <apex:outputLabel value="Event Name"/>
+                                <apex:outputPanel >
+                                        <apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__Event_name__c}" style="width:250px" id="FieldInfo_Event"/>
+                                        <script>document.getElementById('{!$Component.FieldInfo_Event}').disabled = true; </script>
+                                </apex:outputPanel>
+                        </apex:pageBlockSectionItem> -->
+                         <apex:pageBlockSectionItem rendered="{!IF(EventName==null,true,false)}">
+                         <apex:outputLabel value="Event Name"/>
+                         <apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__Event_name__c}" style="width:250px" id="FieldInfo_Event" required="true">
+                         <apex:actionSupport event="onchange" rerender="DisplayLevels"/>
+                         </apex:inputField>
+                         </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem rendered="{!IF(RegistrationLevelName==null,true,false)}">
+                                <apex:outputLabel value="Registration Level Name"/>
+                                        <apex:outputPanel >
+                                                <!--<apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__Registration_level__c}" style="width:250px" id="FieldInfo_level" required="true">
+                                                <apex:actionsupport event="onchange" action="{!NewDiscountRecord}" rerender="CreateDiscountPlan"/>
+                                    
+                                                </apex:inputfield>-->
+                                                <!--<script>document.getElementById('{!$Component.FieldInfo_level}').disabled = true; </script>-->
+                                        <apex:selectlist id="DisplayLevels" value="{!CreateDiscountPlan.CnP_PaaS_EVT__Registration_level__c}" size="1" styleclass="LevelName">
+                                        <apex:actionsupport event="onchange" action="{!NewDiscountRecord}" rerender="CreateDiscountPlan"/>
+                                        <apex:selectOptions value="{!EventLevels}" />
+                                        </apex:selectlist>
+                                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                      
+                        <apex:inputField value="{!CreateDiscountPlan.Name}" id="Eventinfo_PlanName" styleClass="PlanName"/>
+                       
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Discount %"/>
+                        <apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__discount__c}" style="width:60px;" styleClass="PDisc" id="Eventinfo_Cdiscount"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Fixed Discount"/>
+                        <apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__fixed_discount__c}" style="width:60px;" id="Eventinfo_Fixeddiscount" styleClass="FXDisc"/>
+                        </apex:pageBlockSectionItem>
+                       
+                        <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="Start Date" />
+                                        <apex:outputPanel >
+                                        <apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__Start_date__c}" style="width:150px;float:left;" id="Eventinfo_Startdate" styleClass="sdate"/>
+                                         <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon ,'Calendar-Lookup2.gif')}" styleClass="calenderIcon"/>
+                                        <apex:outputPanel rendered="{!IF(RelatedDiscountPlans.size>1,true,false)}">
+                                        <b>OR</b> End of Plan &nbsp;&nbsp;&nbsp;
+                                        <apex:outputpanel id="Lookuppanel">
+                                        <apex:selectList id="AccountId" value="{!CreateDiscountPlan.CnP_PaaS_EVT__C_P_Discount_Plan__c}" size="1">                 
+                                                <apex:selectOptions value="{!RelatedDiscountPlans}"/>
+                                        </apex:selectList>
+                                        </apex:outputpanel>
+                                </apex:outputPanel>
+                                </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                                <apex:outputLabel value="End Date" />
+                                        <apex:outputPanel >
+                        <apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__expire_date__c}" style="width:150px;float:left;" id="Eventinfo_Enddate" styleClass="edate"/>
+                          <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon,'Calendar-Lookup2.gif')}" styleClass="calenderIcon"/>
+                         </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                       
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Inventory" />
+                        <apex:outputPanel >
+                        <apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__Total_Inventory__c}" id="Eventinfo_CInventory" styleclass="Inventory"/><br />
+                        <!--(Inventory applies to the entire basket not individual registrations.)-->
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Coupon Code" />
+                        <apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__Coupon_Code_value__c}" id="Eventinfo_Ccode" styleclass="CouponCode"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputLabel value="Group Discount"/>
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Minimum Number" />
+                        <apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__Min_number__c}" id="Eventinfo_MinNumber" styleclass="MinNum"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Maximum Number" />
+                        <apex:inputField value="{!CreateDiscountPlan.CnP_PaaS_EVT__Max_number__c}"  id="Eventinfo_MaxNumber" styleclass="MaxNum"/>
+                        </apex:pageBlockSectionItem>
+                       
+                        
+                       
+                </apex:pageBlockSection>
+                </apex:actionRegion>                 
+        </apex:pageBlock>
+</apex:form> 
+</apex:page>

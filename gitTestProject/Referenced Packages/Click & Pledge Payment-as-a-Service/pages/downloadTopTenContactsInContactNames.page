@@ -1,0 +1,23 @@
+<apex:page controller="CnP_PaaS.download_Items_Top_Ten_ContactNames" contentType="application/x-excel#Top_ten_patrons_per_items.xls" standardStylesheets="false" language="english" readOnly="true">
+<h1>Items Label Donors Top 10</h1>  
+Download Date and Time : <apex:outputLabel value="{!Dvalue}"></apex:outputLabel>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar"> 
+         
+      <apex:column headerValue="Donation Name" value="CnP-{!ar.Name}"/>
+      <apex:column headerValue="Serial #" value="{!ar.Sno}" style="text-align:center;"/>    
+          
+          <apex:column headerValue="Contact Name"  value="{!ar.AccName}">
+           
+            </apex:column> 
+             <apex:column headerValue="Cotnact Email" value="{!ar.contactemail}"/>
+            <apex:column headerValue="Contact Phone" value=":{!ar.contactphone}"/>
+          <apex:column headerValue="Total Amount">
+           <apex:outputText value="{0, number,$###,###,##0.00}">
+            <apex:param value="{!ar.TotalAmount}" id="TotalAmount" />
+            </apex:outputText></apex:column>  
+      </apex:pageBlockTable>
+       {!IF(ResultSet.size==0,"NO records available.",NULL)}  
+      </apex:pageBlock>
+      
+      </apex:page>

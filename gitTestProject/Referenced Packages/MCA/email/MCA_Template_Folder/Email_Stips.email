@@ -1,0 +1,47 @@
+<messaging:emailTemplate subject="Pending Items for {!relatedTo.Account.name}" recipientType="Contact" relatedToType="Opportunity">
+<messaging:htmlEmailBody >
+<style>
+
+    th{
+           /*style="width: 45%;*/
+           font-size: 12.0pt; 
+         background: #B2B2CC;
+    }
+    tr{
+        font-size: 11.0pt; 
+    }
+    td{
+        width: 45%;
+        padding: 5px 5px 5px 5px;
+        height: 18.75pt
+    }
+       
+</style>
+
+  Hello {!recipient.name}<br/><br/>
+  The following is a list of items pending to move your file forward:
+  
+ <br/><br/>
+<table id="oppor_table" border="1" cellspacing="0" style=" border-style :solid; border-width:1px;">
+    <tr>
+    <th>Name </th>
+     <th> Description</th>
+     <th> Type</th>
+    </tr>
+ <apex:repeat var="Stips" value="{!relatedTo.Items_Needed__r}" >      
+    
+      <tr style="display: {!IF(AND(Stips.McaApp__Status__c != 'Completed' , Stips.McaApp__Status__c != 'Cancelled' ), 'table-row','none' )};">
+    
+        <td>{!Stips.Name}</td> 
+        <td>{!Stips.McaApp__Description__c}</td>
+        <td>{!Stips.McaApp__Type__c}</td>      
+    </tr>
+      
+ </apex:repeat>
+ </table> <br/><br/>
+ Kindly review and submit.<br/><br/>
+ 
+ Thanks,<br/>
+{!relatedTo.Owner.Name}
+</messaging:htmlEmailBody>
+</messaging:emailTemplate>

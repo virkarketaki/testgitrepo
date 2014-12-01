@@ -1,0 +1,18 @@
+<apex:page controller="CnP_PaaS.Recurring_Payments" readOnly="true" contentType="application/x-excel#All_Recurring_payments.xls" standardStylesheets="false"  language="english">
+<h1>Active Recurring Payments</h1> 
+Download Date and Time : <apex:outputLabel value="{!Dvalue}"></apex:outputLabel>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar"> 
+     
+         <apex:column headerValue="Recurring Id" >
+            <apex:outputlink value="/{!ar.RecurringId}" target="_blank">
+            <apex:outputLabel value="{!ar.Recurringname }" style="color: blue;cursor:pointer;"></apex:outputLabel>
+            </apex:outputlink>
+            </apex:column>   
+          <apex:column headerValue="Number of Installments" value="{!ar.totalinstallmentsint}"/> 
+          <apex:column headerValue="Installments Done" value="{!ar.installmentsintdone}"/>           
+      </apex:pageBlockTable> 
+        {!IF(ResultSet.size==0,"NO records available.",NULL)}
+      </apex:pageBlock>
+      
+      </apex:page>

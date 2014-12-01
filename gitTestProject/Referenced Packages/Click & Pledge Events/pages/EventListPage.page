@@ -1,0 +1,18 @@
+<apex:page standardController="CnP_PaaS_EVT__Event__c" extensions="CnP_PaaS_EVT.CreateAnEvent">
+     <apex:sectionHeader title="Events" subtitle="Home"/>
+     <apex:form >
+     <apex:pageBlock title="Event List">
+           <apex:pageBlockButtons >
+                 <apex:commandButton value="New"/>
+           </apex:pageBlockButtons>
+           <apex:pageBlockSection >
+                   <apex:pageBlockTable value="{!EventDetails}" var="list">
+                        <apex:column value="{!list.Name}" headerValue="Event Name"/>
+                         <apex:column headerValue="Public Site Url">
+                            <a href="{!list.Event_listing__r.Public_site__c}/EventRegistration_1?event_id={!list.Id}" target="_blank" >View</a>
+                         </apex:column>
+                   </apex:pageBlockTable>
+           </apex:pageBlockSection>
+     </apex:pageBlock>
+     </apex:form>
+</apex:page>

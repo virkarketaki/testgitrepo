@@ -1,0 +1,515 @@
+<apex:page standardController="CnP_PaaS_EVT__Event_Layout__c" extensions="CnP_PaaS_EVT.EventLayout" >
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JsColor, '/jscolor/jscolor.js')}"/>
+<!--<script src="/apexpages/fckeditor/fckeditor.js" type="text/javascript"></script>-->
+<!--<script src="/apexpages/ckeditor/ckeditor.js" type="text/javascript"></script>-->
+<script src="/ckeditor/ckeditor-3.6.2/ckeditor.js?t=3.6.2.1"></script>
+<apex:pagemessages />
+<style>
+ .dateFormat {
+     
+     display:none;
+ }
+ .requiredInput
+ {
+  float:left;
+ }
+ .calenderIcon{    
+    
+    padding-left: 5px;
+    padding-top: 3px;
+}
+#toolTip {
+    background: none repeat scroll 0 0 #FFFFCC;
+    border: 1px solid #FF9900;
+    bottom: 16%;
+    font-family: tahoma;
+    font-size: 11px;
+    margin-left: 98px;
+    padding: 10px;
+    position: absolute;
+    width: 449px;
+      line-height: 19px;
+      display:block;
+}
+#ClosePop a {
+   background-color: #FF9900;
+    bottom: 0;
+    color: #FFFFFF;
+    display: block;
+    float: left;
+    padding: 2px 4px;
+    position: absolute;
+    right: 0;
+    text-decoration: none;
+    font-weight:bold;
+
+}
+ </style>
+<script>
+$(function($) {
+        $(function(){
+           
+            var showimg = $(".showeditor").is(':checked');           
+            if(showimg==false)
+            {     
+                $(".showimage").attr('style','display:none');
+            }else{
+                 $(".showimage").attr('style','display:block');
+            }
+            $(".save").click(function(){
+                  var page = $(".pagelayout").val();
+                   var theme =$(".theme").val();
+                   reg_text=/^([a-zA-Z0-9\'\,\.\-\ ])+$/;
+                   if(theme=="")
+                  {
+                     alert("Please Select a Theme");
+                     $(".theme").focus();
+                     return false;
+                  }
+                  if(page=="")
+                  {
+                       alert("Please Select a Page");
+                       return false;
+                  }
+                  var pagename = $(".pagename").val();
+                  if(pagename=="" || !reg_text.test(pagename))
+                  {
+                       alert("Please Enter a Page Name");
+                       return false;
+                  }
+                  var sd = $(".Datetime_StartDT").val();
+                  var ed = $(".Datetime_endDT").val();                  
+                  if(Date.parse(sd) > Date.parse(ed)) {
+                     alert("Invalid Date Range\nStart Date cannot be after End Date!");
+                     return false;
+                  }
+                   var acknowledgement=$(".acknowledgement").is(':checked');
+                   var showterm = $(".showterm").is(':checked');
+                  if(acknowledgement==true && showterm==false)
+                  {
+                      alert("Please Select The Show Terms & Conditions");
+                      return false;
+                  }
+            })
+        })
+    });
+
+function changelayout(layoutid,PageCopy)
+{    
+     //alert(PageCopy);
+     
+     if(layoutid!='')
+     {
+        Layoutchange(layoutid,PageCopy);
+     }
+      
+}
+function enable_enginecss()
+{
+      $(".enginecss").attr('readonly',false);
+}
+function trimvalue(value,fieldclass)
+{
+     var replace=value.trim();
+     $("."+fieldclass).attr('value',replace);
+}
+function showeditor(value)
+{  
+  if(value)
+  {
+      $(".showimage").attr('style','display:block');
+      
+  }else{
+      $(".showimage").attr('style','display:none');
+  }
+}
+function EventLookupJs(){
+
+NewLayoutRec();
+}
+</script>
+<apex:form Id="LayoutForm">
+<apex:pageBlock title="Page Layout" id="block" >
+<apex:actionfunction name="NewLayoutRec" action="{!NewLayoutRecord}"/>
+     <apex:pageBlockButtons >
+        <apex:actionFunction name="paraFunction" action="{!save}" rerender="view">       
+             <apex:param id="SectionStyle" name="SectionStyleName" value="" />
+             <apex:param id="ButtonStyle" name="ButtonStyleName" value="" />  
+        </apex:actionFunction> 
+        <apex:actionFunction name="Layoutchange" action="{!changeLayout}">
+             <apex:param id="layoutid" name="layoutid"  value="{!PageLayoutCopy}" assignTo="{!PageLayoutCopy}"/>
+             <apex:param id="PageCopy" name="PageCopy" value="" assignTo="{!PageCopy}" />
+             
+        </apex:actionFunction>
+        <!--<apex:commandButton value="Save" onclick="return validate();"></apex:commandButton>-->
+        <apex:commandButton value="Save" action="{!save}" styleClass="save" ></apex:commandButton>
+        <apex:commandButton action="{!cancel}" value="Cancel" onclick="return confirmCancel()"/>
+         <!--<apex:commandLink value="Preview" action="{!preview}" target="_CnP_PaaS_Events_Preview" styleClass="btn" style="text-decoration:none"/>-->
+     </apex:pageBlockButtons>
+     <apex:pageBlockSection id="EventLayoutInfo" title="Page Details" columns="1" collapsible="false">
+     
+        <apex:pageBlockSectionItem rendered="{!IF(EventName!=null,true,false)}">
+            <apex:outputLabel value="Event Name"/>
+            <apex:outputText value="{!EventName}" />
+            
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!IF(EventName==null,true,false)}">
+            <apex:outputLabel value="Event Name"/>
+            <apex:outputPanel >
+                    <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Event_name__c}" id="EventLayoutInfo_EventName" onchange="EventLookupJs();"/>
+                     <!--<script>document.getElementById('{!$Component.EventLayoutInfo_EventName}').disabled = true; </script>-->
+            </apex:outputPanel>
+            
+        </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Select Theme">            
+             </apex:outputLabel>
+             <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Theme_Selection__c}"  styleClass="theme" >
+                <apex:actionSupport event="onchange" action="{!changeTheme}" />
+             </apex:inputField>
+         </apex:pageBlockSectionItem> 
+            <apex:pageBlockSectionItem rendered="{!copyrequired}">
+            <apex:outputLabel value="Copy From" id="copyrequired" />
+                <apex:selectList id="Eventlayoutinfo_copypage" value="{!PageLayoutCopy}" size="1" onchange="return changelayout(this.value,$('.pagelayout').val());"  >
+                          <apex:selectOptions value="{!PageLayout}"/>
+                </apex:selectList>
+           </apex:pageBlockSectionItem>
+        <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Page__c}"  id="Eventlayoutinfo_page" styleClass="pagelayout"/>
+           <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Page_name__c}" style="width:150px" id="Eventlayoutinfo_pagename" onblur="trimvalue(this.value,'pagename');" styleClass="pagename"/>
+          <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="Publish Date"  />
+                           <apex:outputPanel >
+                          <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Start_date__c}"  style="width:150px;float:left;" id="Eventlayoutinfo_startdate" styleClass="Datetime_StartDT"/>
+                            <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon,'Calendar-Lookup2.gif')}" styleClass="calenderIcon"/>
+                           </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="Un-Publish Date"  />
+                           <apex:outputPanel >
+                           <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__End_date__c}"  style="width:150px;float:left;" id="Eventlayoutinfo_enddate" styleClass="Datetime_endDT"/>
+                           <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon,'Calendar-Lookup2.gif')}" styleClass="calenderIcon"/>
+                           </apex:outputPanel>
+          </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem rendered="{!if(theme=='Standard Theme',true,false)}">
+           <apex:outputLabel value="Show Agenda PDF Download"></apex:outputLabel>
+        <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Show_ajenda__c}" id="Ebentlayoutinfo_showagenda" />
+        </apex:pageBlockSectionItem> 
+     </apex:pageBlockSection>
+      <apex:outputPanel id="DisplayPageBlockSectionsItems" rendered="{!if(theme=='Standard Theme',true,false)}">
+     <apex:pageBlockSection id="EventLayoutmiddleInfo" title="Page Design" columns="1" collapsible="false">
+        <apex:pageBlockSectionItem >    
+            <apex:outputLabel value="Page Background"/>
+            <apex:outputPanel >
+                 <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Page_background__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_pagebg"/>
+            
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Show_Page_Image__c}" onclick="showeditor(this.checked);"  styleClass="showeditor"/>
+        <apex:pageBlockSectionItem >           
+            <apex:outputLabel value="Upload Page Background Image (only Image) " styleClass="showimage" />
+            <apex:outputPanel styleClass="showimage">                               
+                <apex:inputTextarea value="{!CreateALayout.CnP_PaaS_EVT__Upload_background_image__c}"  id="Eventlayoutinfo_BGImage" styleClass="Eventlayoutinfo_BGImage"/> 
+            </apex:outputPanel>            
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Display Banner"> </apex:outputLabel>
+            <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Display_Banner__c}" />
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Section Border Color"></apex:outputLabel>
+            <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Page_Section_Border_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_borderbg"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Page Banner"/>
+            <apex:outputPanel >  
+               <apex:inputTextarea value="{!CreateALayout.CnP_PaaS_EVT__Upload_banner__c}" id="Eventlayoutinfo_banner" richText="false" styleClass="banner_text"/>
+            <br /> Optimum image size: 640 x 120 pixels.
+            </apex:outputPanel>
+        </apex:pageBlockSectionItem>    
+        <!--<apex:pageBlockSectionItem dataStyle="display:none" labelStyle="display:none">
+           <apex:outputLabel value="Upload Page Background"/>
+                <apex:inputField value="{!CreateALayout.Upload_logo__c}" id="Eventlayoutinfo_logoImage"/>
+        </apex:pageBlockSectionItem>-->
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Action Button Label"></apex:outputLabel>
+             <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Button_Label__c}" id="Eventlayoutinfo_button"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem id="ButtonItem">
+             <apex:outputLabel value="Action Button Label Format"/>
+             <apex:outputPanel >
+                <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Action_button_text__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_ActionButton"/>
+                &nbsp;<apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Button_font_family__c}"/>
+                  &nbsp;<apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Button_font_size__c}"/>
+              
+             </apex:outputPanel>
+        </apex:pageBlockSectionItem>     
+      </apex:pageBlockSection>
+     
+      <apex:pageBlockSection id="EventLayoutCustomInfo" title="Title Information" columns="1" collapsible="false">
+        <apex:pageBlockSectionItem >
+            <apex:outputlabel value="Display Title Information"></apex:outputlabel>
+            <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Display_Title_Information__c}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Section Border Color"></apex:outputLabel>
+            <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Title_Section_Border_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_titleborderbg"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem id="HeaderItem">
+             <apex:outputLabel value="Background Color"/>    
+             <apex:outputPanel >      
+                 <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Page_header__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_pageheaders"/>
+             </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+     
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Description"/>
+             <apex:inputTextarea value="{!CreateALayout.CnP_PaaS_EVT__Title_and_information__c}" id="EventLayoutCustomInfo_TitleInfo" styleClass="Title_text"/>
+        </apex:pageBlockSectionItem>
+     </apex:pageBlockSection>
+     <apex:pageBlockSection id="EventLayoutSectionInfo" title="Main Section" columns="1" collapsible="false">
+        <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Main Section Background Color"></apex:outputLabel>
+              <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Main_Section_Background_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_mainsectionbg"/>
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Section Border Color"></apex:outputLabel>
+              <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Main_Section_Border_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_mainsectionbg"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Display Title"></apex:outputLabel>
+              <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Display_Title__c}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Title Background"></apex:outputLabel>
+             <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Section_titleheader_background__c}" styleClass="color {hash:true}" style="width:63px"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Section Title"></apex:outputLabel>
+              <apex:inputTextarea value="{!CreateALayout.CnP_PaaS_EVT__Section_Title__c}" id="EventLayoutCustomInfo_SectionTitleInfo" styleClass="sectionTitle_text"/>
+            
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+              <apex:outputLabel value="Display Description"></apex:outputLabel>
+              <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Display_Description__c}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Section Background Color"/>
+             <apex:outputPanel >
+                 <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Section_Headers_background__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_HeaderBG"/>
+             </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <!--<apex:pageBlockSectionItem Id="SectionItem">
+             <apex:outputLabel value="Section headers text color" />
+             <apex:outputPanel >
+                 <apex:inputField value="{!CreateALayout.Section_headers_text__c}" styleClass="color {hash:true}" id="Eventlayoutinfo_Headerstext"/>
+                 <apex:inputField value="{!CreateALayout.Section_font_family__c}"/>
+                 <apex:inputField value="{!CreateALayout.Section_font_size__c}"/>
+                
+             </apex:outputPanel>
+        </apex:pageBlockSectionItem>-->
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Description"></apex:outputLabel>
+             <apex:inputtextarea value="{!CreateALayout.CnP_PaaS_EVT__Section_Description__c}" id="EventLayoutCustomInfo_section_desc" styleClass="section_des"/>
+        </apex:pageBlockSectionItem>
+     </apex:pageBlockSection>
+     <apex:pageBlockSection id="EventLayoutCustomInfo_term" title="Terms & Conditions" columns="1" collapsible="false">
+        <apex:pageBlockSectionItem >
+             <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Show_terms_conditions__c}" id="EventLayoutCustomInfo_ShowTC" styleClass="showterm"/>
+             <apex:outputLabel value="Show Terms & Conditions"/>    
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+             <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Acknowledgement_mandatory__c}" id="EventLayoutCustomInfo_ShowTC" styleClass="acknowledgement"/>
+             <apex:outputLabel value="Acknowledgement Mandatory"/>    
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Background Color"/>
+             <apex:outputPanel >
+                 <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Term_Background_color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_HeaderBG"/>
+             </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Terms & Conditions Text"/>
+             <apex:inputTextarea value="{!CreateALayout.CnP_PaaS_EVT__Terms_conditions__c}" id="EventLayoutCustomInfo_TandC" styleClass="term_info_text"/>
+        </apex:pageBlockSectionItem>
+     </apex:pageBlockSection>
+     <apex:pageBlockSection title="Footer" columns="1" collapsible="false">
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Display Footer"></apex:outputLabel>
+             <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Display_Footer__c}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Border Color"></apex:outputLabel>
+              <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Footer_Border_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_FooterborderBG"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Background Color"/>
+             <apex:outputPanel >
+                   <apex:inputField value="{!CreateALayout.CnP_PaaS_EVT__Footer_background__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_FooterBG"/>
+             </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Description" />
+             <apex:outputPanel >
+                   <apex:inputTextarea value="{!CreateALayout.CnP_PaaS_EVT__Footer_information__c}" id="EventLayoutCustomInfo_FooterInfo" styleClass="footer_text"/>
+             </apex:outputPanel>
+        </apex:pageBlockSectionItem>                          
+     </apex:pageBlockSection>
+     </apex:outputPanel>
+     <apex:outputPanel rendered="{!if(theme=='Custom Theme',true,false)}">
+        <apex:pageBlockSection title="Custom Design" columns="1" collapsible="false">
+            <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Engine CSS">
+                 </apex:outputLabel>
+                 <apex:outputPanel >
+                 <apex:inputtextarea value="{!CreateALayout.CnP_PaaS_EVT__Engine_CSS__c}" rows="5" styleClass="enginecss" cols="84" ></apex:inputtextarea>
+                 <!-- <br/>Customise Engine CSS Click <a href="javascript:void(0);" onclick="return enable_enginecss();" >Here</a>-->
+                 </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Custom Page HTML"></apex:outputLabel>
+                  <apex:outputPanel >
+                  <apex:inputtextarea value="{!CreateALayout.CnP_PaaS_EVT__Custom_Page_Html__c}" rows="10" cols="84" />
+                  <!-- <br/>Engine Veriable is '<@CnP_PaaS_Evt_Engine>',If Term And Condition is Required then assign a veriable '<@CnP_PaaS_Evt_TnC>'.-->
+                       <div id="helptext">
+                           Click <a href="javascript:void(0)" onMouseover="popup()" >HERE</a> for Help 
+                           <div id="toolTip"  style="display:none;">
+If CSS File is there then give absolute path or copy the CSS data and paste in between style tag like<strong><br />&lt;style&gt;CSS content. &lt;/style&gt;</strong><br />
+Place Pdf Variable <br/>
+<strong>&lt;@CnP_PaaS_Evt_Pdf&gt;</strong><br />
+<strong>&lt;@Show>True/False&lt;/@Show&gt;</strong><br /> 
+<strong>&lt;/@CnP_PaaS_Evt_Pdf&gt;</strong><br /> 
+Place Engine Variable<br />
+Syntax:-<br />
+<strong>&lt;@CnP_PaaS_Evt_Engine&gt;&lt;/@CnP_PaaS_Evt_Engine&gt;</strong><br />
+If Terms &amp; Conditions are there then assign a variable<br />
+Syntax:-<br />
+<strong>&lt;@CnP_PaaS_Evt_TnC&gt;&lt;/@CnP_PaaS_Evt_TnC&gt;</strong><br />
+If Terms &amp; Conditions are Required then assign a Variable   <br />
+Syntax:-<br />
+<strong>&lt;@Required&gt;&lt;/@Required&gt; </strong><br />
+e.g:<br />
+<strong>&lt;@CnP_PaaS_Evt_Engine&gt;<br />&lt;@CnP_PaaS_Evt_TnC&gt;<br />&lt;@Required&gt;</strong><br />
+Terms &amp; Conditions Here...........!<br />
+<strong>&lt;/@Required&gt;<br />&lt;/@CnP_PaaS_Evt_TnC&gt;<br />&lt;/@CnP_PaaS_Evt_Engine&gt;
+</strong>
+<div id="ClosePop"  ><a href="javascript:void(0)" onclick="popout()">Close</a></div>
+                            </div>
+                       </div>
+                  </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+     </apex:outputPanel>
+
+</apex:pageBlock>
+</apex:form>  
+<script type="text/javascript">
+
+ function popup()
+ {
+       //alert("Hi");alert(t);
+       var t=$("#toolTip").text();
+       $("#toolTip").fadeIn("fast");
+       
+ }
+ function popout()
+ {
+        $("#toolTip").fadeOut("fast");
+ 
+ }
+  var theme = $(".theme").val();
+if(theme=="Standard Theme"){
+  CKEDITOR.replace($(".banner_text").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".sectionTitle_text").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".Title_text").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".section_des").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".term_info_text").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".footer_text").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".Eventlayoutinfo_BGImage").attr('id'),{ toolbar : 'Image',sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.config.baseHref = '/apexpages/ckeditor/';  
+  CKEDITOR.config.filebrowserImageUploadUrl = '/_ui/common/request/servlet/RtaImageUploadServlet';  
+  CKEDITOR.config.contentsCss= ['/sCSS/24.0/sprites/1329331264000/Theme3/default/gc/HtmlDetailElem.css']; 
+  CKEDITOR.config.language = 'en-us';  
+  CKEDITOR.config.customConfig = '{!$Resource.CnP_PaaS_EVT__ckconfig}';
+  CKEDITOR.config.toolbar='Custome';
+/* var editor2 = new FCKeditor($(".banner_text").attr('id'), null, 160);
+ editor2.BasePath = '/apexpages/fckeditor/';
+ editor2.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor2.ToolbarSet = 'SalesforceBasic';
+ editor2.Config['SkinPath'] = editor2.BasePath + 'editor/skins/sfdc/';
+ editor2.Config['DefaultLanguage'] = 'en-us';
+ editor2.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme2/default/HtmlDetailElem.css'];
+ editor2.Config['ImageUpload'] = true;
+ editor2.Config['SitesPath'] =  '';
+ editor2.ReplaceTextarea();
+ 
+ var editor5 = new FCKeditor($(".sectionTitle_text").attr('id'), null, 160);
+ editor5.BasePath = '/apexpages/fckeditor/';
+ editor5.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor5.ToolbarSet = 'SalesforceBasic';
+ editor5.Config['SkinPath'] = editor5.BasePath + 'editor/skins/sfdc/';
+ editor5.Config['DefaultLanguage'] = 'en-us';
+ editor5.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme3/default/HtmlDetailElem.css'];
+ editor5.Config['ImageUpload'] = true;
+ editor5.Config['SitesPath'] =  '';
+ editor5.ReplaceTextarea();
+ 
+ 
+ var editor3 = new FCKeditor($(".Title_text").attr('id'), null, 160);
+ editor3.BasePath = '/apexpages/fckeditor/';
+ editor3.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor3.ToolbarSet = 'SalesforceBasic';
+ editor3.Config['SkinPath'] = editor3.BasePath + 'editor/skins/sfdc/';
+ editor3.Config['DefaultLanguage'] = 'en-us';
+ editor3.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme3/default/HtmlDetailElem.css'];
+ editor3.Config['ImageUpload'] = true;
+ editor3.Config['SitesPath'] =  '';
+ editor3.ReplaceTextarea();
+ 
+ var editor4 = new FCKeditor($(".section_des").attr('id'), null, 160);
+ editor4.BasePath = '/apexpages/fckeditor/';
+ editor4.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor4.ToolbarSet = 'SalesforceBasic';
+ editor4.Config['SkinPath'] = editor4.BasePath + 'editor/skins/sfdc/';
+ editor4.Config['DefaultLanguage'] = 'en-us';
+ editor4.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme3/default/HtmlDetailElem.css'];
+ editor4.Config['ImageUpload'] = true; 
+ editor4.Config['SitesPath'] =  '';
+ editor4.ReplaceTextarea();
+ 
+ var editor = new FCKeditor($(".term_info_text").attr('id'), null, 160);
+ editor.BasePath = '/apexpages/fckeditor/';
+ editor.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor.ToolbarSet = 'SalesforceBasic';
+ editor.Config['SkinPath'] = editor.BasePath + 'editor/skins/sfdc/';
+ editor.Config['DefaultLanguage'] = 'en-us';
+ editor.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme3/default/HtmlDetailElem.css'];
+ editor.Config['ImageUpload'] = true;
+ editor.Config['SitesPath'] =  '';
+ editor.ReplaceTextarea();
+ 
+ var editor1 = new FCKeditor($(".footer_text").attr('id'), null, 160);
+ editor1.BasePath = '/apexpages/fckeditor/';
+ editor1.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor1.ToolbarSet = 'SalesforceBasic';
+ editor1.Config['SkinPath'] = editor1.BasePath + 'editor/skins/sfdc/';
+ editor1.Config['DefaultLanguage'] = 'en-us';
+ editor1.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme3/default/HtmlDetailElem.css'];
+ editor1.Config['ImageUpload'] = true;
+ editor1.Config['SitesPath'] =  '';
+ editor1.ReplaceTextarea();
+ 
+ var editor6 = new FCKeditor($(".Eventlayoutinfo_BGImage").attr('id'), null, 160);
+ editor6.BasePath = '/apexpages/fckeditor/';
+ editor6.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor6.ToolbarSet = 'SalesforceBasic';
+ editor6.Config['SkinPath'] = editor6.BasePath + 'editor/skins/sfdc/';
+ editor6.Config['DefaultLanguage'] = 'en-us';
+ editor6.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme3/default/HtmlDetailElem.css'];
+ editor6.Config['ImageUpload'] = true;
+ editor6.Config['SitesPath'] =  '';
+ editor6.ReplaceTextarea();*/
+ }
+</script>
+</apex:page>

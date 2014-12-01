@@ -1,0 +1,179 @@
+<apex:page controller="CnP_PaaS.LogDetailsController" title="C&P PaaS Autoresponder Log">
+ <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+ <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__DataTables,'js/jquery.dataTables.js')}"/>
+ <apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS__DataTables,'css/demo_table_jui.css')}"/>
+ <apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS__DataTables,'jquery-ui-1.8.4.custom.css')}"/>
+  <apex:sectionHeader subtitle="Autoresponder Email Log" title="C&P PaaS Autoresponder Log"/>
+  
+  <style>
+      .helpLink {
+       position:relative;       
+    }
+
+    .video{
+      display:none;
+      width:12%;
+      height:auto;
+      background:#EEE;
+      border:1px solid #CCC;
+      position:absolute;     
+      z-index:10;
+      margin-left:945Px;
+    }
+  
+    .black_overlay{
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 100%;
+background-color: black;
+z-index:1001;
+-moz-opacity: 0.8;
+opacity:.40;
+filter: alpha(opacity=80);
+}
+.white_content {
+display: none;
+position: absolute;
+text-align: center;
+top: 30%;
+left: 47%;
+/*width: 2%;*/
+height: 3%;
+padding: 16px;
+background-color: white;
+z-index:1002;
+overflow: auto;
+border-radius:20px;
+-webkit-border-radius: 20px;
+-moz-border-radius: 20px;
+border:1px solid #000;
+} 
+</style>
+<script>
+ $(document).ready(function(){
+           $('.datatables').dataTable({
+                    "bJQueryUI": true,
+                    "iDisplayLength"    : 25, 
+                    aoColumnDefs: [
+                      { aTargets: [0], bSortable: true}] 
+                });
+    })
+    $(function(){
+          $(".video").mouseout(function(){             
+              $(this).fadeOut(8000);             
+          })
+          })  
+          
+function Delete_Autoresponder(type)
+ {      
+       
+        var logNum=$(".rowNumlog").val();
+        var responderid='';
+        var v=0;
+        var count=0;
+        for(var i=0;i<logNum;i++)
+        {
+             var datalist=$(".logid"+i).is(':checked');
+             if(datalist){
+                 v=1;
+                 responderid+=$(".logid"+i).val();
+                 responderid+="--";
+                 count++;
+             }
+             if(count>5 && type=='send')
+             {
+                  v=2;
+             }                      
+        }
+        if(v==1)
+        {
+             if(type=='delete'){ 
+                if(confirm("Are you sure you want to permanently delete this record(s)?")==true){
+                  $("#light").attr('style','display:block');
+                  $("#fade").attr('style','display:block');
+                   
+                              callDeleteResponder(responderid);
+                }
+              }
+                if(type=='send')
+                {  
+                    if(confirm("Are you sure you want to send this record(s)?")==true){    
+                     $("#light").attr('style','display:block');
+                     $("#fade").attr('style','display:block');
+                         callSendResponder(responderid);
+                    }
+                }
+          
+        }else if(v==2 && type=='send'){
+               alert("Please Select Only 5 Records");
+               return false;
+        }else {
+            alert("Please Select at least one record");
+            return false;
+        }        
+ }
+ function recallform()
+ {
+      $("#light").attr('style','display:none');
+      $("#fade").attr('style','display:none');
+      location.reload();
+ }
+ 
+</script>
+  <apex:form >
+          <apex:outputLink styleClass="helpLink" rendered="{!subTab['AutoResponder Log']['AutoResponder Log'].display=='true'}">  
+                              <Apex:outputLabel value="C&P Help for this Page" style="font-size:90%;margin-left:950Px;margin-right:5Px;" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; "/>  
+                               <apex:image value="/s.gif" styleClass="helpIcon" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; "/>                        
+                         </apex:outputLink>
+                          <apex:outputPanel id="Foo1" styleClass="video"  >   
+                           <ul style="padding-left:4px;" >                       
+                              {!subTab['AutoResponder Log']['AutoResponder Log'].description} <br/> <br/>
+                              <apex:outputpanel rendered="{!subTab['AutoResponder Log']['AutoResponder Log'].ActiveLink=='true'}">
+                                 <li><a href="{!subTab['AutoResponder Log']['AutoResponder Log'].link}" target="_blank" >{!subTab['AutoResponder Log']['AutoResponder Log'].strlink}</a> <br/></li></apex:outputpanel>
+                              <apex:outputpanel rendered="{!subTab['AutoResponder Log']['AutoResponder Log'].ActiveVideo=='true'}">
+                                 <li> <a href="{!subTab['AutoResponder Log']['AutoResponder Log'].video}" onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subTab['AutoResponder Log']['AutoResponder Log'].strVideo}</a></li></apex:outputpanel>
+                           </ul>
+                          </apex:outputPanel>
+  <apex:pageBlock >
+           <apex:pageBlockButtons >
+            <a href="javascript:void(0)" onclick="Delete_Autoresponder('send')" class="btn" style="text-decoration:none"><apex:outputText value="Send" ></apex:outputText></a>
+            <a href="javascript:void(0)" onclick="Delete_Autoresponder('delete')" class="btn" style="text-decoration:none"><apex:outputText value="Delete" ></apex:outputText></a> 
+           
+         </apex:pageBlockButtons>   
+           <apex:actionFunction action="{!DeleteLog}" name="callDeleteResponder" reRender="newform" oncomplete="recallform();">
+                                 <apex:param value="" name="deleteides" assignTo="{!deleteides}" />                                 
+           </apex:actionFunction> 
+            <apex:actionFunction action="{!SendLog}" name="callSendResponder" reRender="newform" oncomplete="recallform();">
+                                 <apex:param value="" name="processides" assignTo="{!processides}" />                                 
+           </apex:actionFunction> 
+          
+           <div id="light" class="white_content">                      
+               <apex:image value="{!URLFOR($Resource.CnP_PaaS__LoaderImage)}" title="Processing......" style="height: 15px;"/>
+                <br/>
+                <apex:outputLabel value="we are processing your request. please wait...                  "></apex:outputLabel>
+           </div>
+           <div id="fade" class="black_overlay"></div>  
+       <apex:outputPanel id="process">
+           <apex:variable value="0" var="rowNumlog"/>
+           <apex:pageblockTable value="{!logspoollist}" var="que" styleClass="datatables">
+              <apex:column headerValue="Action"><input type="checkbox" value="{!que.Id}" class="logid{!rowNumlog}"/>
+                         <apex:variable var="rowNumlog" value="{!VALUE(rowNumlog) + 1}"/></apex:column>
+              <apex:column value="{!que.Name}" headerValue="Log ID" style="width:150px"/>
+               <apex:column value="{!que.CnP_PaaS__Contact__c}" headerValue="Contact Name"/>
+              <apex:column value="{!que.CnP_PaaS__CnP_Auto_Responder_Settings__c}" headerValue="Responder Name"/>
+              <apex:column value="{!que.CnP_PaaS__Application_Name__c}" headerValue="Application" style="width:150px"/>
+              <apex:column value="{!que.CnP_PaaS__CnP_Designer__c}" headerValue="C&P Template Name" style="width:150px"/>
+              <apex:column value="{!que.CnP_PaaS__CnP_Transaction__c}" headerValue="Order Number" style="width:150px"/>             
+              <apex:column value="{!que.CnP_PaaS__Sended_Date__c}" headerValue="Sent Date" />
+              <apex:column value="{!que.CnP_PaaS__Status__c}" headerValue="Status" />
+              <apex:column value="{!que.CnP_PaaS__No_Of_Times__c}" headerValue="Attempts" />        
+             
+          </apex:pageblockTable>
+           <input type="hidden" value="{!rowNumlog}" class="rowNumlog" name="rowNumlog"/>  
+       </apex:outputPanel>
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

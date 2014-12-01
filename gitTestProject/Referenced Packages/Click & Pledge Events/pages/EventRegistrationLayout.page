@@ -1,0 +1,775 @@
+<apex:page showHeader="false" standardStylesheets="false" controller="CnP_PaaS_EVT.EventRegistration" >
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+  <script >  
+    function disableBackButton()
+    {
+       window.history.forward();
+    }
+    setTimeout("disableBackButton()", 0);
+  function check(val)
+  {
+    //alert(val);
+     if(val==true)
+     {
+      // $(".next").attr('style','display:block');
+       $(".next").fadeIn(1000); 
+     }else{
+    //  $(".Submit").attr('style','display:none'); 
+       $(".next").fadeOut(1000); 
+     }
+     
+  }
+   $(document).ready(function () { 
+  var b_image=$(".backgroundimageclass img").attr('src');
+  $('body').css('background-image', 'url('+b_image+')');
+  $('#Header img').removeAttr('width');
+  $('#Header img').removeAttr('height'); 
+   
+  });
+  
+</script>
+  <style>
+@charset "utf-8";
+/* CSS Document */
+
+/* Default Element Styles */
+body{
+   margin: 0;   
+   background-color:{!IF(StyleRec.Show_Page_Image__c==false,StyleRec.Page_background__c,'')};
+}
+.pbBody {
+    /*bottom: 10px;*/
+    position: relative;
+}
+#Header img {
+     border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+     max-width: 640px;
+     -o-border-radius: 10px;
+     -khtml-border-radius: 10px;
+}
+/* ==============================*/
+/* Main */
+#Main{
+    width:640px;
+    margin-left:auto;
+    margin-right:auto;
+    top: 10px;
+    width: 640px;
+    padding-top: 10px;
+}
+/* ==============================*/
+
+/* Header */
+#Header{
+  
+    width:100%;
+    float:left;
+   
+    border:1px solid {!StyleRec.Page_Section_Border_Color__c};
+    border-radius:10px;
+    moz-border-radius:10px;
+    webkit-border-radius:10px;
+    -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+#HeaderLeft{
+    float:left;
+    width:640px;
+    
+}
+
+.Title_Header {
+    float:left;
+    width:640px;
+  
+    font-size:25px;
+    font-weight:bold;
+  
+    
+}
+.DownloadAgenda{ 
+     color: #000000;
+    float: right;
+    font-family: Tahoma;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 24px;
+    margin-bottom: 5px;
+    padding: 1px 4px 1px 0;
+    border-radius:4px;
+    moz-border-radius:4px;
+    webkit-border-radius:4px;
+    background: -moz-linear-gradient(center top , #FFFFFF, #F2F2F2) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F2F2F2));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F2F2F2');
+ 
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+   
+}
+.DownloadAgenda img{
+    color: #000000;
+    font-family: Tahoma;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 24px;
+}
+div.DownloadAgenda:hover{
+        background: #FFFFFF; 
+        color:#000000;
+        cursor:pointer;
+     
+         background: -moz-linear-gradient(center top , #F2F2F2, #FFFFFF) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, left bottom, from(#F2F2F2), to(#FFFFFF));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F2F2F2', endColorstr='#FFFFFF');
+}
+.Caption{
+    float:left;
+   
+    width:{!Logowidth};
+    
+    height:20px;
+    
+    position:absolute;
+    padding:15px;
+}
+
+#HeaderRight{
+    float:left;
+    width:400px;
+  
+    margin-left:200px;
+    padding:15px;
+    position:absolute;
+    color:Red;
+   
+}
+/* ==============================*/
+
+/* ContentArea */
+#ContentArea{
+    float:left;   
+    width:620px;  
+    height:auto;
+    background-color:{!StyleRec.Main_Section_Background_Color__c};
+    border:1px solid {!StyleRec.Main_Section_Background_Color__c};
+    border-radius:10px;
+    moz-border-radius:10px;
+    webkit-border-radius:10px;
+    margin-top:5px;
+    padding:10px;
+       -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+#ContentTop{
+   
+                    float:left;
+                    width:97%;
+                    height:auto;
+                    padding-top:10px;
+                   
+                    text-align:left;
+                   
+                    padding-left:20px;
+                    border:1px solid {!StyleRec.Title_Section_Border_Color__c};
+                    background-color:{!StyleRec.Page_header__c};
+                    margin-bottom:10px;
+                    border-radius:10px;
+                    moz-border-radius:10px;
+                    webkit-border-radius:10px;
+                    padding-bottom:10px;
+}
+
+#ContentBot{   
+                    float:left;
+                    width:97%;
+                    height:auto;
+                    padding: 10px 14px 10px 5px;                
+                    text-align:left;        
+                                  
+                    background-color:{!StyleRec.Term_Background_color__c};
+                    margin-bottom:10px;
+                    border-radius:10px;
+                    moz-border-radius:10px;
+                    webkit-border-radius:10px;
+                   
+}
+
+#ContentTop1{
+   
+                    float:left;
+                    width:100%;
+                    height:auto;
+                    padding-top:10px;
+                    text-align:left;
+                    background-color:{!StyleRec.Page_header__c};
+}
+        /* Right */
+        #Right{
+        }
+        
+        .EvtInfo{
+            
+        }
+        
+        .EvtInfo li{
+            list-style:none;
+            list-style-type:none;
+            margin:0px;
+            line-height:20px;
+        }
+        
+        .DtlAttch{
+            padding-left:40px;
+        }
+        
+        .BrochureInfo{
+            float:left;
+            margin:10px;
+        }
+        
+        #ContentBott{
+            width:100%;
+            height:auto;
+            float:left;
+            margin:10px 0px;
+             border:1px solid {!StyleRec.Main_Section_Border_Color__c};
+             -webkit-border-radius: 8px 8px 8px 8px;
+                -moz-border-radius: 8px 8px 8px 8px;
+              border-radius: 8px 8px 8px 8px;
+        }
+        
+        .FormTitle{
+            width:99%;
+            height:20px;
+            background-color:#82cfaf;
+            color:#fff;
+            text-align:left;
+            padding:5px 0px 0px 10px;
+        }
+        
+        .FormFields{
+            width:600px;
+           
+            border:0px;
+        }
+        
+        .FormFields span{
+            width:220px;
+            height:10px;
+            
+        }
+        
+        .FormFields label{
+            margin:5px 0px;
+            float:left;
+            width:400px;
+        }
+        
+        .FormFields label.Slct{
+            width:220px;
+        }
+        
+        .FormFields select{
+            margin:5px 0px;
+            width:155px;
+        }
+        
+        .FormFields input{
+            
+            
+        }
+        
+        .Submit {
+             border-radius: 0.5em 0.5em 0.5em 0.5em;
+
+            cursor: pointer;
+            display: inline-block;
+            margin: 0 2px 0 10px;
+            outline: medium none;
+            padding: 5px;
+            text-align: center;
+            text-decoration: none;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+            vertical-align: baseline;
+           
+            color:{!StyleRec.Action_button_text__c};
+            font-size:{!StyleRec.Button_font_size__c}px;
+            font-weight:bold;
+            font-family:{!StyleRec.Button_font_family__c};
+          
+           background: -moz-linear-gradient(center top , #F2F2F2, #FFFFFF) repeat scroll 0 0 transparent;
+          background: -webkit-gradient(linear, left top, left bottom, from(#F2F2F2), to(#FFFFFF));
+          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F2F2F2', endColorstr='#F2F2F2')
+         
+           
+        }
+        input[value="Next attendee"] {
+              border-radius: 0.5em 0.5em 0.5em 0.5em;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: inline-block;
+            margin: 0 2px 10px 0;
+            outline: medium none;
+            padding: 5px;
+            text-align: center;
+            text-decoration: none;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+            vertical-align: baseline;
+           
+            color:{!StyleRec.Action_button_text__c};
+            font-size:{!StyleRec.Button_font_size__c}px;
+            font-weight:bold;
+            font-family:{!StyleRec.Button_font_family__c};
+           
+           background: -moz-linear-gradient(center top , #F2F2F2, #FFFFFF) repeat scroll 0 0 transparent;
+          background: -webkit-gradient(linear, left top, left bottom, from(#F2F2F2), to(#FFFFFF));
+          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F2F2F2', endColorstr='#F2F2F2');
+            border: 1px solid #B7B7B7;
+        
+        }
+        
+        .Submit:hover {
+        background: -moz-linear-gradient(center top , #FFFFFF, #DCDCDC) repeat scroll 0 0 transparent;
+        }
+        
+        .Submit input{
+            background-color:#fbfbfb;
+            width:20px;
+            color:#fb2828;
+            font-weight:bold;
+            border:1px solid #999;
+            border-radius:5px;
+            box-shadow:1px 2px 5px #999999;;
+            moz-box-shadow:1px 2px 5px #999999;
+            webkit-box-shadow:1px 2px 5px #999999;
+        }
+        
+        #EventMgmt{
+            margin-left:auto;
+            margin-right:auto;
+        }
+        
+        .FldTitle{
+            font-weight:bold;
+            color:#fb2828;
+            margin:0px 30px;
+        }
+        /* ==============================*/
+
+
+/* ==============================*/
+#Footer{
+   width:612px;
+    padding:10px;
+          padding-left:20px;
+                margin-top:5px;
+                border-radius:10px;
+                moz-border-radius:10px;
+                webkit-border-radius:10px;
+         
+           float:left;
+    
+    
+    background-color:{!StyleRec.Footer_background__c}; 
+   
+    border:1px solid {!StyleRec.Footer_Border_Color__c};
+     -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+#Footer a {
+    color:#999;
+}
+
+#Footer a:hover {
+    text-decoration:none;
+}
+/* Default SF Class Overwrites */
+.Title_Header img{
+   
+    float:left;
+  
+   
+}
+.odd1, .odd1 td { 
+ background: -moz-linear-gradient(center top , #E6E6E6, #FFFFFF) repeat scroll 0 0 transparent;
+  background: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#FFFFFF));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E6E6E6', endColorstr='#FFFFFF'); 
+    line-height: 25px;
+       
+
+}
+.even1, .even1 td {
+     background: -moz-linear-gradient(center top , #E6E6E6, #FFFFFF) repeat scroll 0 0 transparent;
+     background: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#FFFFFF));
+     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E6E6E6', endColorstr='#FFFFFF'); 
+    line-height: 25px;
+      
+
+}
+.odd, .odd td { 
+    
+    line-height: 20px;
+}
+.even, .even td{
+      line-height: 20px;
+}
+#SummaryTable {
+      background: -moz-linear-gradient(center top , #E6E6E6, #AAA) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#AAA));
+     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E6E6E6', endColorstr='#AAAAAA'); 
+}
+.DiscountBar, .DiscountBar td{
+    background: -moz-linear-gradient(center top , #FDE9D9, #FC6) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FDE9D9), to(#FC6));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FDE9D9', endColorstr='#FED17B');  
+    color: #666666;
+    font-weight: bold;
+}
+.headerrow{
+background-color: #D9D9D9;
+   
+    color: #000000;
+    line-height: 25px;
+    
+}
+.ChildRow1{
+
+     
+      
+}
+.ChildRow2{
+background-color: #FF825C;
+}
+.detailList{
+    border-collapse: collapse;
+    font-family: 'Arial';
+    font-size: 12px;
+    text-align: left;
+    width:100%;
+    margin-left:3px;
+}
+.detailList tr td {
+    padding-top:5px;
+   /* vertical-align:top; */
+  /*  line-height:17px;*/
+
+
+}
+td.last  {
+   padding-left:25px;
+
+}
+.FormFields td.last {
+   padding-left:0;
+
+}
+
+.data2Col .detailList, .FormFields .detailList {
+  border:none;
+
+}
+.data2Col .detailList td.last, .FormFields .detailList {
+padding-left:0px;
+  border:none;
+
+}.data2Col .detailList input[type=text], .FormFields .detailList [type=text] {
+   box-shadow: 0 0.5px 3px rgba(0, 0, 0, 0.2);
+   height:20px;
+   margin:5px 0 5px 3px;
+   border: 1px solid #CCCCCC;
+   background: -moz-linear-gradient(center top , #F7F7F7, #FFFFFF) repeat scroll 0 0 transparent;
+  background: -webkit-gradient(linear, left top, left bottom, from(#F7F7F7), to(#FFFFFF));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F7F7F7', endColorstr='#FFFFFF');
+
+}
+.data2Col .detailList textarea, .FormFields .detailList textarea{
+   box-shadow: 0 0.5px 3px rgba(0, 0, 0, 0.2);
+   margin:5px 0 5px 3px;
+    border: 1px solid #CCCCCC;
+   background: -moz-linear-gradient(center top , #F7F7F7, #FFFFFF) repeat scroll 0 0 transparent;
+  background: -webkit-gradient(linear, left top, left bottom, from(#F7F7F7), to(#FFFFFF));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F7F7F7', endColorstr='#FFFFFF');
+}
+.data2Col .detailList radio,.FormFields .detailList radio{
+
+   margin:0px 0 0px 3px;
+  border: 1px solid #CCCCCC;
+  background: -moz-linear-gradient(center top , #F7F7F7, #FFFFFF) repeat scroll 0 0 transparent;
+  background: -webkit-gradient(linear, left top, left bottom, from(#F7F7F7), to(#FFFFFF));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F7F7F7', endColorstr='#FFFFFF');
+
+}
+.data2Col span{
+  line-height:17px;
+}
+/* Summary Page */
+.summaryPage {
+ margin-top:5px;
+
+}
+.summaryPage .first {
+    border:0px;
+    padding-top:0px;
+    font-weight:bold;
+}
+.summaryPage .detailList{
+
+    padding-top:0px;
+    font-weight:normal;
+}
+.summaryPage .data2Col {
+    padding-top:0px;
+    border:0px;
+}
+.summaryPage .data2Col .dataCell  {
+    border:0px;
+    padding:0px;
+    font-weight:normal;
+
+}
+.summaryPage .last {
+    padding-left:0px;
+
+}
+.summaryPage .data2Col .list {
+     border:0px;
+    padding:0px;
+        font-weight:normal;
+}
+.summaryPage .headerRow   {
+    border:0px;
+    padding:0px;
+
+}
+.summaryPage .labelCol {
+   padding:0px;
+   text-align:right;
+   width:508px;
+
+}
+.summaryPage .data2Col {
+   padding:0px;
+   text-align:right;
+ }
+ 
+#AttendeeForm .detailList .labelCol{
+   
+   width:170px;
+   max-width:300px;
+   vertical-align:top;
+   padding-top: 12px;
+}
+
+#AttendeeInfo .labelCol {
+    width: 132px;
+     max-width:300px;
+
+}
+#AttendeeForm_1 .detailList .labelCol{
+   
+   width:170px;
+   max-width:300px;
+   vertical-align:top;
+   padding-top: 12px;
+}
+
+#AttendeeInfo_1 .labelCol {
+    width: 132px;
+     max-width:300px;
+
+}
+.requiredBlock {
+      background-color: #CC0000;
+    bottom: 1px;
+    height: 27px;
+    left: -4px;
+    position: absolute;
+    top: 4px;
+    width: 3px;
+}
+}
+.requiredInput {
+height:100%;
+position:relative;
+}
+.reqvalue{    
+    float: right;
+    background-color: #C00;
+    height: 27px;
+    left: -4px;
+    width: 3px;
+    position: initial;
+    margin-top: 4px;
+}
+.reqvaluetest{
+    color:red;
+    position:relative;
+}
+
+.requiredInput {
+height:100%;
+position:relative;
+}
+
+
+
+
+.test1{
+    float: right;
+    margin-right: 2px;
+}
+
+/* ==============================*/
+                 /*List events style*/
+.Box
+{
+   
+     width:619px;
+  
+    float:left;
+    font-family:'Arial';
+    border-radius:8px;
+    moz-border-radius:8px;
+    webkit-border-radius:8px;
+    
+}
+
+.t1
+{
+    font-size:16px;
+  
+    text-align:left;
+  
+   padding-left:10px;
+       
+}
+
+.Box .Top
+{
+    float:left;
+    display:block;
+   
+     width:620px;
+  
+}
+
+.Top .T-Left
+{
+    float:left;
+    width:11px;
+ 
+    background-repeat:no-repeat;
+    background-position:left;
+    height:43px;
+}
+
+.Top .Title1
+{
+   
+    
+   width: 620px;
+   
+   
+    background-color:{!StyleRec.Section_titleheader_background__c};
+  
+    background-repeat:repeat-x;
+    
+    float:left;
+    -webkit-border-radius: 8px 8px 0px 0px;
+    -moz-border-radius: 8px 8px 0px 0px;
+    border-radius: 8px 8px 0px 0px;    
+}
+.Top .Title1 h3 {
+   
+    padding: 8px 0 8px 10px;
+    margin:0px;
+
+}
+.Top .T-Right
+{
+    width:11px;
+    height:43px;
+    float:left;
+   
+    background-repeat:no-repeat;
+    background-position:right;
+}
+
+.ContMiddle
+{
+   
+    width:600px;
+   
+    float:left;
+   
+    background-color:{!StyleRec.Section_Headers_background__c};  
+ 
+    -webkit-border-radius: 0px 0px 8px 8px;
+    -moz-border-radius: 0px 0px 8px 8px;
+    border-radius: 0px 0px 8px 8px;
+    padding:10px;
+    font-size:11px;
+   
+}
+
+.Box .Bottom
+{
+  
+    width:620px;
+    float:left;
+    height:17px;
+}
+
+.Bottom .B-Left
+{
+    float:left;
+    width:11px;
+    height:17px;
+    
+    background-repeat:no-repeat;
+    background-position:left;
+}
+
+.Box .B-Middle
+{
+    
+      width:598px;
+    height:16px;
+    border-bottom:1px solid #e4e4e4;
+    background-color:#fff;
+    float:left;
+}
+
+.Box .B-Right
+{
+   
+    background-repeat:no-repeat;
+    background-position:right;
+    float:left;
+    height:17px;
+    width:11px;
+}
+.term{
+position:relative;float:left;
+margin-right: 10px;
+//margin-top:19px;
+}
+.socialIcons{
+  float:left;
+  margin-top:10px;
+
+}
+</style>
+<apex:pageBlock ><Title>{!EventRec.Event_title__c}</title></apex:pageBlock>
+
+<apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Upload_background_image__c}" style="display:none" styleClass="{!IF(StyleRec.CnP_PaaS_EVT__Show_Page_Image__c==true ,'backgroundimageclass','nontest')}"  escape="false"/>
+</apex:page>

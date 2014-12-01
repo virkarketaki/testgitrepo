@@ -1,0 +1,38 @@
+<apex:page controller="CnP_PaaS.Recurring_UpComingAmount_Daily_MonthEnd" tabStyle="C_P_Reports__tab"> 
+<style>
+#title h1{
+//padding-left:10px;
+//margin:5px 0 0 0;
+}
+.bPageTitle {
+padding-bottom:0px;
+margin:0px 0 0 0;
+}
+</style>
+<span id="title">
+<apex:sectionHeader title="Recurring Daily Upcoming $ Month End"/> </span>
+<div align="right" style="padding-bottom:10px;" class="test">
+<apex:outputLink value="/apex/downloadUpcomingDailyVolume" style="text-decoration:none;display:block;border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 4px 4px;float:right;background-color:#FFFFFF;" target="CnP_PaaS_Evt_Download">Download</apex:outputLink>
+</div>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar"> 
+     
+          <apex:column headerValue="Day" value="{!ar.MonthDigit}"/> 
+          <apex:column headerValue="Month" value="{!ar.YearNo}"/> 
+           <apex:column headerValue="Total Amount">
+           <apex:outputText value="{0, number,$###,###,##0.00}">
+            <apex:param value="{!ar.TotalAmount}" id="TotalAmount" />
+            </apex:outputText></apex:column>
+             
+      </apex:pageBlockTable>
+      {!IF(ResultSet.size==0,"NO records available.",NULL)} 
+      </apex:pageBlock>
+      
+      </apex:page>

@@ -1,0 +1,13 @@
+<apex:page controller="CnP_PaaS.Relative_Monthly_Growth_Count_ThisYear" contentType="application/x-excel#monthly_growth_of_volume_year_to_date.xls" standardStylesheets="false"  language="english">
+<h1>% Monthly Growth ThisYear #</h1>  
+Download Date and Time : <apex:outputLabel value="{!Dvalue}"></apex:outputLabel>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar">  
+          <apex:column headerValue="Month" value="{!ar.MonthNo}"/>  
+           <apex:column headerValue="Number Of Transactions" value="{!ar.TotalAmount}"/>
+           <apex:column headerValue="Relative Change" value="{!ar.Difference} %"/>    
+      </apex:pageBlockTable>
+      {!IF(ResultSet.size==0,"NO records available.",NULL)} 
+      </apex:pageBlock>
+      
+      </apex:page>

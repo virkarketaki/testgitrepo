@@ -1,0 +1,40 @@
+<apex:page standardController="CnP_PaaS_EVT__Discount_plan__c" extensions="CnP_PaaS_EVT.DiscountPlan">
+ <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/jquery-1.5.1.js')}"/>
+ <script>
+    function validateform()
+    {
+        var file = $(".csvfile").val();
+              if(file==""){
+                    alert("Please Choose Only CSV Format!");
+                    $(".csvfile").focus();
+                    return false;
+              }else if(file.match(/\.(csv||CSV)$/) ){
+                       return true;   
+              }
+              else{ 
+                   alert("Please Choose Only CSV Format!");
+                   $(".csvfile").focus();
+                   return false;
+              } 
+           
+         
+    }
+ </script>
+<apex:form id="UploadCSVfile">
+
+<apex:pageBlock id="CouponFile" title="Discount File">
+ <apex:outputLink value="/{!ev_id}" title="{!EventName}">{!EventName}</apex:outputLink> >>  <apex:outputLink title="{!RegistrationLevelName}" value="/{!leveldis_id}">{!RegistrationLevelName}</apex:outputLink>
+               <br/> <br/> <br/> <br/>
+<apex:messages />
+<apex:pageBlockButtons >
+                        <apex:commandButton action="{!ReadFile}" value="Save" styleClass="submitbutton" onclick="return validateform();" />
+                        <apex:outputLink value="/{!leveldis_id}" styleClass="btn" style=" text-decoration: none;" >Back</apex:outputLink>
+                        <!--<apex:commandButton action="{!Back}" value="Back"/>-->                       
+              
+                </apex:pageBlockButtons>
+               
+<apex:inputfile value="{!contentFile}" filename="{!nameFile}" styleClass="csvfile"/>&nbsp;&nbsp;
+ <apex:outputLink value="{!URLFOR($Resource.CnP_PaaS_EVT__DiscountFileSample, 'DiscountPlan.csv')}" style="color:blue;text-align:right;width:250px;">Sample CSV file download</apex:outputLink> 
+</apex:pageBlock> 
+</apex:form>  
+</apex:page>

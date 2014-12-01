@@ -1,0 +1,32 @@
+<apex:page standardController="CnP_PaaS_EVT__Contact_information_fields__c" extensions="CnP_PaaS_EVT.ContactInfoFieldClass">
+ <input type="hidden" class="event" id="event" value="{!eventcheck}"/>
+ <input type="hidden" class="level" id="level" value="{!levelcheck}"/>
+ <input type="hidden" class="eventid" id="eventid" value="{!event_details.id}"/>
+ <input type="hidden" class="eventname" id="eventname" value="{!event_details.Name}"/>
+ <input type="hidden" class="levelid" id="levelid" value="{!level_details.id}"/>
+ <input type="hidden" class="levelname" id="levelname" value="{!level_details.Name}"/>
+ <input type="hidden" class="level_e_id" id="level_e_id" value="{!level_details.Event_name__r.id}"/>
+ <input type="hidden" class="level_e_name" id="level_e_name" value="{!level_details.Event_name__r.Name}"/>
+ <script>
+  function test(){  
+     var ev=document.getElementById('event').value;
+     var lv=document.getElementById('level').value;
+     var e_id=document.getElementById('eventid').value;
+     var e_name=document.getElementById('eventname').value;
+     var l_id=document.getElementById('levelid').value;
+     var l_name=document.getElementById('levelname').value;
+     var l_e_id=document.getElementById('level_e_id').value;
+     var l_e_name=document.getElementById('level_e_name').value;
+     if(ev=='true')
+     {
+       location.replace('/apex/ContactInfoFields?EventId='+e_id+'&Event_name='+e_name);
+     }
+     if(lv=='true')
+     {      
+       location.replace('/apex/ContactInfoFields?RL_id='+l_id+'&RL_name='+l_name+'&EventId='+l_e_id+'&Event_name='+l_e_name);
+     }     
+  }
+  test();
+</script>
+
+</apex:page>

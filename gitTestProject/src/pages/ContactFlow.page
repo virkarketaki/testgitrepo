@@ -1,0 +1,8 @@
+<apex:page standardController="Contact" extensions="ContactFlowController" sidebar="false">
+    <apex:pageBlock rendered="{!flag}" id="pgBlockId">
+        <flow:interview name="TestContactFlow" interview="{!contactFlow}" finishLocation="{!finishLocation}" rerender="pgBlockId">
+            <apex:param name="ContactName" value="{!contName}"/> 
+        </flow:interview>
+        <apex:outputText />
+    </apex:pageBlock>
+</apex:page>

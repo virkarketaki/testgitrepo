@@ -1,0 +1,145 @@
+<apex:page controller="CnP_PaaS.LogDetailsController">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__DataTables,'js/jquery.dataTables.js')}"/>
+ <apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS__DataTables,'css/demo_table_jui.css')}"/>
+ <apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS__DataTables,'jquery-ui-1.8.4.custom.css')}"/>
+<style>
+    .black_overlay{
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 100%;
+background-color: black;
+z-index:1001;
+-moz-opacity: 0.8;
+opacity:.40;
+filter: alpha(opacity=80);
+}
+.white_content {
+display: none;
+position: absolute;
+top: 30%;
+left: 47%;
+/*width: 2%;
+height: 4%;*/
+padding: 16px;
+background-color: white;
+z-index:1002;
+overflow: auto;
+border-radius:20px;
+-webkit-border-radius: 20px;
+-moz-border-radius: 20px;
+border:1px solid #000;
+} 
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+
+    
+           $('.datatables').dataTable({
+                    "bJQueryUI": true,
+                    "iDisplayLength"    : 25,  
+                    aoColumnDefs: [
+                      { aTargets: [0], bSortable: true}] 
+                });
+
+})
+function Process_Que(queaction)
+ {      
+       
+        var logNum=$(".rowNumlog").val();
+        var responderid='';
+        var v=0;
+        var count=0;
+        for(var i=0;i<logNum;i++)
+        {
+             var datalist=$(".logid"+i).is(':checked');
+             if(datalist){
+                 v=1;
+                 responderid+=$(".logid"+i).val();
+                 responderid+="--";
+                  count++;
+             }
+              if(count>10 && queaction=='queue')
+             {
+                  v=2;
+             }                        
+        }
+        if(v==1)
+        {
+           if(queaction=='delete'){
+            if(confirm("Are you sure you want to permanently delete this record(s)?")==true){
+              $("#light").attr('style','display:block');
+              $("#fade").attr('style','display:block');
+                 
+                         callDeleteResponder(responderid);
+               }    
+            }
+                   if(queaction=='queue')
+                   {
+                       if(confirm("Are you sure you want to send this record(s)?")==true){
+                          $("#light").attr('style','display:block');
+                         $("#fade").attr('style','display:block');
+                         callProcessQueue(responderid);
+                       }
+                   }
+           
+        }else if(v==2 && queaction=='queue'){
+               alert("Please Select Only 10 Records");
+               return false;
+        }else {
+            alert("Please Select at least one record");
+            return false;
+        }        
+ } 
+ function recallform()
+ {
+      $("#light").attr('style','display:none');
+      $("#fade").attr('style','display:none');
+      location.reload();
+ }
+</script>
+ <apex:form >
+        <apex:sectionHeader title="C&P Email Queue Process Details" subtitle="Email Queue Details"/>
+        <apex:pageBlock title="Email Queue Information" id="process">
+            <apex:pageBlockButtons >
+                   <a href="javascript:void(0)" onclick="Process_Que('queue')" class="btn" style="text-decoration:none"><apex:outputText value="Send" ></apex:outputText></a> 
+                   <a href="javascript:void(0)" onclick="Process_Que('delete')" class="btn" style="text-decoration:none"><apex:outputText value="Delete" ></apex:outputText></a> 
+                   <apex:commandLink value="Back" action="/{!contactId}" styleclass="btn" style="text-decoration:none"/>
+           </apex:pageBlockButtons> 
+           <apex:actionFunction action="{!ProcessQue}" name="callProcessQueue" reRender="process" oncomplete="recallform();">
+                                 <apex:param value="" name="processides" assignTo="{!processides}" />                                 
+           </apex:actionFunction> 
+           <apex:actionFunction action="{!DeleteQue}" name="callDeleteResponder" reRender="newform" oncomplete="recallform();">
+                                 <apex:param value="" name="deleteides" assignTo="{!deleteides}" />                                 
+           </apex:actionFunction> 
+           <div id="light" class="white_content">                      
+               <apex:image value="{!URLFOR($Resource.CnP_PaaS__LoaderImage)}" title="Processing..." style="height: 15px;"/>
+               <br/>
+                <apex:outputLabel value="we are processing your request. please wait...                  "></apex:outputLabel>
+           </div>
+           <div id="fade" class="black_overlay"></div> 
+           <apex:outputPanel id="newform">
+                 <apex:variable value="0" var="rowNumlog"/>
+            <apex:pageBlockTable value="{!queuedetails}" var="que" styleClass="datatables">
+                   <apex:column headerValue="Action">                        
+                         <input type="checkbox" value="{!que.Id}" class="logid{!rowNumlog}"/>
+                         <apex:variable var="rowNumlog" value="{!VALUE(rowNumlog) + 1}"/>
+                   </apex:column>
+                   <apex:column value="{!que.Name}" headerValue="Queue ID" />
+                   <apex:column value="{!que.CnP_PaaS__CnP_Auto_Responder_Settings__c}" headerValue="Responder Name" />
+                   <apex:column value="{!que.CnP_PaaS__CnP_Designer__c}" headerValue="C&P Template Name" />
+                   <apex:column value="{!que.CnP_PaaS__CnP_Transaction__c}" headerValue="Order Number" />                   
+                   <apex:column value="{!que.CnP_PaaS__Sent_Date__c}" headerValue="Sent Date" />                   
+                   <apex:column value="{!que.CnP_PaaS__Last_Attempt__c}" headerValue="Last Attempt" />
+                   <apex:column value="{!que.CnP_PaaS__Sent_Count__c}" headerValue="Attempts" />
+                                   
+            </apex:pageBlockTable>
+             <input type="hidden" value="{!rowNumlog}" class="rowNumlog" name="rowNumlog"/>  
+           </apex:outputPanel>
+              
+        </apex:pageBlock>
+ </apex:form>
+</apex:page>

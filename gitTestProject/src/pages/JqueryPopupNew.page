@@ -1,0 +1,79 @@
+<apex:page standardController="Account" extensions="JqueryPageController" sidebar="false">
+<head>
+    <apex:includeScript value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.10.2.custom/js/jquery-1.9.1.js')}"  />
+    <apex:includeScript value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.10.2.custom/js/jquery-ui-1.10.2.custom.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.10.2.custom/css/ui-lightness/jquery-ui-1.10.2.custom.css')}" />
+
+    <script>
+        $j = jQuery.noConflict();   
+   
+        $j(document).ready(function() {
+            $j('[id*=DateId]').datepicker();
+            $j('[id*=clickLbl]').click(function(){
+                $j('#txtdiv').dialog({autoOpen: true, modal: true, position: 'center'});
+             
+                $j('[id*=btnOk]').click(function(){
+                    if($j('[id*=DateId]').val() != '')
+                    {
+                        $j('#txtdiv').dialog('close');
+                    }
+                    else
+                        alert('Please select a date.');
+                });
+                
+                return false;
+            });
+        });
+        
+        
+        function doSave() {
+    <!--     var datesel = $j('[id*=DateId]').val();  -->
+  <!--  paraFunction(datesel); -->
+         
+         if($j('[id*=accID]').val())
+           paraFunction($j('[id*=accID]').val()); 
+         else
+            paraFunction('');
+        } 
+        
+        
+    </script>    
+</head>
+
+<body>
+    <apex:form >
+    
+    <apex:actionFunction name="paraFunction" action="{!saveInterviewDate}" rerender="btnOk,accDetail">       
+         <apex:param id="aname" name="interviewDate" value=""/>  
+     </apex:actionFunction> 
+                   
+       <apex:commandButton id="clickLbl" value="Click Me"/>
+   
+       <div id="txtdiv" style="display:none">
+           <apex:pageBlock id="pgBlockId">
+               <apex:pageBlockSection columns="1">
+            
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Date"></apex:outputLabel>
+                        <apex:inputText id="DateId" label="Date" required="true"/>
+                     </apex:pageBlockSectionItem>
+                     
+                     <apex:pageBlockSectionItem >
+                         <apex:outputLabel value="Acc Name"/>
+                         <apex:selectList id="accID" value="{!selectedAccountId}" size="4">
+                             <apex:selectOptions value="{!items}"/>
+                         </apex:selectList>
+                     </apex:pageBlockSectionItem>
+                     
+                </apex:pageBlockSection>   
+                
+                <apex:commandButton id="btnOk" value="Ok" oncomplete="doSave();"/>
+            </apex:pageBlock>
+       </div>
+       
+       <apex:detail id="accDetail" subject="{!objAccount}" relatedList="false" />
+       
+    </apex:form>
+</body>
+    
+</apex:page>

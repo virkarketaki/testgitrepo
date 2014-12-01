@@ -1,0 +1,377 @@
+<apex:page standardController="CnP_PaaS__Contact_Mail_ids__c" extensions="CnP_PaaS.CreditTransactions" showheader="true" sidebar="true" tabStyle="CnP_PaaS__Contact_Mail_ids__c" >
+ <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+ <style>
+ 
+  .helpLink {
+       position:relative;       
+    }
+
+    .video{
+      display:none;
+      width:12%;
+      height:auto;
+      background:#EEE;
+      border:1px solid #CCC;
+      position:absolute;     
+      z-index:10;
+      margin-left:920Px;
+    }
+    
+.items {
+    font-size:13px;
+    color:#000;
+    width: 850px;
+    text-align: left;
+    border-collapse: collapse;
+    box-shadow: 0 0 5px #CCC;
+    border: 1px solid #666;
+  }
+.items thead {
+     background:#999;
+}
+.items th {
+        font-size: 12px;
+        background:#999;
+        background-repeat:repeat-x;
+        padding:6px 6px 0px 6px;
+       font-weight:600;
+         color:#FFF;
+}
+.items td {
+    padd=Input .requiredBlock{
+  bottom:1px;
+}
+ 
+ </style>
+ <script type="text/javascript">
+    
+function valueupdate(){
+   var condition =0;
+
+   
+  var first = $(".first").is(":checked");  
+  var last=$(".last").is(":checked");  
+  var email=$(".email").is(":checked");  
+  var phone=$(".phone").is(":checked");  
+  var city=$(".city").is(":checked"); 
+   var state=$(".state").is(":checked");  
+  var country=$(".country").is(":checked");  
+  var street=$(".street").is(":checked"); 
+  var postalcode=$(".postalcode").is(":checked");  
+
+ if(first==false && last==false && email==false && phone==false && city==false && state==false && country==false && street==false && postalcode==false)
+   {
+   alert('Please Select atleast one field to update the contact');
+   condition=1;
+   return false;
+   }
+ 
+ if(condition == 0)
+  {
+    $("#light").attr('style','display:block');
+    $("#fade").attr('style','display:block');
+    return true;
+  }
+ else
+  {
+    return false;
+  }     
+    }
+    
+function aliasvalidate()
+ {
+     var condition =0;
+  var aliaslast=jQuery.trim(jQuery(".aliaslast").val());
+  var reg_email= /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+  var aliasemail=jQuery.trim(jQuery(".aliasemail").val());
+  if(aliaslast=='')
+   {
+   alert('Please Enter Last Name');
+   jQuery(".aliaslast").focus();
+   condition=1;
+   return false;
+   }
+   if(aliasemail!=''&& !reg_email.test(aliasemail))
+   {
+   alert('Please Enter valid Email');
+   jQuery(".aliasemail").focus();
+   condition=1;
+   return false;
+   }
+   
+   if(condition == 0)
+  {
+    $("#light").attr('style','display:block');
+    $("#fade").attr('style','display:block');
+    return true;
+  }
+ else
+  {
+    return false;
+  }  
+}
+
+jQuery(function(){
+          jQuery(".video").mouseout(function(){             
+              jQuery(this).fadeOut(8000);             
+          })
+          })  
+    </script>
+    
+<apex:form >
+          <apex:outputLink styleClass="helpLink" rendered="{!subtab['ContactAlias']['ContactAlias'].display=='true'}">  
+                              <Apex:outputLabel value="C&P Help for this Page" style="font-size:90%;margin-left:930Px;margin-right:5Px;" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; "/>  
+                               <apex:image value="/s.gif" styleClass="helpIcon" onmouseover="document.getElementById('{!$Component.Foo1}').style.display='block'; "/>                        
+                         </apex:outputLink>
+                          <apex:outputPanel id="Foo1" styleClass="video"  >   
+                           <ul style="padding-left:4px;" >                       
+                              {!subtab['ContactAlias']['ContactAlias'].description} <br/> <br/>
+                              <Apex:outputpanel rendered="{!subtab['ContactAlias']['ContactAlias'].ActiveLink=='true'}">
+                                 <li><a href="{!subtab['ContactAlias']['ContactAlias'].link}" target="_blank" >{!subtab['ContactAlias']['ContactAlias'].strlink}</a> <br/></li></Apex:outputpanel>
+                             <Apex:outputpanel rendered="{!subtab['ContactAlias']['ContactAlias'].ActiveVideo=='true'}">
+                                 <li> <a href="{!subtab['ContactAlias']['ContactAlias'].video}" onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subtab['ContactAlias']['ContactAlias'].strVideo}</a></li></Apex:outputpanel>
+                           </ul>
+      </apex:outputPanel>                       
+<apex:pageBlock rendered="{!IF(editalias == false, true, false)}" title="C&P Alias Contact">
+ 
+
+<apex:pageBlockButtons >
+<apex:commandbutton value="Edit" action="{!editalias}"/>
+<apex:commandbutton value="Copy to Contact" action="{!save}" onclick="if(!valueupdate()){return false;}"/>
+<apex:commandbutton value="Delete"  action="{!deletealias}" onclick="return confirm('Are you sure you want to delete this Alias record permanently?')"/>
+<apex:commandbutton value="Back"  action="{!backtocontact}" />
+</apex:pageBlockButtons>
+      <apex:pageBlockSection title="C&P Alias Contact" collapsible="false" >
+      
+       </apex:pageBlockSection>
+           <apex:outputlabel value="Contact"/> &nbsp;&nbsp;&nbsp;&nbsp;
+             <apex:outputLink value="/{!aliascon.CnP_PaaS__Contact__c}">{!aliascon.Contact__r.Name}</apex:outputLink><br/><br/>
+<table  style="margin-left:60px;" Class="items" columns="4">
+    <thead>
+       <th>Copy Field</th>
+       <th>Alias Field</th>
+       <th>Alias Info</th>
+       <th>Map to Contact Record</th>
+    </thead>
+    <tbody>
+       <tr>
+           <td> <apex:inputCheckbox value="{!firstcheck}" styleClass="first">
+                    <apex:actionsupport event="onclick" rerender="first" />
+                </apex:inputCheckbox>   
+           </td>
+           <td> <apex:outputlabel value="First Name"></apex:outputlabel> </td>
+           <td>  <apex:outputField value="{!aliascon.CnP_PaaS__First_Name__c}"/> </td>
+           <td>  <apex:outputpanel id="first"><apex:selectList size="1" value="{!aliasfirstfields}"  rendered="{!firstcheck}"  >
+                    <apex:selectOption itemValue="FirstName" itemLabel="First Name"/>
+                    <apex:selectOptions value="{!ContactfirstFields }"></apex:selectOptions>
+                </apex:selectList></apex:outputpanel>
+          </td>
+       </tr>
+       
+       <tr>
+           <td> <apex:inputCheckbox value="{!lastcheck}" styleClass="last">
+                    <apex:actionsupport event="onclick" rerender="last" />
+                </apex:inputcheckbox>
+           </td>
+           <td> <apex:outputlabel value="Last Name"></apex:outputlabel> </td>
+           <td> <apex:outputField value="{!aliascon.CnP_PaaS__Last_Name__c}"/> </td>
+           <td> <apex:outputpanel id="last"><apex:selectList size="1" value="{!aliaslastfields}" rendered="{!lastcheck}" >
+                    <apex:selectOption itemValue="LastName" itemLabel="Last Name"/>
+                    <apex:selectOptions value="{!ContactlastFields }"></apex:selectOptions>
+                </apex:selectList></apex:outputpanel> 
+          </td>
+       </tr>
+       
+       <tr>
+           <td> <apex:inputCheckbox value="{!emailcheck}" styleClass="email">
+                    <apex:actionsupport event="onclick" rerender="email" />
+                </apex:inputcheckbox>
+           </td>
+           <td> <apex:outputlabel value="Email"></apex:outputlabel> </td>
+           <td> <apex:outputField value="{!aliascon.CnP_PaaS__Contact_Mail_id__c}"/> </td>
+           <td><apex:outputpanel id="email"> <apex:selectList size="1" value="{!aliasemailfields}" rendered="{!emailcheck}" >
+                     <apex:selectOption itemValue="Email" itemLabel="Email"/>
+                    <apex:selectOptions value="{!ContactEmailFields}"></apex:selectOptions>
+                </apex:selectList></apex:outputpanel>
+           </td>
+       </tr>
+             
+       <tr>
+          <td> <apex:inputCheckbox value="{!phonecheck}" styleClass="phone"> 
+                  <apex:actionsupport event="onclick" rerender="phone" />
+               </apex:inputcheckbox>
+          </td>
+          <td> <apex:outputlabel value="Phone"></apex:outputlabel> </td>
+          <td> <apex:outputField value="{!aliascon.CnP_PaaS__Billing_Phone__c}"/> </td>
+          <td><apex:outputpanel id="phone"> <apex:selectList size="1" value="{!aliasphonefields}" rendered="{!phonecheck}" >
+                   <apex:selectOption itemValue="Phone" itemLabel="Business Phone"/>
+                   <apex:selectOptions value="{!ContactphoneFields}"></apex:selectOptions>
+               </apex:selectList></apex:outputpanel>
+          </td>
+       </tr>
+       
+       <tr>
+           <td>  <apex:inputCheckbox value="{!streetcheck}" styleClass="street">
+                    <apex:actionsupport event="onclick" rerender="street" />
+                </apex:inputcheckbox>
+           </td>
+           <td> <Apex:outputLabel value="Street"/> </td>
+           <td> <apex:outputField value="{!aliascon.CnP_PaaS__Billing_Street__c}" /> </td>
+           <td> <apex:outputpanel id="street"><apex:selectList size="1" value="{!aliasmailingstreet}" rendered="{!streetcheck}" >
+                   <apex:selectOption itemValue="MailingStreet" itemLabel="Mailing Street"/>
+                   <apex:selectOptions value="{!ContactstreetFields }"></apex:selectOptions>
+                </apex:selectList></apex:outputpanel>
+           </td>
+         
+       </tr>    
+      
+       <tr>
+           <td>  <apex:inputCheckbox value="{!citycheck}" styleClass="city">
+                        <apex:actionsupport event="onclick" rerender="city" />
+                 </apex:inputcheckbox>
+           </td>
+           <td> <Apex:outputLabel value="City"/> </td>
+           <td> <apex:outputField value="{!aliascon.CnP_PaaS__Billing_City__c}"/> </td>
+           <td> <apex:outputpanel id="city" ><apex:selectList size="1" value="{!aliasmailingcity}" rendered="{!citycheck}">
+                    <apex:selectOption itemValue="MailingCity" itemLabel="Mailing City"/>
+                    <apex:selectOptions value="{!ContactcityFields }"></apex:selectOptions>
+                </apex:selectList></apex:outputpanel>
+           </td>
+          
+       </tr> 
+             
+       <tr>
+           <td>  <apex:inputCheckbox value="{!statecheck}" styleClass="state">
+                     <apex:actionsupport event="onclick" rerender="state" />
+                 </apex:inputcheckbox>
+           </td>
+           <td> <Apex:outputLabel value="State"/> </td>
+           <td> <apex:outputField value="{!aliascon.CnP_PaaS__Billing_State__c}"/> </td>
+           <td><apex:outputpanel id="state"> <apex:selectList size="1" value="{!aliasmailingstate}" rendered="{!statecheck}" >
+                    <apex:selectOption itemValue="MailingState" itemLabel="Mailing State/Province"/>
+                    <apex:selectOptions value="{!ContactstateFields }"></apex:selectOptions>
+                </apex:selectList></apex:outputpanel>
+           </td>
+          
+       </tr> 
+     
+       <tr>
+           <td>  <apex:inputCheckbox value="{!postalcodecheck}" styleClass="postalcode">
+                    <apex:actionsupport event="onclick" rerender="postalcode" />
+                 </apex:inputcheckbox>
+           </td>
+           <td> <Apex:outputLabel value="Postal Code"/> </td>
+           <td> <apex:outputField value="{!aliascon.CnP_PaaS__Billing_Postal_Code__c}"  /> </td>
+           <td> <apex:outputpanel id="postalcode"><apex:selectList size="1" value="{!aliasmailingpostalcode}" rendered="{!postalcodecheck}" >
+                    <apex:selectOption itemValue="MailingPostalCode" itemLabel="Mailing Zip/Postal Code"/>
+                    <apex:selectOptions value="{!ContactpostalcodeFields }"  ></apex:selectOptions>
+                </apex:selectList></apex:outputpanel>
+           </td>
+          
+       </tr> 
+             
+       <tr>
+           <td>  <apex:inputCheckbox value="{!countrycheck}" styleClass="country">
+                    <apex:actionsupport event="onclick" rerender="country" />
+                 </apex:inputcheckbox>
+           </td>
+           <td> <Apex:outputLabel value="Country"/> </td>
+           <td> <apex:outputField value="{!aliascon.CnP_PaaS__Billing_Country__c}"/> </td>
+           <td> <apex:outputpanel id="country"><apex:selectList size="1" value="{!aliasmailingcountry}" rendered="{!countrycheck}" >
+                   <apex:selectOption itemValue="MailingCountry" itemLabel="Mailing Country"/>
+                   <apex:selectOptions value="{!ContactcountryFields }"></apex:selectOptions>
+                </apex:selectList></apex:outputpanel>
+           </td>
+          
+       </tr> 
+          
+    </tbody>
+</table>
+ 
+</apex:pageBlock>
+<apex:pageBlock rendered="{!IF(editalias = true, true, false)}" title="C&P Contact Alias Edit">
+
+<apex:pageblockButtons >
+<apex:commandbutton value="Update" action="{!updatealias}"  onclick="if(!aliasvalidate()){return false;}"/>
+<apex:commandbutton value="Cancel" action="{!cancelalias}"/>
+</apex:pageblockButtons>
+
+<apex:pageblocksection title="C&P Contact Alias Edit" collapsible="false">
+</apex:pageblocksection>
+  <apex:outputlabel value="Contact"/> &nbsp;&nbsp;&nbsp;&nbsp;
+             <apex:outputLink value="/{!aliascon.CnP_PaaS__Contact__c}">{!aliascon.Contact__r.Name}</apex:outputLink><br/><br/>
+<table  style="margin-left:60px;" Class="items" columns="2">
+    <thead>
+       <th>Alias Field</th>
+       <th>Alias Info</th>
+     </thead>
+    <tbody>
+       
+    <!--   <tr>
+           <td> <apex:outputlabel value="Contact"/> </td>  
+            <td>   <apex:outputLink value="/{!aliascon.CnP_PaaS__Contact__c}">{!aliascon.Contact__r.Name}</apex:outputLink>   </td>
+       </tr>-->
+     
+       <tr>
+           <td> <apex:outputlabel value="First Name"/> </td>  
+           <td> <apex:inputtext value="{!aliasfirst}" /> </td>
+       </tr>
+      
+       <tr>
+           <td> <apex:outputlabel value="Last Name"/> </td>  
+           <td> 
+                     <apex:outputPanel styleClass="requiredInput" layout="block">
+                     <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                     <apex:inputtext value="{!aliaslast}" styleclass="aliaslast"/>
+                     </apex:outputpanel>
+           </td>
+       </tr>
+       
+        <tr>
+           <td> <apex:outputlabel value="Email"/> </td>  
+           <td> <apex:inputtext value="{!aliasemail}" styleclass="aliasemail"/> </td>
+       </tr>
+       
+       <tr>
+           <td> <apex:outputlabel value="Phone"/> </td>  
+           <td> <apex:inputtext value="{!aliasphone}"/> </td>
+       </tr>
+       
+       <tr>
+           <td> <apex:outputlabel value="Street"/> </td>  
+           <td> <apex:inputtext value="{!aliasstreet}"/> </td>
+       </tr>
+       
+        <tr>
+           <td> <apex:outputlabel value="City"/> </td>  
+           <td> <apex:inputtext value="{!aliascity}"/> </td>
+       </tr>
+       
+       <tr>
+           <td> <apex:outputlabel value="State"/> </td>  
+           <td> <apex:inputtext value="{!aliasstate}"/> </td>
+       </tr>
+       
+       <tr>
+           <td> <apex:outputlabel value="Postal Code"/> </td>  
+           <td> <apex:inputtext value="{!aliaspostalcode}"/> </td>
+       </tr>
+       
+        <tr>
+           <td> <apex:outputlabel value="Country"/> </td>  
+           <td> <apex:inputtext value="{!aliascountry}"/> </td>
+       </tr>
+
+   </tbody>
+</table>
+
+</apex:pageBlock>
+
+</apex:form>
+  <style>
+      .tertiaryPalette{
+  background-color: #efb22d !important;
+  border-color: #efb22d !important;
+ }
+  </style>
+</apex:page>

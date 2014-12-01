@@ -1,0 +1,58 @@
+<apex:page controller="CnP_PaaS_EVT.TemperoryGridTables" tabStyle="CnP_PaaS_EVT__Custom_fields__c">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__DataTables,'js/jquery.dataTables.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS__DataTables,'css/demo_table_jui.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS__DataTables,'jquery-ui-1.8.4.custom.css')}"/>
+    
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                oTable = $('.displaylevel').dataTable({
+                    "bJQueryUI": true,
+                    "sPaginationType": "full_numbers"
+                });
+            } );
+        </script>
+ <apex:form >
+  <apex:pageBlock >
+  <apex:pageBlockSection columns="1">
+  <apex:pageBlockSectionItem >
+  <apex:outputLabel value="Event Name"></apex:outputLabel>
+  <apex:outputPanel ><a href="../../{!EventRec.Id}"><apex:outputField value="{!EventRec.Name}" label="Event Name"/></a></apex:outputPanel>
+  </apex:pageBlockSectionItem>
+  <apex:pageBlockSectionItem >
+  <apex:outputLabel value="Start Date"></apex:outputLabel>
+  <apex:outputField value="{!EventRec.CnP_PaaS_EVT__Start_date_and_time__c}"/>
+  </apex:pageBlockSectionItem>
+   <apex:pageBlockSectionItem >
+  <apex:outputLabel value="End Date"></apex:outputLabel>
+  <apex:outputField value="{!EventRec.CnP_PaaS_EVT__End_date_and_time__c}"/>
+  </apex:pageBlockSectionItem>
+  <apex:pageBlockSectionItem >
+  <apex:outputLabel value="Publish Date"></apex:outputLabel>
+  <apex:outputField value="{!EventRec.CnP_PaaS_EVT__Publish_date__c}"/>
+  </apex:pageBlockSectionItem>
+  </apex:pageBlockSection>
+  <apex:pageBlockSection title="Payee Details" columns="1">
+  <apex:pageblockTable columns="5" value="{!DisplayRegistrants}"  styleClass="displaylevel"  var="temp1" id="RefreshTable">
+  
+ <apex:column headerValue="First Name"><a href="apex/CnP_PaaS__Temporarycontact?id={!temp1.TempContactId}"><apex:outputText value="{!temp1.FirstName}"></apex:outputText></a></apex:column>
+   <apex:column headerValue="Last Name"><apex:outputText value="{!temp1.LastName}"></apex:outputText></apex:column>
+   <apex:column headerValue="Email"><apex:outputText value="{!temp1.Email}"></apex:outputText></apex:column>
+  </apex:pageblockTable>
+  </apex:pageBlockSection>
+  
+  <apex:pageBlockSection title="Attendee Details" columns="1">
+  <apex:pageBlockSectionItem rendered="{!IF(LevelId!=null,true,false)}">
+  <apex:outputLabel value="Level Name"></apex:outputLabel>
+  <apex:outputPanel ><a href="../../{!LevelId}"><apex:outputtext value="{!Levelname}" label="Event Name"/></a></apex:outputPanel>
+  </apex:pageBlockSectionItem>
+  <apex:pageblockTable columns="5" value="{!DisplayTempContacts}"  styleClass="displaylevel"  var="temp1" id="RefreshTable">
+   
+   <apex:column headerValue="First Name"><a href="/apex/EventTemparyContact?Id={!temp1.TempContactId}"><apex:outputText value="{!temp1.FirstName}"></apex:outputText></a></apex:column>
+   <apex:column headerValue="Last Name"><apex:outputText value="{!temp1.LastName}"></apex:outputText></apex:column>
+   <apex:column headerValue="Email"><apex:outputText value="{!temp1.Email}"></apex:outputText></apex:column>
+  </apex:pageblockTable>
+  </apex:pageBlockSection>
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

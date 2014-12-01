@@ -1,0 +1,76 @@
+<apex:page standardController="CnP_PaaS_EVT__Registration_level__c" extensions="CnP_PaaS_EVT.RegistrationLevelsAndPrices" action="{!updatedata}">
+    <apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/demos/demos.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/themes/base/jquery.ui.all.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/jquery-1.5.1.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/ui/jquery.ui.core.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/ui/jquery.ui.widget.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/ui/jquery.ui.mouse.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/ui/jquery.ui.sortable.js')}"/>
+    <style>
+    #classtable {cursor: pointer;padding: 0.4em; padding-left: 1.5em; font-size: 1.2em; height: 18px;border-top: 1px solid #D4DADC;border-bottom: 1px solid #D4DADC;border-right: 1px solid #D4DADC;border-left: 1px solid #D4DADC;}
+    #classtable classspan {width:50%}
+    #sortable { list-style-type: none; margin: 0; padding: 0; width: 100%; background-color:white;border:1px 1px 1px 1px;}
+    #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
+    #sortable li span { position: absolute; margin-left: -1.3em; }
+    </style>
+    <script>
+        $(function() {
+            $( "#sortable" ).sortable();
+           // $( "#sortable" ).disableSelection();
+            
+        });
+         function SaveData(){
+      var result = $('#sortable').sortable('toArray');
+     
+    var ResultSet="";
+        for(i = 0; i < result.length; i++){
+         ResultSet+=result[i]+",";
+     }
+    //alert(ResultSet);
+    //return false;
+    SendResult(ResultSet);
+   
+    }
+    function testing()
+    {
+        // alert('testing');
+         $(".submitbutton").attr('style','display:none'); 
+    }
+    </script>
+    <apex:form id="OrderFields">
+
+        <apex:pageBlock title="Order of the Registration Levels({!EventName})">
+        <apex:pageBlockButtons >
+                 <apex:outputPanel styleClass="submitbutton1">
+                        <apex:outputLabel value="Submit" styleClass="btn submitbutton" onclick="SaveData()" />
+                        <apex:outputLink value="/{!EventId}" styleClass="btn" style=" text-decoration: none;" >Back</apex:outputLink>
+                        <apex:actionFunction id="SendResult" name="SendResult" action="{!saveLevel}" reRender="jsvalues"  oncomplete="testing()">
+                                <apex:param name="firstParam" assignTo="{!resultset}" value="" />
+                        </apex:actionFunction>
+                  </apex:outputPanel>    
+                 
+         </apex:pageBlockButtons>
+         
+         <apex:outputPanel id="jsvalues"> 
+         <div id="sortable">
+                                <apex:repeat var="var" value="{!Registrationlist}">
+                                        <div id="{!var.Id}">
+                                                <div id="classtable"> 
+                                                        <table width="100%">
+                                                            <tr>
+                                                                <td width="30%">{!var.Name}</td>
+                                                                
+                                                                
+                                                                <td width="10%"><apex:outputText value="{0, number, integer}">
+                                                                            <apex:param value="{!var.CnP_PaaS_EVT__OrderLevel__c}" />
+                                                                        </apex:outputText></td>
+                                                            </tr>
+                                                        </table>
+                                                </div>
+                                        </div>
+                                </apex:repeat>
+                   </div>
+            </apex:outputPanel>
+         </apex:pageBlock>
+     </apex:form>
+</apex:page>

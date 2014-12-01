@@ -1,0 +1,15 @@
+<apex:page standardController="CnP_PaaS__CnPRecurring__c"  extensions="CnP_PaaS.CnP_RecurringRedirect_Controller">
+    <script>
+          window.onload = function() {
+              load();
+          }          
+          function function2(url)
+          {
+              parent.parent.location.href=url;
+          }          
+    </script>
+
+    <apex:form >
+        <apex:actionFunction name="load" action="{!Redirect}"/>
+    </apex:form>          
+</apex:page>

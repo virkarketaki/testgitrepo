@@ -1,0 +1,78 @@
+<apex:page standardController="CnP_PaaS_EVT__Event_Layout__c" extensions="CnP_PaaS_EVT.EventLayout">
+<script>
+     function confirmdelete()
+     {
+          if(confirm("Are you sure?")==true){
+                return true;
+          }else{
+                 return false;
+          }
+     }
+</script>
+    <apex:form >
+         <apex:pageBlock title="Page Layout" id="block" >
+           <apex:pageBlockButtons >
+               <apex:commandButton value="Edit" action="{!edit}" styleClass="edit" ></apex:commandButton>
+               <apex:commandButton value="Delete" action="{!delete}" styleClass="delete" onclick="return confirmdelete();"></apex:commandButton>
+              <!-- <apex:commandButton action="{!cancel}" value="Cancel" onclick="return confirmCancel()"/> -->
+               <apex:commandLink value="Preview" action="{!preview}" target="_CnP_PaaS_Events_Preview" styleClass="btn" style="text-decoration:none"/>             
+            </apex:pageBlockButtons>  
+           <apex:pageBlockSection id="EventLayoutInfo" title="Page Details" columns="1" collapsible="true">
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Event_name__c}" id="EventLayoutInfo_EventName"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Theme_Selection__c}" styleClass="theme" />
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Page__c}" id="Eventlayoutinfo_page" styleClass="pagelayout"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Page_name__c}" style="width:150px" id="Eventlayoutinfo_pagename" styleClass="pagename"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Start_date__c}"  style="width:150px;float:left;" id="Eventlayoutinfo_startdate" styleClass="Datetime_StartDT"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__End_date__c}"  style="width:150px;float:left;" id="Eventlayoutinfo_enddate" styleClass="Datetime_endDT"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Show_ajenda__c}" id="Ebentlayoutinfo_showagenda" rendered="{!if(CreateALayout.CnP_PaaS_EVT__Theme_Selection__c=='Standard Theme',true,false)}"/>
+           </apex:pageBlockSection>
+           <apex:pageBlockSection title="Custom Design" columns="1" collapsible="true" rendered="{!if(CreateALayout.CnP_PaaS_EVT__Theme_Selection__c=='Custom Theme',true,false)}">
+                
+                <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Engine_CSS__c}" styleClass="enginecss"  />
+                <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Custom_Page_Html__c}" />
+           </apex:pageBlockSection>
+           <apex:outputLabel rendered="{!if(CreateALayout.CnP_PaaS_EVT__Theme_Selection__c=='Standard Theme',true,false)}">
+              <apex:pageBlockSection title="Page Design" columns="1" collapsible="true" >
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Page_background__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_pagebg"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Show_Page_Image__c}" />
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Upload_background_image__c}" id="Eventlayoutinfo_BGImage" rendered="{!CreateALayout.CnP_PaaS_EVT__Show_Page_Image__c}"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Display_Banner__c}" />
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Page_Section_Border_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_borderbg"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Upload_banner__c}" id="Eventlayoutinfo_banner"  styleClass="banner_text"/>                 
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Button_Label__c}" id="Eventlayoutinfo_button"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Action_button_text__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_ActionButton"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Button_font_family__c}"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Button_font_size__c}"/>
+              </apex:pageBlockSection>
+               <apex:pageBlockSection title="Title Information" columns="1" collapsible="true" >
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Display_Title_Information__c}"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Title_Section_Border_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_titleborderbg"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Page_header__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_pageheaders"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Title_and_information__c}" id="EventLayoutCustomInfo_TitleInfo" styleClass="Title_text"/>
+               </apex:pageBlockSection>
+               <apex:pageBlockSection id="EventLayoutSectionInfo" title="Main Section" columns="1" collapsible="true">  
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Main_Section_Background_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_mainsectionbgcolor"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Main_Section_Border_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_mainsectionbg"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Display_Title__c}"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Section_titleheader_background__c}" styleClass="color {hash:true}" style="width:63px"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Section_Title__c}" id="EventLayoutCustomInfo_SectionTitleInfo" styleClass="sectionTitle_text"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Display_Description__c}"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Section_Headers_background__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_HeaderBG"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Section_Description__c}" id="EventLayoutCustomInfo_section_desc" styleClass="section_des"/>
+               </apex:pageBlockSection>
+               <apex:pageBlockSection id="EventLayoutCustomInfo_term" title="Terms & Conditions" columns="1" collapsible="true">
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Show_terms_conditions__c}" id="EventLayoutCustomInfo_ShowTC"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Acknowledgement_mandatory__c}" />
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Term_Background_color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_HeaderBG"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Terms_conditions__c}" id="EventLayoutCustomInfo_TandC" styleClass="term_info_text"/>
+               </apex:pageBlockSection>
+               <apex:pageBlockSection title="Footer" columns="1" collapsible="true">
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Display_Footer__c}"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Footer_Border_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_FooterborderBG"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Footer_background__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_FooterBG"/>
+                 <apex:outputField value="{!CreateALayout.CnP_PaaS_EVT__Footer_information__c}" id="EventLayoutCustomInfo_FooterInfo" styleClass="footer_text"/>
+               </apex:pageBlockSection>
+           </apex:outputLabel>
+         </apex:pageBlock>
+    </apex:form>
+</apex:page>

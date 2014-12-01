@@ -1,0 +1,61 @@
+<apex:page controller="CnP_PaaS.Recurring_Cardexpiry_thirty" readOnly="true" tabStyle="C_P_Reports__tab">
+<style>
+#title h1{
+//padding-left:10px;
+//margin:5px 0 0 0;
+}
+.bPageTitle {
+padding-bottom:0px;
+margin:0px 0 0 0;
+}
+</style>
+<span id="title">
+  <apex:sectionHeader title="Cards Expiring in Current Month"/></span>
+  <div align="right" style="padding-bottom:10px;" class="test">
+<apex:outputLink value="/apex/downloadCardexpiringthiry" style="text-decoration:none;display:block;border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 4px 4px;float:right;background-color:#FFFFFF;" target="CnP_PaaS_Evt_Download">Download</apex:outputLink>
+</div>
+  <apex:pageBlock >  
+          <apex:pageBlockTable value="{!Results}" var="ar" > 
+          <apex:column headerValue="Serial #" value="{!ar.Sno}"/>
+          <apex:column headerValue="Recurring Id" >
+            <apex:outputlink value="/{!ar.recurringid}" target="_blank">
+            <apex:outputLabel value="{!ar.recurringname}" style="color: blue;cursor:pointer;"></apex:outputLabel>
+            </apex:outputlink>
+            </apex:column>   
+          <apex:column headerValue="Contact Name" >
+            <apex:outputlink value="/{!ar.contactid}" target="_blank">
+            <apex:outputLabel value="{!ar.contactname}" style="color: blue;cursor:pointer;"></apex:outputLabel>
+            </apex:outputlink>
+            </apex:column> 
+          <apex:column headerValue="Contact Email" value="{!ar.contactemail}"/>
+          <apex:column headerValue="Date Established" value="{!ar.Datees}"/>
+          <apex:column headerValue="First Installment Date" value="{!ar.Transactiondate2}"/>
+          <apex:column headerValue="Installment Period" value="{!ar.installementperiod}"/>
+          <apex:column headerValue="# of Installments" value="{!ar.NoofInstallments}"/>
+          <apex:column headerValue="Installments Made" value="{!ar.Installmentsmade}"/>
+          <apex:column headerValue="Installment Amount"> 
+          <apex:outputText value="{0, number,$###,###,##0.00}">
+            <apex:param value="{!ar.Installmentamount}" id="Installmentamount" />
+            </apex:outputText></apex:column>
+          
+          <apex:column headerValue="Credit Card Last 4 digits" value="{!ar.CardNo}"/>  
+          <apex:column headerValue="Name On Card" value="{!ar.NameOnCard}"/> 
+          <apex:column headerValue="Credit Card Expiration" value="{!ar.Expirtydate}"/> 
+          <apex:column headerValue="Next Installment Date" value="{!ar.Nextidate2}"/>
+          <apex:column headerValue="Card Type" value="{!ar.paymenttype}"/>
+          <apex:column headervalue="Upcoming Reciepts" >
+          <apex:outputText value="{0,number,$###,###,##0.00}">
+          <apex:param value="{!ar.upcomingr}" id="upcoming"/>
+          </apex:outputText></apex:column>
+      </apex:pageBlockTable>
+       {!IF(ResultSet.size==0,"NO records available.",NULL)} 
+      </apex:pageBlock>
+      
+</apex:page>

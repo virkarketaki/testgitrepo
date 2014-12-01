@@ -1,0 +1,332 @@
+<apex:page standardController="CnP_PaaS_EVT__Registration_level__c" extensions="CnP_PaaS_EVT.RegistrationLevelsAndPrices">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+ <apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JsColor, '/jscolor/jscolor.js')}"/>
+ <!--<script src="/apexpages/fckeditor/fckeditor.js" type="text/javascript"></script>-->
+ <script src="/ckeditor/ckeditor-3.6.2/ckeditor.js?t=3.6.2.1"></script>
+ <style>
+ .dateFormat {
+     /*padding: 0 69px;*/
+     display:none;
+ }
+.requiredInput
+ {
+    float:left;
+ }
+ .calenderIcon{    
+    
+    padding-left: 5px;
+    padding-top: 3px;
+}
+ </style>
+ <script>
+$(function($) {
+        $(function(){
+         $(".EventLevelinfo_LevelName").attr('maxlength','80');
+           $(".nameonreport").attr('maxlength','20');
+          $(".save").click(function(){
+                  reg_text=/^([a-zA-Z0-9\'\,\.\-\ ])+$/;
+                  reg_sku=/^([a-zA-Z0-9\_\:\-\ ])+$/;
+                  var sdate = $(".sdate").val();
+                  var edate = $(".edate").val(); 
+                  var TotalInventory = $(".TotalInventory").val();
+                  var InventorySold = $(".InventorySold").val(); 
+                  var nameonreport = $(".nameonreport").val();
+                  var skucode = $(".skucode").val();
+                  var EventLevelinfo_LevelName = $(".EventLevelinfo_LevelName").val();
+                  
+                  var TaxDeductible=$(".LevelPrice_TaxDeductible").val();
+                  var LevelPrice=$(".LevelPrice_Price").val();
+                  var Fee=$(".LevelPrice_Fee").val();
+                   var TaxRate=$(".LevelTaxRate").val();
+                 
+                  if(EventLevelinfo_LevelName=="" || !EventLevelinfo_LevelName.indexOf(' ',0) || !reg_text.test(EventLevelinfo_LevelName))
+                  {
+                        alert("Please enter the valid Level Name");
+                        $(".EventLevelinfo_LevelName").focus();
+                        return false;
+                  }
+                  if(EventLevelinfo_LevelName.length>80){
+                  alert("Level Name length should be 80 characters only.");
+                  $(".EventLevelinfo_LevelName").focus();
+                  return false;
+                  }
+                  
+                  if(nameonreport=="" || !nameonreport.indexOf(' ',0) || !reg_text.test(nameonreport))
+                  {
+                        alert("Please enter the Name on Report");
+                        $(".nameonreport").focus();
+                        return false;
+                  }
+                  if(skucode!="" && !reg_sku.test(skucode))
+                  {
+                      alert("Please enter the only Alphanumeric _ - : and space for SKU");
+                      $(".skucode").focus();
+                      return false;
+                  }
+                  if(TotalInventory<0){
+                  alert("Invalid Total Inventory");
+                  $(".TotalInventory").focus();
+                  return false;
+                  }
+                if(parseInt(TotalInventory)<parseInt(InventorySold) || parseInt(TotalInventory)==0){          
+                  alert("Invalid Total Inventory");
+                  return false;
+                  }              
+                if(sdate=="")
+                {
+                   alert("Please Select the Start Date");
+                   $(".sdate").focus();
+                   return false;
+                }
+                if(edate=="")
+                {
+                    alert("Please Select the Ends Date");
+                    $(".edate").focus();
+                    return false;
+                }
+                
+                if (Date.parse(sdate) > Date.parse(edate)) {
+                        alert("Invalid Date Range\nStart Date cannot be after End Date!")
+                        return false;
+                }
+                 if(LevelPrice <0){
+                     alert("Please enter the Positive Values in Price Field");
+                     $(".LevelPrice_Price").focus();
+                     return false;
+                 
+                 }
+                 if(Fee<0 ){
+                     alert("Please enter the Positive Values in Additional Fee Field");
+                     $(".LevelPrice_Fee").focus();
+                     return false;
+                 
+                 }
+                 if(TaxDeductible<0){
+                     alert("Please enter the Positive Values in Tax Deductible Portion Field");
+                     $(".LevelPrice_TaxDeductible").focus();
+                     return false;
+                 
+                 }
+                 
+                 if(TaxRate <0){
+                     alert("Please enter the Positive Values in Tax Rate% Field");
+                     $(".LevelTaxRate").focus();
+                     return false;
+                 
+                 }
+                 
+                if(parseFloat(TaxDeductible)>parseFloat(LevelPrice)){
+               
+                alert("Tax Deductible Portion Must Be Less Than or Equal to Price");
+                $(".LevelPrice_TaxDeductible").focus();
+                return false;
+                }
+                
+                
+           })
+        })
+    })
+    function limitlength(obj, length){    
+    var maxlength=length
+    if (obj.value.length>maxlength)
+    obj.value=obj.value.substring(0, maxlength)
+    }
+    function trimvalue(value,fieldclass)
+    {
+     var replace=value.trim();
+     $("."+fieldclass).attr('value',replace);
+    }
+    function EventLookupJs(){
+    alert("naresh123");
+    NewLevelRec();
+    }
+ </script>
+<apex:form id="EventLevel">
+
+        <apex:pageBlock id="EventLevelblock">
+        <apex:actionfunction name="NewLevelRec" action="{!NewLevelRecord}" rerender="EventLevel"/>
+        <apex:pageBlockButtons >
+                        <apex:commandButton action="{!save}" value="Save" styleClass="save"/>
+                        <apex:commandButton action="{!cancel}" value="Cancel" immediate="true"/>
+                        <!--<apex:commandButton action="{!cancel}" value="Save and next"/>-->
+        </apex:pageBlockButtons>
+        <apex:pageMessages />
+                         <apex:pageBlockSection id="EventLevelInfo" title="Registration Level Details" columns="1" collapsible="false">
+                         <apex:pageBlockSectionItem rendered="{!IF(EventName==null,true,false)}">
+                        <apex:outputLabel value="Event Name"/>
+                        <apex:outputPanel >
+                        <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Event_name__c}" style="width:250px" id="EventLevelinfo_Event"/>
+                        <!--<script>document.getElementById('{!$Component.EventLevelinfo_Event}').disabled = true; </script>-->
+                        </apex:outputPanel>
+                         </apex:pageBlockSectionItem> 
+                         <apex:pageBlockSectionItem rendered="{!IF(EventName!=null,true,false)}">
+                        <apex:outputLabel value="Event Name"/>
+                        <apex:outputText value="{!EventName}" />
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                         <apex:outputLabel value="Level Name on the Form"/>
+                         <apex:outputPanel >                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+                        <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Name_on_the_form__c}" style="width:250px" required="true" onblur="trimvalue(this.value,'EventLevelinfo_LevelName');" styleClass="EventLevelinfo_LevelName" id="EventLevelinfo_LevelName" />
+                        &nbsp;&nbsp;&nbsp;e.g. Attendee, Member, Non-member, Exhibitor...
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem> 
+                         <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="Name on Reports"/>  
+                           <apex:outputPanel >                     
+                          <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Name_on_reports__c}" onblur="trimvalue(this.value,'nameonreport');" required="true" style="width:250px" styleClass="nameonreport" id="EventLevelinfo_LevelNameReports" />
+                           &nbsp;&nbsp;&nbsp;(max length is 20 characters)
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem> 
+                        <apex:pageBlockSectionItem >
+                       <apex:outputLabel value="Report Color"></apex:outputLabel>
+                        <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Report_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventreport"/>
+                       </apex:pageBlockSectionItem>  
+                        <apex:pageBlockSectionItem >
+                         <apex:outputLabel value="SKU Code"></apex:outputLabel>
+                         <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__SKU_Code_Level__c}" style="width:250px" id="EventLevelinfo_SKU" styleClass="skucode"/>
+                         </apex:pageBlockSectionItem>
+                        
+                       
+                         <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Campaign__c}" style="width:250px" id="EventLevelinfo_Campaign"/>
+                         
+                                                                                                                                                                                                                                                                                                                                               
+                        
+                        <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="Level Description"></apex:outputLabel>
+                        <!--<apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Description__c}" id="EventLevelinfo_Description"/>-->   
+                           <apex:inputTextarea value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Description__c}" id="EventLevelinfo_Description" styleClass="EventLevelinfo_Description"/>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                          </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection id="DateTimeInfo" title="Registration Date & Time" columns="1" collapsible="false">
+                       <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="Registration Start Date"  />
+                           <apex:outputPanel >
+                        <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Display_this_registration_from__c}" required="true" style="width:150px;float:left;" id="LevelPrice_ShowDate" styleClass="sdate"/>                                                                                                                                               
+                        <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon,'Calendar-Lookup2.gif')}" styleClass="calenderIcon"/>
+                           </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="Registration End Date"  />
+                           <apex:outputPanel >
+                        <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Hide_this_registration_from__c}" required="true" style="width:150px;float:left;" id="LevelPrice_HideDate" styleClass="edate"/>
+                         <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon,'Calendar-Lookup2.gif')}" styleClass="calenderIcon"/>
+                           </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <!--<apex:pageBlockSectionItem >  
+                        <apex:inputField value="{!CreateRegistrationLevel.After_registration_statusto__c}" id="EventLevelinfo_AfterRegistrationStatus"/>
+                        <apex:outputLabel value="Registered Status"/>
+                        <apex:selectlist value="{!CreateRegistrationLevel.After_registration_statusto__c}" style="width:250px" size="1">             
+                                          <apex:selectOptions value="{!Levelstatus}"/>
+                                      </apex:selectlist>
+                        </apex:pageBlockSectionItem>-->
+                        <apex:pageBlockSectionItem > 
+                        <apex:outputLabel value="Total Inventory" />
+                         <apex:outputPanel >              
+                        <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Limit_for_this_type__c}" style="width:65px" id="EventLevelinfo_LimitNumber" styleclass="TotalInventory"/> 
+                        <apex:inputtext value="{!InventorySold}" style="visibility:hidden" styleclass="InventorySold"/>                                                                                                                                              
+                        </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <!--<apex:inputField value="{!CreateRegistrationLevel.Current_inventory__c}" style="width:65px" id="EventLevelinfo_CurrentInventory"/>-->
+                        <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="Sold Out Message"></apex:outputLabel>
+                           <apex:inputTextarea value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Message_to_display_when_limit_is_reached__c}" id="EventLevelinfo_LimitMessage" styleClass="EventLevelinfo_LimitMessage"/>
+                        </apex:pageBlockSectionItem>
+                        <!--<apex:pageBlockSectionItem >
+                           <apex:outputLabel value="End Date Message"></apex:outputLabel>
+                           <apex:inputTextarea value="{!CreateRegistrationLevel.End_date_message__c}" id="EventLevelinfo_EndDateMessage" styleClass="EventLevelinfo_EndDateMessage"/> 
+                         </apex:pageBlockSectionItem>-->
+                </apex:pageBlockSection>
+                <apex:pageBlockSection id="EventLevelPriceInfo" title="Price Details" columns="1" collapsible="false">
+                                                                                                                                                                    
+                        <!--<apex:inputField value="{!CreateRegistrationLevel.Fee_label__c}" style="width:250px" id="LevelPrice_Label"/>-->                                                                                                                                               
+                        <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Price__c}" style="width:65px" id="LevelPrice_Price" styleclass="LevelPrice_Price"/> 
+                        
+                        <!--<apex:inputField value="{!CreateRegistrationLevel.Additional_Fee_label__c}" style="width:250px" id="LevelPrice_Feelabel"/>-->
+                        <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Additional_Fee__c}" style="width:65px" id="LevelPrice_Fee" styleclass="LevelPrice_Fee"/>
+                        <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Tax_Deductible__c}" style="width:65px" id="LevelPrice_TaxDeductible" styleclass="LevelPrice_TaxDeductible"/> 
+                       <apex:inputField value="{!CreateRegistrationLevel.CnP_PaaS_EVT__Tax_rate__c}" style="width:65px" id="LevelPrice_Taxrate" styleclass="LevelTaxRate"/> 
+                      <!--<apex:pageBlockSectionItem dataStyle="display:none">
+                                     <apex:inputField value="{!CreateRegistrationLevel.Disclaimer_Additional_Information__c}" id="DisclaimerInfo_DesclaimerMessage"/>
+                                </apex:pageBlockSectionItem>-->                                                                                                                                             
+                                                                                                                                                                      
+                </apex:pageBlockSection> 
+                                              
+                       <!--<apex:pageBlockSection id="ConfirmationInfo" title="Confirmation" columns="1" collapsible="false">
+                                <apex:inputField value="{!CreateRegistrationLevel.Use_the_default_confirmation_email__c}" id="BenifitsInfo_DefaultConfim" />
+                                 <apex:pageBlockSectionItem >  
+                                 <apex:outputLabel value="Confirmation Message"></apex:outputLabel>                                                                                                                                                                                                                                                                                                                                                                                       
+                                <apex:inputTextarea value="{!CreateRegistrationLevel.Confirmation_message__c}" id="BenifitsInfo_ConfirmNessage" styleClass="BenifitsInfo_ConfirmNessage"/>                                                                                                                                                                      
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem dataStyle="display:none">
+                                     <apex:inputField value="{!CreateRegistrationLevel.Disclaimer_Additional_Information__c}" id="DisclaimerInfo_DesclaimerMessage"/>
+                                </apex:pageBlockSectionItem>
+                        </apex:pageBlockSection>-->
+                        
+                        <!--<apex:pageBlockSection id="DisclaimerInfo" title="Terms & Conditions Information" columns="1" collapsible="false">
+                        <apex:outputpanel >
+                                <apex:inputField value="{!CreateRegistrationLevel.Show_disclaimer_registration__c}" id="DisclaimerInfo_ShowDesclaimer">
+                                <apex:actionSupport event="onchange" reRender="DispalyTermsAndCondtions" status="TermsAndConditions"/>
+                                </apex:inputField>
+                                <apex:outputLabel value="Show Terms & Conditions"/>
+                                <apex:actionstatus id="TermsAndConditions" startText="Please wait....">                                
+                                <apex:facet name="stop">
+                                                    
+                                </apex:facet>
+                                </apex:actionstatus> 
+                        <br />
+                        <apex:outputpanel id="DispalyTermsAndCondtions">
+                        <apex:outputpanel Rendered="{!CreateRegistrationLevel.Show_disclaimer_registration__c==true}">
+                        <apex:outputpanel >
+                                <apex:inputField value="{!CreateRegistrationLevel.Acceptance_of_Terms_Conditions__c}" id="DisclaimerInfo_Acceptterms" />&nbsp;
+                                <apex:outputLabel value="Acceptance of Terms & Conditions is required"/>
+                        </apex:outputpanel><br />
+                         <apex:outputpanel >
+                                <apex:inputField value="{!CreateRegistrationLevel.Include_the_Terms_Conditions__c}" id="DisclaimerInfo_Includeterms"/>&nbsp;
+                                <apex:outputLabel value="Include the Terms & Conditions on the receipt"/>
+                        </apex:outputpanel>
+                        </apex:outputpanel>
+                        </apex:outputpanel>
+                        </apex:outputpanel>
+                        <apex:inputField value="{!CreateRegistrationLevel.Disclaimer_Additional_Information__c}" id="DisclaimerInfo_DesclaimerMessage"/>
+
+                </apex:pageBlockSection>-->                 
+        </apex:pageBlock>
+</apex:form> 
+<script type="text/javascript">
+  
+  CKEDITOR.replace($(".EventLevelinfo_Description").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".EventLevelinfo_LimitMessage").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.config.baseHref = '/apexpages/ckeditor/';  
+  CKEDITOR.config.filebrowserImageUploadUrl = '/_ui/common/request/servlet/RtaImageUploadServlet';  
+  CKEDITOR.config.contentsCss= ['/sCSS/24.0/sprites/1329331264000/Theme3/default/gc/HtmlDetailElem.css']; 
+  CKEDITOR.config.language = 'en-us';  
+  CKEDITOR.config.customConfig = '{!$Resource.CnP_PaaS_EVT__ckconfig}';
+  CKEDITOR.config.toolbar='Custome'; 
+   
+ /*var editor2 = new FCKeditor($(".EventLevelinfo_Description").attr('id'), null, 160);
+ editor2.BasePath = '/apexpages/fckeditor/';
+ editor2.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor2.ToolbarSet = 'SalesforceBasic';
+ editor2.Config['SkinPath'] = editor2.BasePath + 'editor/skins/sfdc/';
+ editor2.Config['DefaultLanguage'] = 'en-us';
+ editor2.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme2/default/HtmlDetailElem.css'];
+ editor2.Config['ImageUpload'] = true;
+ editor2.Config['SitesPath'] =  '';
+ editor2.ReplaceTextarea();
+ 
+ 
+ var editor3 = new FCKeditor($(".EventLevelinfo_LimitMessage").attr('id'), null, 160);
+ editor3.BasePath = '/apexpages/fckeditor/';
+ editor3.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor3.ToolbarSet = 'SalesforceBasic';
+ editor3.Config['SkinPath'] = editor3.BasePath + 'editor/skins/sfdc/';
+ editor3.Config['DefaultLanguage'] = 'en-us';
+ editor3.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme2/default/HtmlDetailElem.css'];
+ editor3.Config['ImageUpload'] = true;
+ editor3.Config['SitesPath'] =  '';
+ editor3.ReplaceTextarea();*/
+ 
+ 
+
+ </script>
+</apex:page>

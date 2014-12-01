@@ -1,0 +1,222 @@
+<apex:page extensions="CnP_PaaS.TemporaryObjectController" standardController="CnP_PaaS__Temporary_Contact__c">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+<style>
+    .helpLink {
+       position:relative;       
+    }
+
+    .video{
+      display:none;
+      width:12%;
+      font-size: 90%;
+      height:auto;
+      background:#EEE;
+      border:1px solid #CCC;
+      position:absolute;     
+      z-index:10;
+      margin-left:950Px;
+    }
+.black_overlay{
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 100%;
+background-color: black;
+z-index:1001;
+-moz-opacity: 0.8;
+opacity:.40;
+filter: alpha(opacity=80);
+}
+.white_content {
+display: none;
+position: absolute;
+text-align: center;
+top: 30%;
+left: 35%;
+/*width: 25%;
+height: 12%;*/
+padding: 16px;
+background-color: white;
+z-index:1002;
+overflow: auto;
+border-radius:20px;
+-webkit-border-radius: 20px;
+-moz-border-radius: 20px;
+border:1px solid #000;
+} 
+</style>
+<script type="text/javascript">
+    function MapId(field)
+    {        
+         jQuery("#light").attr('style','display:block');
+         jQuery("#fade").attr('style','display:block');
+         if(field != 'selectanycontact'){
+             jQuery(".anycontactmapid").val('');
+         }
+        ContactMapid(field);
+    }
+    function ProcessComplete()
+    {
+        jQuery("#light").attr('style','display:none');
+         jQuery("#fade").attr('style','display:none');
+    }
+    function contactselection(){
+        var newcontact= $(".newcontact").is(":checked");
+       var selectanycontact= $(".selectanycontact").is(":checked");
+          var existingcontact= $(".existingcontact").is(":checked");
+          var anycontactmapid= $(".anycontactmapid").val();
+           
+       
+        if(newcontact == false && existingcontact == false && selectanycontact == false){
+            alert("Please select a Contact to Process");
+                    return false; 
+        }        
+        if((selectanycontact == true && anycontactmapid == '')){
+            alert("Please select any Existing Contact to Process");
+            return false;
+        }
+        if(selectanycontact == false && anycontactmapid != '')
+        {
+            $(".anycontactmapid").val('');
+        }
+        
+       
+        
+      return true;  
+        
+    }
+  $(function(){
+          $(".video").mouseout(function(){
+             
+              $(this).fadeOut(8000);
+             
+          })
+          });  
+    
+  $(document).ready( function () {  
+    $(".anycontactmapid").click( function() {
+        ContactMapid('selectanycontact');
+        $(".selectanycontact").attr("checked","checked");
+    });
+    });
+</script>
+<apex:form >
+                         <apex:outputLink styleClass="helpLink" rendered="{!subTab['TemporaryContact']['TemporaryContact'].display=='true'}">  
+                              <Apex:outputLabel value="C&P Help for this Page" style="font-size:90%;margin-left:950Px;margin-right:5Px;" onmouseover="jQuery('[id$=Foo]').css('display','block');"/>  
+                               <apex:image value="/s.gif" styleClass="helpIcon" onmouseover="jQuery('[id$=Foo]').css('display','block');" />
+                        
+                         </apex:outputLink>
+                          <apex:outputPanel id="Foo" styleClass="video"  >   
+                           <ul style="padding-left:4px;" >                       
+                              {!subTab['TemporaryContact']['TemporaryContact'].description} <br/> <br/>
+                              <apex:outputPanel rendered="{!subTab['TemporaryContact']['TemporaryContact'].ActiveLink=='true'}">
+                                 <li><a href="{!subTab['TemporaryContact']['TemporaryContact'].link}" target="_blank" >{!subTab['TemporaryContact']['TemporaryContact'].strlink}</a> <br/></li></apex:outputPanel>
+                              <apex:outputPanel rendered="{!subTab['TemporaryContact']['TemporaryContact'].ActiveVideo=='true'}">
+                                 <li> <a href="{!subTab['TemporaryContact']['TemporaryContact'].video}" onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subTab['TemporaryContact']['TemporaryContact'].strVideo}</a></li></apex:outputPanel>
+                           </ul>
+                          </apex:outputPanel>
+                          
+<apex:pageBlock >
+<apex:pageMessages />
+  <apex:actionFunction action="{!selectcon}" reRender="selectsection"  name="ContactMapid" oncomplete="ProcessComplete();">
+                <apex:param assignTo="{!selectcon}" name="conid" value=""/>         
+               </apex:actionFunction> 
+             <div id="light" class="white_content">   
+                <apex:image value="{!URLFOR($Resource.CnP_PaaS__LoaderImage)}" title="we are processing your request. please wait..." style="height: 15px;width: 20px;"  /><br/>
+               <apex:outputlabel value="we are processing your request. please wait...                  "  />
+              </div>
+               <div id="fade" class="black_overlay"></div>
+  <apex:pageBlockSection title="Contact Details" >
+  
+  <apex:outputText value="{!condetails.firstname}" label=" First Name"/>
+    <apex:outputText value="{!condetails.lastname}" label=" Last Name"/>
+
+ <apex:outputText value="{!condetails.MailingStreet}" label="Street"/>
+    <apex:outputText value="{!condetails.MailingCity}" label="City"/>
+   <apex:outputText value="{!condetails.email}" label=" Email"/>
+   <apex:outputText value="{!condetails.MailingState}" label="State/Province"/>
+   <apex:outputText value="{!condetails.Phone}" label="Phone"/>
+    <apex:outputText value="{!condetails.MailingpostalCode}" label="Zip/Postal Code"/>
+    <apex:inputHidden />
+    <apex:outputText value="{!condetails.MailingCountry}" label="Country"/>
+  
+    </apex:pageBlockSection>
+     <apex:pageBlockSection title="Transaction Information">
+     <apex:outputText value="{!trans.name}" label=" Order Number"/>
+      <apex:outputText value="{!trans.CnP_PaaS__Transaction_Type__c}" label=" Transaction Type"/>
+      <apex:outputText value="{!trans.CnP_PaaS__TotalCharged__c}" label="Total Charged $"/>
+       <apex:outputText value="{!trans.CnP_PaaS__Deductible_Charge__c}" label=" Deductible $"/>
+       <apex:outputText value="{!trans.CnP_PaaS__TaxAmount_Due__c}" label=" Tax $"/>
+       <apex:outputText value="{!trans.CnP_PaaS__VaultGUID__c}" label=" Vault GUID"/>
+       <apex:outputText value="{!trans.CnP_PaaS__Campaign__c}" label=" Campaign"/>
+       <apex:outputText value="{!trans.CnP_PaaS__Tracker__c}" label=" Tracker"/>
+       <apex:outputText value="{!trans.CnP_PaaS__PaymentType__c}" label="Payment Type"/>
+       <apex:outputText value="{!trans.CnP_PaaS__CreditCard4x4__c}" label="Credit Card Last 4 digits" rendered="{!trans.CnP_PaaS__PaymentType__c=='Credit Card'}"/>
+       <apex:outputText value="{!trans.CnP_PaaS__Credit_Card_Name__c}" label="Credit Card Name" rendered="{!trans.CnP_PaaS__PaymentType__c=='Credit Card'}"/>
+       <apex:outputText value="{!trans.CnP_PaaS__CardExpiration__c}" label="Credit Card Expiration" rendered="{!trans.CnP_PaaS__PaymentType__c=='Credit Card'}"/>
+       <apex:outputText value="{!trans.CnP_PaaS__Invoice_Check_Number__c}" label="Check Number" rendered="{!trans.CnP_PaaS__PaymentType__c== 'eCheck'}"/>
+       <apex:outputText value="{!trans.CnP_PaaS__Invoice_Check_Number__c}" label="Purchase Order Number" rendered="{!trans.CnP_PaaS__PaymentType__c == 'Purchase Order'}"/>
+       <apex:outputText value="{!trans.CnP_PaaS__Invoice_Check_Number__c}" label="Invoice Check Number" rendered="{!trans.CnP_PaaS__PaymentType__c== 'Invoice'}"/>
+        <apex:outputText value="{!trans.CnP_PaaS__Invoice_Check_Number__c}" label="Custom Payment Number" rendered="{!trans.CnP_PaaS__PaymentType__c== 'CustomPaymentType'}"/>
+       <apex:outputText value="{!trans.CnP_PaaS__Custom_Payment_Type_Name__c}" label="Custom Payment Name" rendered="{!trans.CnP_PaaS__PaymentType__c== 'CustomPaymentType'}"/> 
+       <apex:outputText value="{!trans.CnP_PaaS__Transaction_Result__c}" label="Transaction Result" />
+        <apex:outputText value="{!trans.CnP_PaaS__GatewayTransactionNumber__c}" label="Gateway Transaction Number"/>
+         <apex:outputText value="{!tc.CnP_PaaS__Recurring__c}" label="Recurring Name"  rendered="{tc.Recurring__c != ''}"/>
+          <apex:outputText value="{!mastertransaction}" label="Master Transaction Number" rendered="{!mastertransaction!= ''}" />
+       <!--  <apex:outputText value="{!tc.Master_Transaction_Number__c}" label="Master Transaction Number" rendered="{tc.Master_Transaction_Number__c!= ''}"/> -->
+      
+
+  </apex:pageBlockSection>
+  
+  <apex:pageBlockSection title="Settings" columns="1" > 
+
+<apex:outputPanel rendered="{!contactshow}">
+
+           <input type="radio" name="contid" checked="checked" class="newcontact" onclick="MapId('newcontact');">New Contact</input><br/>
+           <input type="radio" name="contid" class="selectanycontact" onclick="MapId('selectanycontact');">Select any Contact
+               <apex:inputField value="{!tc.CnP_PaaS__Map_Contact__c}" style="margin-left:10px;" styleClass="anycontactmapid"/>
+           </input><br/>
+
+</apex:outputPanel>
+      
+<apex:outputPanel id="selectSection" title="Attach to Existing Contact" rendered="{!if(contactlist.size>0,true,false)}">
+        <apex:outputLabel ><b>Attach to Existing Contact</b></apex:outputLabel><br/><br/>
+          <apex:pageBlockTable value="{!contactlist}" var="contact" width="100%" >  
+           <apex:column headerValue="Merge With">           
+               <input type="radio" value="{!contact.Id}"  name="contid" onclick="MapId('{!contact.Id}');" class="existingcontact"/>     
+           </apex:column>      
+           <apex:column headerValue="First Name" width="30%">
+                    <apex:outputLink value="/{!contact.Id}">{!contact.FirstName}</apex:outputLink>                 
+           </apex:column>    
+           <apex:column headerValue="Last Name" width="30%">
+                    <apex:outputLink value="/{!contact.Id}">{!contact.LastName}</apex:outputLink>                 
+           </apex:column>   
+           <apex:column headerValue="Email" width="30%">        
+                    <apex:outputField value="{!contact.Email}"/>                                                    
+           </apex:column>    
+           <apex:column headerValue="Phone" width="30%">        
+                    <apex:outputField value="{!contact.Phone}"/>                                                    
+           </apex:column> 
+              <apex:column headerValue="Contact Id" width="30%">
+                    <apex:outputField value="{!contact.Id}"/>                 
+           </apex:column>  
+        </apex:pageBlockTable>
+
+          </apex:outputPanel>
+          <br/><br/>
+ 
+  </apex:pageBlockSection> 
+  
+  
+  
+  
+  <div align="center">
+<apex:commandButton action="{!saveItem}" value=" Process " onclick="if(!contactselection()){return false;}"/>
+<apex:commandButton action="{!deleteItem}" value="  Delete  " onclick="return confirm('Are you sure you want to delete this Temporary Contact Record permenantly?')"/>
+<apex:commandButton action="{!cancelItem}" value="  Cancel  "/>
+</div> 
+</apex:pageBlock>
+ </apex:form>
+</apex:page>

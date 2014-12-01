@@ -1,0 +1,178 @@
+<apex:page controller="SavePage" >
+<!-- <apex:includeScript value="{!URLFOR($Resource.jQuery, 'jquery-ui-1.10.3.custom/js/jquery-1.9.1.js')}" /> -->
+<!-- <apex:includeScript value="{!URLFOR($Resource.jQuery, 'jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js')}" /> -->
+<!-- <apex:stylesheet value="{!URLFOR($Resource.jQuery, 'jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css')}" /> -->
+<apex:includeScript value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/js/jquery-1.8.3.js')}"  />
+        <apex:includeScript value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/css/ui-lightness/jquery-ui-1.9.2.custom.css')}" />
+        
+<script>
+    var j$ = jQuery.noConflict();
+    j$(document).ready(function()
+    {
+        j$('[id*=weekdaytd],[id*=lbl],[id*=weeknumbertd],[id*=block]').hide();
+        j$('[id*=start],[id*=end]').datepicker();
+
+        j$('[id*=chk]').click(function()
+        {
+            j$('[id*=block]').toggle();
+            j$('[id*=weekdays],[id*=hours],[id*=minutes],[id*=months],[id*=weekday],[id*=year]').val([]);
+        });
+
+        j$('[id*=daily]').click(function()
+        {
+            j$('[id*=weekdaytd],[id*=lbl],[id*=weeknumbertd]').hide();
+            j$('[id*=weekdays],[id*=hours],[id*=minutes],[id*=months],[id*=weekday],[id*=year]').val([]);
+            j$('[id*=hourtd],[id*=ddatetd],[id*=minutetd],[id*=months]').show();
+            //j$('[id*=lbl1]').hide();
+        });
+
+        j$('[id*=weekly]').click(function()
+        {
+            j$('[id*=hourtd],[id*=weekdaytd],[id*=minutetd],[id*=months]').show();
+            j$('[id*=ddatetd],[id*=lbl],[id*=weeknumbertd]').hide();
+            j$('[id*=ddates],[id*=hours],[id*=minutes],[id*=months],[id*=weekday],[id*=year]').val([]);
+            //j$('[id*=lbl1]').hide();
+        });
+
+        j$('[id*=monthly]').click(function()
+        {
+            j$('[id*=ddatetd],[id*=hourtd],[id*=minutetd],[id*=lbl1]').hide();
+            j$('[id*=weeknumbertd],[id*=weekdaytd],[id*=lbltd]').show();
+            j$('[id*=ddates],[id*=hours],[id*=minutes],[id*=months],[id*=weeknumber],[id*=weekday],[id*=year]').val([]);
+        });
+
+        j$('[id*=click]').click(function(event)
+        {
+     //     if(j$('[id*=hours]').val() === null && j$('[id*=minutes]').val() === null && j$('[id*=months]').val() === null && j$('[id*=ddates]').val() === null && j$('[id*=weekdays]').is(':checked') === false)
+            if(j$('[id*=hours]').val() === null && j$('[id*=minutes]').val() === null && j$('[id*=months]').val() === null && j$('[id*=years]').val() === null && j$('[id*=ddates]').val() === null && j$('[id*=weekdays]').val() === null)
+            {
+                alert('Please specify scheduling time.');
+                j$('[id*=lbl]').hide();
+            }
+            console.log('**************'+j$('[id*=hours]').val());
+        });
+    });
+</script>
+
+<apex:form >
+<apex:actionFunction name="se" action="{!sel}"/>
+<b><apex:outputLabel value="Rule Name" /></b>
+<apex:inputText style="width:200px"/>
+<br/>
+<b><apex:outputLabel value="Description" /></b>
+<apex:inputTextarea style="width:200px"/>
+<br/><br/>
+
+<input type="checkbox" id="chk" name="blk" value="Hourly">Schedule</input>
+
+<div id="block">
+
+<div id="radio">
+    <input type="radio" id="daily" name="radio" checked="checked"/>
+    <label for="radio1">Daily</label>
+    <input type="radio" id="weekly" name="radio" />
+    <label for="radio2">Weekly</label>
+    <input type="radio" id="monthly" name="radio" />
+    <label for="monthly">Monthly</label>
+</div>
+
+<table>
+<tr>
+
+<!-- <td id="weekdaytd"> -->
+<!-- <b><apex:outputlabel value="Day of Week"/></b> -->
+<!-- <apex:selectcheckboxes id="weekdays" value="{!weekdays}" layout="pageDirection" > -->
+<!-- <apex:selectOptions id="weekday" value="{!weekday}" /> -->
+<!-- </apex:selectcheckboxes> -->
+<!-- </td> -->
+
+
+<td id="weekdaytd">
+<b>
+<apex:outputlabel value="Week Days"/></b><br/>
+<apex:selectList id="weekdays" value="{!weekdays}"  style="height:200px; width:50px;" >
+<apex:selectOptions id="weekday" value="{!weekday}" />
+</apex:selectList>
+</td>
+
+
+<td></td>
+
+<td id="hourtd">
+<b>
+<apex:outputlabel value="Hours"/></b><br/>
+<apex:selectList id="hours" value="{!hours}" style="height:200px; width:50px;" multiselect="true" >
+<apex:selectOptions id="hour" value="{!hour}" />
+</apex:selectList>
+</td>
+
+<td></td>
+
+<td id="minutetd">
+<b>
+<apex:outputlabel value="Minutes"/></b><br/>
+<apex:selectList id="minutes" value="{!minutes}" style="height:200px; width:50px;" >
+<apex:selectOptions id="minute" value="{!minute}" />
+</apex:selectList>
+</td>
+
+<td></td>
+
+<td id="monthtd">
+<b>
+<apex:outputlabel value="Month"/></b><br/>
+<apex:selectList id="months" value="{!months}" style="height:200px; width:50px;" multiselect="true" >
+<apex:selectOptions id="month" value="{!month}" />
+</apex:selectList>
+</td>
+
+<td></td>
+
+<td id="ddatetd">
+<b>
+<apex:outputlabel value="Date"/></b><br/>
+<apex:selectList id="ddates" value="{!dates}"  style="height:200px; width:50px;" multiselect="true" >
+<apex:selectOptions id="ddate" value="{!ddate}" />
+</apex:selectList>
+</td>
+
+<td></td>
+
+<td id="weeknumbertd">
+<b>
+<apex:outputlabel value="Week Number"/></b><br/>
+<apex:selectList id="weeknumbers" value="{!weeknumbers}"  style="height:90px; width:70px;" >
+<apex:selectOptions id="weeknumber" value="{!weeknumber}" />
+</apex:selectList>
+</td>
+
+<td></td>
+
+<td id="yeartd">
+<b>
+<apex:outputlabel value="Year"/></b><br/>
+<apex:selectList id="years" value="{!years}"  style="height:200px; width:50px;" multiselect="true" >
+<apex:selectOptions id="year" value="{!year}" />
+</apex:selectList>
+</td>
+
+<td></td>
+
+<td>
+<!-- disabled="{!selected}" -->
+<apex:commandButton id="click" action="{!click}" value="Click" rerender="lbl" />
+<apex:outputLabel id="lbl1" value="Disappear" />
+<apex:outputLabel id="lbl" value="{!temp}" />
+</td>
+
+</tr>
+</table>
+
+Start Date : <apex:inputText id="start" value="{!startDate}"/><br/><br/>
+End Date : <apex:inputText id="end" value="{!endDate}"/><br/>
+
+</div>
+
+</apex:form>
+</apex:page>

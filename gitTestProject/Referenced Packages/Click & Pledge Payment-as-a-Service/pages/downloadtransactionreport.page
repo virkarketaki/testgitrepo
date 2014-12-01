@@ -1,0 +1,71 @@
+<apex:page controller="CnP_PaaS.Transaction_download" contentType="application/x-excel#CustomReport.xls" standardStylesheets="false"  language="english" readOnly="true">
+
+<h1>{!reportname}</h1>
+Download Time:{!Dvalue}
+<apex:pageBlock >
+  <apex:pageBlockTable value="{!rec_trans}" var="rect" id="testresult"  rendered="{!filterresult}">
+ 
+    <apex:column headerValue="Order Number" value=":{!rect.Name}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionTimeZone__c}"/>
+     <apex:column value="{!rect.CnP_PaaS__CheckOutPageId__c}"/>
+    
+  <apex:column value="{!rect.CnP_PaaS__Contact__r.Name}"/>
+   
+  <apex:column value="{!rect.CnP_PaaS__Contact__r.Email}"/> 
+    <apex:column headerValue="Phone"  value=":{!rect.CnP_PaaS__Contact__r.Phone}"/>
+    <apex:column value="{!rect.CnP_PaaS__PaymentType__c}"/>
+ 
+      <apex:column value="{!rect.CnP_PaaS__CreditCard4x4__c}"/>
+   <apex:column value="{!rect.CnP_PaaS__CardExpiration__c}"/>
+    <apex:column value="{!rect.CnP_PaaS__Invoice_Check_Number__c}"/>
+    <apex:column value="{!rect.CnP_PaaS__Custom_Payment_Type_Name__c}"/>
+     <apex:column value="{!rect.CnP_PaaS__Check_Number__c}"/>
+ <apex:column headerValue="Total Charged">
+    <apex:outputText value="{0, number,$###,###,##0.00}">
+    <apex:param value="{!rect.CnP_PaaS__TotalCharged__c}" id="TotalAmount" />
+   </apex:outputText></apex:column>
+  <apex:column value="{!rect.CnP_PaaS__Transaction_Result__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__TransactionDate__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__CheckOutPage__c}"/>
+  <apex:column value="{!rect.CnP_PaaS__Campaign__c}"/>
+   <apex:column value="{!rect.CnP_PaaS__Tracker__c}"/>
+  
+   
+   <apex:column value="{!rect.CnP_PaaS__CnPAccountID__c}"/>
+   <apex:column value="{!rect.CnP_PaaS__CnP_Account_ID__c}"/>
+   <apex:column value="{!rect.CnP_PaaS__Contact__r.MailingState}"/>
+   <apex:column value="{!rect.CnP_PaaS__Contact__r.MailingCountry}"/>
+  
+  </apex:pageBlockTable> 
+  
+  
+   <apex:pageBlockTable value="{!rec_trans1}" var="que" id="results1" styleClass="displaylevel" rendered="{!groupresult}" >
+      
+     <apex:repeat value="{!fieldsforresult}" var="cc">
+     <apex:column headerValue="{!cc}">
+           <apex:outputtext value="{0,number,00000}" rendered="{!IF(cc=='ClickAndPledgeAccountId',true,false)}">
+                     <apex:param value="{!que[cc]}"/>
+              </apex:outputtext>
+              <apex:outputtext value=":{!que[cc]}" rendered="{!IF(cc=='OrderNumber',true,false)}"/>
+                    
+               <apex:outputText value=":{!que[cc]}" rendered="{!IF(cc=='ContactPhone',true,false)}"></apex:outputText>
+               
+               <apex:outputText value="${0, number, ###,###.00}" rendered="{!If(cc=='TotalCharged' && numericval==false,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              
+              <apex:outputText value="{0, number,0}" rendered="{!If(cc=='TotalCharged' && numericval==true,true,false)}">
+                   <apex:param value="{!que[cc]}"/>
+              </apex:outputText>
+              <apex:outputtext value="{!que[cc]}" rendered="{!IF(cc!='ClickAndPledgeAccountId' && cc!='TotalCharged' && cc!='OrderNumber' && cc!='ContactPhone' ,true,false)}"/>                    
+             
+           
+          </apex:column>
+      </apex:repeat>
+         
+     </apex:pageBlockTable>
+  </apex:pageBlock>  
+ 
+ 
+ 
+</apex:page>

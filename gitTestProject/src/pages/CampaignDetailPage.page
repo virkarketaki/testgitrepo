@@ -1,0 +1,26 @@
+<apex:page standardController="Campaign" sidebar="false">
+    <apex:form >
+        <b>Campaign Details</b>
+        <div align="right">
+            <apex:outputLink value="{!URLFOR($Action.Campaign.Edit,Campaign.Id)}">Edit</apex:outputLink>
+            <apex:outputLink value="{!URLFOR($Action.Campaign.Delete,Campaign.Id)}">Delete</apex:outputLink>
+            <apex:outputLink value="{!URLFOR($Action.Campaign.Clone,Campaign.Id)}">Copy</apex:outputLink>
+        </div>
+    
+        <apex:pageBlock >
+             <apex:pageBlockSection title="Campaign Details" columns="4">
+                 <apex:outputField value="{!Campaign.OwnerId}"/>
+                 <apex:outputField value="{!Campaign.Name}"/>
+                 <apex:outputField value="{!Campaign.StartDate}"/>
+                 <apex:outputField value="{!Campaign.Type}"/>
+                 <apex:outputField value="{!Campaign.EndDate}"/>
+                 <apex:outputField value="{!Campaign.NumberSent}"/>
+                 <apex:outputField value="{!Campaign.LastModifiedById}"/>
+                 <apex:outputField value="{!Campaign.Status}"/>
+                 <apex:outputField value="{!Campaign.CreatedById}"/>
+                 <apex:outputField value="{!Campaign.ParentId}"/>
+                 <apex:outputField value="{!Campaign.Description}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form> 
+</apex:page>

@@ -1,0 +1,132 @@
+<apex:page standardController="CnP_PaaS__CnP_Designer__c" extensions="CnP_PaaS.EmailDesigner">
+<apex:includeScript value="{!URlFOR($Resource.CnP_PaaS__jquery)}"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+  <style>.btn1{color: #333;
+margin: 1px;
+padding: 4px 3px;
+border: 1px solid #B5B5B5;
+text-decoration: none;
+border-bottom-color: #7F7F7F;
+background: #E8E8E9 url('/img/alohaSkin/btn_sprite.png') repeat-x right top;
+font-weight: bold;
+font-size: .9em;
+-moz-border-radius: 3px;
+-webkit-border-radius: 3px;
+
+border-radius: 3px;}
+
+      .helpLink {
+       position:relative;       
+    }
+
+    .video{
+      display:none;
+      width:12%;
+      font-size: 90%;
+      height:auto;
+      background:#EEE;
+      border:1px solid #CCC;
+      position:absolute;     
+      z-index:10;
+      margin-left:950Px;
+    }     
+
+</style> 
+<script type="text/javascript">
+ $.noConflict();
+
+    $(document).ready(function(){
+         var c=$(".emailcontent").text();
+         $(".emailcontentbody").html(c);
+    })
+   
+    
+    $(function(){
+          $(".video").mouseout(function(){
+             
+              $(this).fadeOut(8000);
+             
+          })
+          })  
+    
+    function confirmdelete()
+    {
+         if(confirm("Are you sure you want to permanently delete this record?"))
+         {
+             return true;
+         }else{
+             return false;
+         }
+    }
+</script>
+   <apex:form >
+     <apex:sectionHeader title="C&P Design View" subtitle="C&P Design View"/> 
+     <apex:repeat value="{!subTab['Designer']}" var="sub">
+         
+    
+      <apex:outputPanel rendered="{!IF(sub=='designerView',true,false)}">
+                     <apex:outputLink styleClass="helpLink" rendered="{!subTab['Designer']['designerView'].display=='true'}">  
+                              <Apex:outputLabel value="C&P Help for this Page" style="font-size:90%;margin-left:950Px;margin-right:5Px;" onmouseover="jQuery('[id$=Foo]').css('display','block');"/>  
+                               <apex:image value="/s.gif" styleClass="helpIcon" onmouseover="jQuery('[id$=Foo]').css('display','block');"/>                        
+                         </apex:outputLink>
+                          <apex:outputPanel id="Foo" styleClass="video"  >   
+                           <ul style="padding-left:4px;" >                       
+                              {!subTab['Designer']['designerView'].description} <br/> <br/>
+                              <apex:outputpanel rendered="{!subTab['Designer']['designerView'].activeLink=='true'}">
+                             <li><a href="{!subTab['Designer']['designerView'].link}" target="_blank" >{!subTab['Designer']['designerView'].strlink}</a> <br/></li> </apex:outputpanel>
+                             <apex:outputpanel rendered="{!subTab['Designer']['designerView'].activeVideo=='true'}">
+                             <li> <a href="{!subTab['Designer']['designerView'].video}" onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subTab['Designer']['designerView'].strVideo}</a></li></apex:outputpanel>
+                           </ul>
+                          </apex:outputPanel>
+                       
+                          </apex:outputPanel>
+                  </apex:repeat>
+                          
+     <apex:pageMessages ></apex:pageMessages>         
+      <apex:pageBlock >
+          <apex:pageBlockButtons >
+                 <!-- <apex:commandButton value="Edit Design" action="{!edit}"/> -->
+                  <apex:commandButton value="Edit Template" action="{!Editdesign}"/>
+                  <apex:commandButton value="Delete" action="{!deletetemplatedata}" onclick="return confirmdelete();"/>
+                  <apex:commandButton value="Test Mail" action="{!testmail}"/>
+                  <apex:commandLink value="Preview" action="{!preview}" target="EmailDesinger" styleClass="btn1" />
+                  <apex:commandLink value="Clone" action="{!clonedesign}" target="EmailDesinger" styleClass="btn1" />
+                  <apex:commandButton value="Cancel" action="{!cancel}"/>
+           </apex:pageBlockButtons>
+         <apex:pageBlockSection columns="1">
+     
+             <apex:outputField value="{!emailpro.CnP_PaaS__Library__c}"/>            
+             <apex:outputField value="{!emailpro.Name}"/>
+             <apex:outputField value="{!emailpro.CnP_PaaS__Tags__c}"/>
+             <apex:outputField value="{!emailpro.CnP_PaaS__Select_Template_Cat__c}"/>
+             <apex:outputField value="{!emailpro.CnP_PaaS__Select_Layout__c}" rendered="{!if(emailpro.CnP_PaaS__Library__c=='Click & Pledge',true,false)}"/>
+             <apex:outputField value="{!emailpro.CnP_PaaS__Template_Layout_Name__c}" rendered="{!if(emailpro.CnP_PaaS__Library__c=='Click & Pledge',true,false)}"/>
+             
+             <apex:outputField value="{!emailpro.CnP_PaaS__Design_Selection__c}" rendered="{!if(emailpro.CnP_PaaS__Library__c=='Click & Pledge',true,false)}"/>
+             <!-- <apex:outputField value="{!emailpro.SalesForce_Public_Site_URL__c}"/> -->
+             <apex:pageBlockSectionItem >
+                   <apex:outputLabel value="PDF Attachment"></apex:outputLabel>
+                   <apex:outputPanel id="RefreshBlock_1">
+                   <a href="/servlet/servlet.FileDownload?file={!PdfId}" target="_blank">{!Pdfname}</a>       
+                       <apex:commandButton value="Delete" action="{!delCont}" styleClass="Delete" onclick="if(!confirmdelete()) return false" rendered="{!if(PdfId!=null,true,false)}" reRender="RefreshBlock_1" status="statusIdForDelete" style="margin-left:25px;"> 
+                       <apex:param name="contIdParam" value="{!PdfId}" assignTo="{!DeleteId}"/>
+                       </apex:commandButton>
+                   </apex:outputPanel>
+             </apex:pageBlockSectionItem>
+            <!-- <apex:pageBlockSectionItem >
+                     <apex:outputLabel value="Send attached PDF with email"/>
+                     <apex:outputField value="{!emailpro.Pdf_include__c}"/>
+             </apex:pageBlockSectionItem> -->
+            
+             <apex:pageBlockSectionItem >
+                   <apex:outputLabel value="Email Content Body"></apex:outputLabel>
+                  
+                   <apex:outputPanel >                  
+                   <apex:outputText value="{!emailcontentbody}" style="display:none;" styleClass="emailcontent"></apex:outputText>
+                   <div class="emailcontentbody"></div>
+                   </apex:outputPanel>
+             </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+      </apex:pageBlock>
+</apex:form>
+</apex:page>

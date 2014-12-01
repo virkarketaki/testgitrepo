@@ -1,0 +1,3 @@
+<apex:page standardController="CnP_PaaS__CnP_Transaction__c" extensions="CnP_PaaS.SaveClass" action="{!Redirect}">
+<h1> Opportunity Record Type Select </h1>
+</apex:page>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Error Report with contact address at bottom</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <letterhead>Click_Pledge_2</letterhead>
+    <name>Error Template</name>
+    <style>formalLetter</style>
+    <subject>Error Report : {!Organization.Name}--{!CnPData__c.Name__c}</subject>
+    <textOnly>Hi {!CnPData__c.OwnerFullName},
+
+Sorry but we have encountered an error while posting the data to your Salesforce account. The following is the system error response:
+
+
+{!CnPData__c.Message__c}
+
+Our developers have been notified and will evaluate the error shortly.
+
+Please feel free to contact us through our support email (support@clickandpledge.com) regarding this issue.
+
+We apologize for the inconvenience and will keep you updated on how to resolve the issue.
+
+
+
+Regards,
+Click &amp; Pledge Development Team
+Salesforce Group</textOnly>
+    <type>html</type>
+</EmailTemplate>

@@ -1,0 +1,74 @@
+<apex:component controller="McaApp.MCAStipsTabController" allowDML="true">
+
+  <apex:form id="records" styleClass="records">
+  
+    <c:MCAJQTabComponent />
+  
+    <apex:pageBlock >
+    
+      <apex:pageBlockButtons >
+      
+        <apex:CommandButton action="{!newStip}" value="New Stip" rerender="records,refreshComponent" immediate="true"></apex:CommandButton>
+      
+        <apex:CommandButton action="{!saveAll}" value="Save" rerender="records,refreshComponent" status="loadingPanel"></apex:CommandButton>
+        <apex:CommandButton action="{!editAll}" value="Edit All" rerender="records,refreshComponent" status="loadingPanel"></apex:CommandButton>
+        
+        <apex:CommandButton action="{!refresh}" value="Refresh" rerender="records,refreshComponent" status="loadingPanel"></apex:CommandButton>
+        
+        <apex:CommandButton action="{!refresh}" value="Cancel" rerender="records,refreshComponent" status="loadingPanel"></apex:CommandButton>
+        <apex:commandButton onclick="window.open('{!DestURL}');" value="Email Stips" action="{!refresh}" rerender="records,refreshComponent" status="loadingPanel"/>
+      </apex:pageBlockButtons>
+      
+      <apex:pageBlockSection columns="1" title="Stips ({!containers.size})" collapsible="false">
+        <apex:pageBlockTable value="{!containers}" var="container" styleClass="tablesorting tablesorter" headerClass="header">
+          <apex:inlineEditSupport event="ondblclick" />    
+        
+          <apex:column >
+          
+            <apex:outputLink value="/{!container.stip.Id}" target="blank" rendered="{!NOT(ISBLANK(container.stip.Id))}"> View </apex:outputLink>
+            <apex:outputLabel value=" | " rendered="{!NOT(ISBLANK(container.stip.Id))}"/>
+                      
+            <apex:commandLink action="{!deleteStip}" value="Del" rerender="records,refreshComponent" rendered="{!NOT(ISBLANK(container.stip.Id))}" status="loadingPanel" immediate="true">
+              <apex:param name="recordToDelete" value="{!container.stip.Id}" assignTo="{!recordToDelete}" ></apex:param>
+            </apex:commandLink>
+            
+            <apex:commandLink action="{!removeStip}" value="Remove" rerender="records,refreshComponent" rendered="{!(ISBLANK(container.stip.Id))}" status="loadingPanel" immediate="true">
+              <apex:param name="indexToRemove" value="{!container.index}" assignTo="{!indexToRemove}"></apex:param>
+            </apex:commandLink>                        
+                        
+          </apex:column>
+        
+          <apex:column headerValue="{!$ObjectType.McaApp__Stips__c.Fields.McaApp__Recv_d__c.Label}">
+            <apex:outputField value="{!container.stip.McaApp__Recv_d__c}" rendered="{!AND(NOT(ISBLANK(container.stip.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.stip.McaApp__Recv_d__c}" rendered="{!OR((ISBLANK(container.stip.Id)), editAll)}"/>
+          </apex:column>
+    
+          <apex:column headerValue="{!$ObjectType.McaApp__Stips__c.Fields.Name.Label}">
+            <apex:outputField value="{!container.stip.Name}" rendered="{!AND(NOT(ISBLANK(container.stip.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.stip.Name}" rendered="{!OR((ISBLANK(container.stip.Id)), editAll)}" />
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Stips__c.Fields.McaApp__Type__c.Label}">
+            <apex:outputField value="{!container.stip.McaApp__Type__c}" rendered="{!AND(NOT(ISBLANK(container.stip.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.stip.McaApp__Type__c}" rendered="{!OR((ISBLANK(container.stip.Id)), editAll)}"/>
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Stips__c.Fields.McaApp__Status__c.Label}">
+            <apex:outputField value="{!container.stip.McaApp__Status__c}" rendered="{!AND(NOT(ISBLANK(container.stip.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.stip.McaApp__Status__c}" rendered="{!OR((ISBLANK(container.stip.Id)), editAll)}"/>
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Stips__c.Fields.McaApp__Requested_by__c.Label}">
+            <apex:outputField value="{!container.stip.McaApp__Requested_by__c}" rendered="{!AND(NOT(ISBLANK(container.stip.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.stip.McaApp__Requested_by__c}" rendered="{!OR((ISBLANK(container.stip.Id)), editAll)}"/>
+          </apex:column>                        
+
+
+        </apex:pageBlockTable>
+      </apex:pageBlockSection>         
+      
+    </apex:pageBlock>
+    
+  </apex:form>
+
+</apex:component>

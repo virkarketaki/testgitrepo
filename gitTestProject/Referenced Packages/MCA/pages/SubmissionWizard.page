@@ -1,0 +1,495 @@
+<apex:page Controller="McaApp.SubmissionWizardController" sidebar="false" tabStyle="McaApp__Program__c"> 
+<!-- wizard="true"> -->
+<!--    <apex:includeScript value="{!URLFOR($Resource.Jquary, 'js/jquery-1.6.2.min.js')}" /> -->
+<!--     <apex:includeScript value="{!URLFOR($Resource.Jquary, 'js/jquery-ui-1.8.15.custom.min.js')}" /> -->
+    
+     <style type="text/css">
+.disablingDiv { /* Do not display it on entry */ 
+	display: none;
+	/* Display it on the layer with index 1001.
+	           Make sure this is the highest z-index value
+	           used by layers on that page */
+	z-index: 3001;
+	/* make it cover the whole screen */
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	width: 112%;
+	height: 102%;
+	/* make it white but fully transparent */
+	background-color: #6D7B8D;
+	opacity: .30;
+	filter: alpha(opacity = 20);
+}
+
+.custPopup {
+	background-color: white;
+	border-width: 2px;
+	border-style: solid;
+	z-index: 9999;
+	left: 50%;
+	padding: 10px;
+	position: absolute;
+	/* These are the 3 css properties you will need to change so the popup
+            displays in the center of the screen. First set the width. Then set
+            margin-left to negative half of what the width is. You can add
+            the height property for a fixed size pop up if you want.*/
+	width: 500px;
+	margin-left: -250px;
+	/*          width: 50% ;  */
+	/*          top: 25% ; */
+	/*             top:100px; */
+	top: 50%;
+}
+
+.popupBackground {
+	background-color: black;
+	opacity: 0.20;
+	filter: alpha(opacity =   20);
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 9998;
+}
+</style>
+    
+    <style type="text/css">
+      .detailList {
+          table-layout: fixed;
+      }
+      .labelCol {
+          text-align: right !important;
+          width: 20% !important;
+          max-width: 20% !important;
+      }
+      .dataCol {
+        width: 20% !important;
+        max-width: 20% !important;  
+      }
+    </style>
+    
+<!--     <script type="text/javascript"> -->
+<!--          var j$ = jQuery.noConflict(); -->
+ 
+<!--         j$(document).ready(function(){ -->
+<!--             j$("#delayBtn").click(function() { -->
+<!--                 alert("NINJA STAR TO FACE!!!!!"); -->
+<!--                 alert(document.getElementById("{!$Component.tstpopup}")); -->
+<!--                 alert(document.getElementById("{!$Component.subWiz:form:tstpopup:parentPopup:actPopup:popup}")); -->
+<!--                 document.getElementById("{!$Component.subWiz:form:tstpopup:parentPopup:actPopup:popup}").focus(); -->
+<!--             }); -->
+<!--         }); -->
+<!--      </script> -->
+     
+    <!-- script to check all the checkboxes -->
+    <script type="text/javascript">
+        function checkAll(cb,cbid)
+        {
+            var inputElem = document.getElementsByTagName("input");                    
+            for(var i=0; i<inputElem.length; i++)
+            {            
+                 if(inputElem[i].id.indexOf(cbid)!=-1){                                       
+                    inputElem[i].checked = cb.checked;
+                }
+            }
+        }
+    </script>
+    
+    <script type="text/javascript">
+ 		
+	    function showDisablingDiv()
+        {     
+           // alert('in disabling div');
+            document.getElementById('disablingDiv').style.display='block';
+        } 
+        
+        function hideDisablingDiv()
+        {
+            //alert('in hide disabling div');
+            document.getElementById('disablingDiv').style.display='none';
+        }
+        function focusOn(val)
+	    {
+	    	var checkboxId = val;           
+	        document.getElementById(checkboxId).focus();
+	    }
+	    function ClosePage(){
+	    	//alert('test');
+	    	window.top.close();
+	    }
+	</script>
+	
+    <apex:includeScript value="/support/console/22.0/integration.js"/>
+  
+    <apex:form id="form">
+        <apex:pageMessages id="pageMessageId" escape="false"/>
+        <div align="left" class="disablingDiv" id="disablingDiv"></div>
+        
+        <center>
+        <div style="position:absolute;top: 50%;left: 350px;" >
+<!--         style="position:absolute;margin-top:15%;margin-left:auto;margin-right:auto;text-align:center;vertical-align: middle;"> -->
+<!--         style="position:absolute;top: 50%;left: 350px;" > -->
+<!--         	style="position:absolute;top: 120px;left: 100px; z-index:3002;" -->
+            <apex:actionStatus stopText="" id="counterStatusSave">
+                <apex:facet name="start">
+                     <apex:outputPanel style="padding-left:50%;">
+                        <apex:image value="{!$Resource.McaApp__Loading}" width="50%" height="50%"/>
+                     </apex:outputPanel>             </apex:facet>
+            </apex:actionStatus>
+        </div>
+        </center>
+        <apex:actionFunction name="resetAtt" action="{!resetAttachments}"  
+                                             rerender="pgmTable,pageMessageId,attachmentTable" 
+                                             status="loadingAttachment"/>
+        <apex:actionFunction name="selDesAtt" action="{!selectDeselectAtt}"  
+                                             rerender="pgmTable,pageMessageId,attachmentTable" 
+                                             status="counterStatusSave" oncomplete="hideDisablingDiv();">
+        	<apex:param name="isPgmSelected" value=""/> 
+            <apex:param name="pgmId"  value=""/> 
+        </apex:actionFunction>
+        
+        <apex:actionFunction name="checkUncheckAtt" action="{!checkUncheckAttachements}"  
+                                            rerender="pageMessageId,attachmentTable" 
+                                             status="loadingAttachment" oncomplete="hideDisablingDiv();">
+        	<apex:param name="isSelected" value=""/> 
+            <apex:param name="attId"  value=""/> 
+        </apex:actionFunction>
+        
+        <!-- Code for the popup -->
+         <apex:outputPanel id="tstpopup">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}" id="parentPopup"/>
+                <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}" id="actPopup">
+                    <apex:pageBlock title="Required Documents" id="popup">
+                        <apex:repeat value="{!prgmDocMap}" var="pgm">
+                            <!--       <apex:variable value="{!1}" var="rowNum"/> -->
+                            <b><apex:outputText value="{!pgm}"/></b><br/>
+                            <apex:dataList value="{!prgmDocMap[pgm]}" var="doc">
+                                
+<!--                                <apex:outputText value="{!FLOOR(rowNum)}"/> - -->
+                                 <apex:outputText value="{!doc}"/>
+<!--                                <apex:variable var="rowNum" value="{!rowNum + 1}"/><br/> -->
+                            </apex:dataList>
+                        </apex:repeat>
+                        <apex:outputText Value="There are no Required Documents for the selected Programs" rendered="{!MapSize}"/> 
+                     </apex:pageBlock>
+                     <div align="center"> 
+                        <apex:commandButton value="Close" action="{!closePopup}" rerender="tstpopup" status="loadingStatus"/>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+        <!--    End of Popup -->
+                                        
+        <apex:pageBlock title="Submission Wizard" rendered="{!NOT(showThankYouPage)}">
+            <div align="right">
+                 <apex:outputLink value="/{!oppId}"> <apex:outputText value="<< Back to Opportunity"/> </apex:outputLink>
+            </div>
+            <apex:pageBlockSection title="Summary Info" collapsible="true" columns="3" >
+                 <apex:outputField value="{!Opp.Account.Name}" /> 
+                 <apex:outputField value="{!Opp.Account.McaApp__Gross_monthly_Sales__c}" /> 
+                 <apex:outputField value="{!Opp.Account.McaApp__Monthly_CC_Avg_All__c}" />
+                 <apex:outputField value="{!Opp.Account.McaApp__Years_in_Business__c}" /> 
+                 <apex:outputField value="{!Opp.Account.McaApp__Number_Bank_Statements_Available__c}" />
+                 <apex:outputField value="{!Opp.Account.McaApp__Number_CC_Statements_Available__c}" /> 
+                 <apex:outputField value="{!Opp.Account.McaApp__NumberofLocations__c}" />    
+                 <apex:outputField value="{!Opp.Account.McaApp__Monthly_Bank_Deposit_Avg_All__c}" /> 
+                 <apex:outputField value="{!Opp.McaApp__Total_Loan_Balance__c}" /> 
+                 <apex:outputField value="{!Opp.Account.Industry}" /> 
+                 <apex:outputField value="{!Opp.Account.McaApp__NSFs_Avg__c}" />  
+                 <apex:outputField value="{!Opp.McaApp__No_of_Funders__c}" /> 
+                 <apex:outputField value="{!Opp.McaApp__Credit_Score__c}" /> 
+<!--                  <apex:outputField value="{!Opp.McaApp__Total_Loan_Balance__c}" />  -->
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Programs" >
+            </apex:pageBlockSection>
+            
+            <apex:outputPanel title="Programs">
+                <br/>
+                <table width="100%" title="Programs">
+                    <tr>
+                        <td>
+                            <apex:outputLabel value="Max. Credit Score" />
+                            <apex:inputField value="{!program.McaApp__Credit_Score__c}" onkeypress="return noenter(event);"/>
+                        </td>
+                        <td>
+                            <apex:outputLabel value="Max. Years in Business"    />
+                            <apex:inputField value="{!program.McaApp__Years_in_Business__c}" onkeypress="return noenter(event);"/>
+                        </td>
+                        <td>
+                            <apex:outputLabel value="Monthly Deposits"  />
+                            <apex:inputField value="{!program.McaApp__Min_Monthly_Deposits__c}" onkeypress="return noenter(event);"/>
+                        </td>
+                        <td>
+                            <apex:outputLabel value="Industry"/>
+                            <apex:inputField value="{!program.McaApp__Industry__c}" onkeypress="return noenter(event);"/>
+                        </td>
+                        <td>
+                            <apex:outputLabel value="Preferred Programs"/>
+                            <apex:inputField value="{!program.McaApp__Preffered_Programs__c}" onkeypress="return noenter(event);"/>
+                        </td>
+<!--                        <td></td> -->
+                    </tr>
+                </table>
+                <div align="center" >
+                    <apex:commandButton id="filterBtn" value="Filter" 
+                    								   action="{!getPrograms}" 
+                    								   rerender="pgmTable,pageMessageId,attachmentTable" status="loadingStatus"
+                    								   onclick="showDisablingDiv();"
+                    								   oncomplete="hideDisablingDiv();"/>
+                    &nbsp;&nbsp;
+                    <apex:commandButton value="Clear Filters" action="{!clearFilter}" rerender="form" status="loadingStatus"
+															  onclick="showDisablingDiv();"
+                    								   		  oncomplete="hideDisablingDiv();"/>
+                     &nbsp;&nbsp;
+                     <apex:actionStatus id="loadingStatus" stopText="">
+                        <apex:facet name="start">
+                        <apex:outputPanel >
+                            <apex:image url="/img/loading.gif" />
+                            <apex:outputLabel value=" "/>         
+                        </apex:outputPanel>                 
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <script type="text/javascript" >
+		                function noenter(e){
+						    if(window.event){
+						    	key = window.event.keyCode; //IE
+						    }else{
+						    	key = e.which; //firefox
+						    }
+						    if(key == 13) {
+						    	//alert('key 13');
+						    	//alert(document.getElementById("{!$Component.filterBtn}"));
+							    var ele=document.getElementById("{!$Component.filterBtn}").id;
+								//alert('***'+ele);
+								document.getElementById(ele).click();
+						    	return false;
+						    } else{
+						    	return true;
+						    }
+					    }
+					  </script>
+                </div>
+              
+            </apex:outputPanel>
+            
+            <br/>
+             <apex:outputPanel id="pgmTable"> 
+<!--              style="overflow:scroll;height:800px;" layout="block"> -->
+                 <apex:pageBlockTable value="{!programWrapperList}" var="pgmWrapper" >
+                     <apex:column >
+                        <apex:facet name="header"> 
+                            <apex:inputCheckbox onclick="checkAll(this,'checkBox');resetAtt()" >
+                                
+                            </apex:inputCheckbox>
+                            </apex:facet>
+                        <apex:inputCheckbox value="{!pgmWrapper.isSelected}" id="checkBox" 
+                        					onclick="focusOn(this.id);showDisablingDiv();selDesAtt('{!pgmWrapper.isSelected}','{!pgmWrapper.prgm.Id}')"  >
+                        </apex:inputCheckbox>
+                    </apex:column>
+                     <apex:column value="{!pgmWrapper.prgm['Bank__c']}">
+                        <apex:facet name="header">   
+                            <apex:commandLink action="{!ViewSortedData_Program}" value="Bank{!IF(sortExpression=='Bank__r.Name',IF(sortDirection='ASC','▲','▼'),'')}" id="cmdSortBankName" reRender="pgmTable" status="loadingStatus">
+                                <apex:param value="Bank__r.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>   
+                     </apex:column> 
+                     <apex:column > 
+                        <a href="/{!pgmWrapper.prgm['Id']}" id="{!pgmWrapper.prgm['Id']}"
+                                    onmouseover="LookupHoverDetail.getHover('{!pgmWrapper.prgm['Id']}', '/{!pgmWrapper.prgm['Id']}/m?retURL={!pgmWrapper.prgm['Id']}&isAjaxRequest=1').show();"
+                    onmouseout="LookupHoverDetail.getHover('{!pgmWrapper.prgm['Id']}').hide();"
+                    onfocus="LookupHoverDetail.getHover('{!pgmWrapper.prgm['Id']}', '/{!pgmWrapper.prgm['Id']}/m?retURL={!pgmWrapper.prgm['Id']}&isAjaxRequest=1').show();"
+                    onblur="LookupHoverDetail.getHover('{!pgmWrapper.prgm['Id']}').hide();" > 
+                            {!pgmWrapper.prgm['Name']}
+                        </a>
+                        <apex:facet name="header">   
+                            <apex:commandLink action="{!ViewSortedData_Program}" value="Program Name{!IF(sortExpression=='Name',IF(sortDirection='ASC','▲','▼'),'')}" id="cmdSortName" reRender="pgmTable" status="loadingStatus">
+                                <apex:param value="Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>   
+                     </apex:column> 
+                     <apex:column >
+                        <apex:facet name="header">   
+                            <apex:commandLink action="{!ViewSortedData_Program}" value="Credit Score{!IF(sortExpression=='Credit_Score__c',IF(sortDirection='ASC','▲','▼'),'')}" id="cmdSortCreditScore" reRender="pgmTable" status="loadingStatus">
+                                <apex:param value="Credit_Score__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!pgmWrapper.prgm['Credit_Score__c']}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header">   
+                            <apex:commandLink action="{!ViewSortedData_Program}" value="Years in Business{!IF(sortExpression=='Years_in_Business__c',IF(sortDirection='ASC','▲','▼'),'')}" id="cmdSortYearsInBui" reRender="pgmTable" status="loadingStatus">
+                                <apex:param value="Years_in_Business__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!pgmWrapper.prgm['Years_in_Business__c']}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header">   
+                            <apex:commandLink action="{!ViewSortedData_Program}" value="Min. Monthly Deposits{!IF(sortExpression=='Min_Monthly_Deposits__c',IF(sortDirection='ASC','▲','▼'),'')}" id="cmdSortMinMonthly" reRender="pgmTable" status="loadingStatus">
+                                <apex:param value="Min_Monthly_Deposits__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!pgmWrapper.prgm['Min_Monthly_Deposits__c']}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header">   
+                            <apex:commandLink action="{!ViewSortedData_Program}" value="Max# NSFs{!IF(sortExpression=='Max_No_NSFs__c',IF(sortDirection='ASC','▲','▼'),'')}" id="cmdSortMaxNSF" reRender="pgmTable" status="loadingStatus">
+                                <apex:param value="Max_No_NSFs__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!pgmWrapper.prgm['Max_No_NSFs__c']}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header">   
+                            <apex:commandLink action="{!ViewSortedData_Program}" value="Max. Amount{!IF(sortExpression=='Max_Amount__c',IF(sortDirection='ASC','▲','▼'),'')}" id="cmdSortMaxAmt" reRender="pgmTable" status="loadingStatus">
+                                <apex:param value="Max_Amount__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!pgmWrapper.prgm['Max_Amount__c']}"/>
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header">   
+                            <apex:commandLink action="{!ViewSortedData_Program}" value="Commission %{!IF(sortExpression=='Commission_Percentage__c',IF(sortDirection='ASC','▲','▼'),'')}" id="cmdSortCommPer" reRender="pgmTable" status="loadingStatus">
+                                <apex:param value="Commission_Percentage__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!pgmWrapper.prgm['Commission_Percentage__c']}"/>
+                    </apex:column>
+                    
+                     <apex:column value="{!pgmWrapper.prgm['Bank__r.Main_Contact__c']}">
+                        <apex:facet name="header" >
+                            <apex:outputText value="Main Contact"/>
+                        </apex:facet>   
+                     </apex:column> 
+                     
+                     <apex:column > 
+                        <apex:outputText value="{0,number,$###,###}">
+                              <apex:param value="{!pgmWrapper.PotentialFundingAmt}" />
+                        </apex:outputText>
+                        <apex:facet name="header" >
+                            <apex:commandLink action="{!ViewSortedData_Program}" value="Potential Funding Amt.{!IF(sortExpression=='Funding_Amt_of_Monthly_Gross_Sales__c',IF(sortDirection='ASC','▲','▼'),'')}" id="cmdSortPotFundAmt" reRender="pgmTable" status="loadingStatus">
+                                <apex:param value="Funding_Amt_of_Monthly_Gross_Sales__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>       
+                     </apex:column>
+                     
+                     <apex:column >                  
+                        <apex:outputPanel rendered="{!NOT(pgmWrapper.missingInfo)}">
+                            <apex:outputPanel >
+                                <apex:image value="/img/samples/color_green.gif" width="{!pgmWrapper.score}" height="12" />
+                                <apex:image value="/img/samples/color_yellow.gif" width="{!(100 - pgmWrapper.score)}" height="12" />
+                            </apex:outputPanel>&nbsp;
+                            <apex:outputText value="{0,number,###}">
+                                  <apex:param value="{!pgmWrapper.score}" />
+                            </apex:outputText>%
+                        </apex:outputPanel>
+                        
+                        <apex:outputPanel rendered="{!(pgmWrapper.missingInfo)}">
+                            <apex:outputText value="Missing Info" style="color:Red;"/>
+                        </apex:outputPanel>
+                        
+                        <apex:facet name="header" >
+                            <apex:commandLink action="{!ViewSortedData_Program}" value="Program Match Percent{!IF(sortExpression=='score',IF(sortDirection='ASC','▲','▼'),'')}" id="cmdSortScore" reRender="pgmTable" status="loadingStatus">
+                                <apex:param value="score" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>       
+                     </apex:column>
+                 </apex:pageBlockTable>
+                 <apex:outputText value="No Programs for this criteria" rendered="{!programWrapperList.size == 0}"/>
+            </apex:outputPanel>
+             
+            <div align="center"> 
+                <apex:commandButton value="Check Required Document" action="{!checkReqdDocument}"
+                                    rerender="tstpopup" status="loadingStatus" id="delayBtn" />
+            </div>
+        </apex:pageBlock>
+        
+         <apex:actionStatus id="loadingAttachment" stopText="">
+            <apex:facet name="start">
+            <apex:outputPanel >
+                <apex:image url="/img/loading.gif" />
+                <apex:outputLabel value="Loading..."/>         
+            </apex:outputPanel>                 
+            </apex:facet>
+        </apex:actionStatus>
+        
+        <apex:pageBlock title="Available Attachments" rendered="{!NOT(showThankYouPage)}">
+            <apex:outputPanel id="attachmentTable">
+                <apex:pageBlockTable value="{!AttachmentWrapperList}" var="attachmentWrapper">
+                     <apex:column value="{!attachmentWrapper.cnt}"/>    
+                     
+                     <apex:column value="{!attachmentWrapper.attachment['name']}">
+                        <apex:facet name="header" >
+                            <apex:outputText value="Name"/>
+                         </apex:facet>  
+                     </apex:column>     
+                     
+                     <apex:column value="{!attachmentWrapper.attachment['Description']}">
+                        <apex:facet name="header" >
+                            <apex:outputText value="Description"/>
+                         </apex:facet> 
+                     </apex:column>     
+                     
+                     <apex:column >
+                         <apex:facet name="header" >
+                            <apex:outputText value="Programs"/>
+                         </apex:facet> 
+                         <apex:selectList value="{!attachmentWrapper.selectedPrograms}" multiselect="true">
+                            <apex:selectOptions value="{!attachmentWrapper.options}"/>
+                         </apex:selectList>
+                     </apex:column>
+                     <apex:column >
+                        <apex:facet name="header"> 
+                            <apex:outputText value="Include"/>
+                         </apex:facet>
+                        <apex:inputCheckbox value="{!attachmentWrapper.isRequired}" 
+                        				    onclick="checkUncheckAtt('{!attachmentWrapper.isRequired}','{!attachmentWrapper.attachment.Id}');showDisablingDiv();">
+                        </apex:inputCheckbox>
+                    </apex:column>
+                    
+                 </apex:pageBlockTable>
+                 <apex:outputText value="No Attachments were found" rendered="{!AttachmentWrapperList.size == 0}"/>
+             </apex:outputPanel>
+             
+             <div align="center"> 
+             	 <apex:commandButton value="Create without Sending" action="{!createWithoutSending}" />
+                 <apex:commandButton value="Send without Attachments" action="{!sendWithoutAttachment}" />
+<!--                 <apex:commandButton value="Send All Attachments" action="{!sendAllAttachments}" /> -->
+                 <apex:commandButton value="Send with Attachments" action="{!sendSelectedAttachments}" />
+                 <apex:commandButton value="Cancel" action="{!cancel}"/>
+                 <apex:commandLink value="Add Attachments" action="{!openAttachment}" styleClass="btn" 
+                                    style="text-decoration:none" target="_blank" onclick="ClosePage();"/> 
+<!--                 action="{!getAvailableAttachments}" -->
+<!--                                                     onclick="openAttachmentPage()" /> -->
+             </div>
+        </apex:pageBlock>
+        
+        <apex:pageBlock rendered="{!showThankYouPage}">
+             <apex:outputPanel rendered="{!applicationSentToPgm.size > 0}">
+              <apex:outputText value="{!$Label.mcaapp__Submission_MailSent}" style="color:Green; font-weight: bold; "/> 
+             <apex:pageBlockTable value="{!applicationSentToPgm}" var="pgms">
+                <apex:column >
+                    <apex:image url="{!URLFOR($Resource.McaApp__SubmissionWizard,'SubmissionWizard/Sent.jpg')}" width="20" height="20"/>&nbsp;&nbsp;
+                    <a href="/{!pgms.Id}">{!pgms.Name}</a>
+                </apex:column>
+                <apex:column value="{!pgms.McaApp__Bank__c}"/>
+             </apex:pageBlockTable>
+             <br/>
+             </apex:outputPanel>
+             
+             <apex:outputPanel rendered="{!applicationNotSentToPgm.size > 0}">
+             <apex:outputText value="{!$Label.mcaapp__Submission_MailNotSent}" style="color:Red; font-weight: bold; "/> 
+             <apex:pageBlockTable value="{!applicationNotSentToPgm}" var="pgms">
+                <apex:column >
+                    <apex:image url="{!URLFOR($Resource.McaApp__SubmissionWizard,'SubmissionWizard/NotSent.jpg')}" width="16" height="16"/>&nbsp;&nbsp;
+                    <a href="/{!pgms.Id}">{!pgms.Name}</a>
+                </apex:column>
+                <apex:column value="{!pgms.McaApp__Bank__c}"/>
+             </apex:pageBlockTable>
+             </apex:outputPanel>
+             <apex:outputLink value="/{!oppId}"> <apex:outputText value="<< Back to Opportunity"/> </apex:outputLink>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

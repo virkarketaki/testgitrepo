@@ -1,0 +1,322 @@
+<apex:page renderAs="pdf" standardController="Purchase_Order__c" extensions="GeneratePdfController">
+	<apex:form >
+		<apex:pageBlock id="bodyBlock" title="Final Bill" mode="detail">
+		
+		<!-- Block Section for ' General Information' -->
+			<apex:pageBlockSection id="generalInfo" title="General Information">
+				<apex:pageBlockTable id="generalInfoTble" value="{!quote}" var="q" rendered="{!NOT(ISNULL(quote))}">
+				
+				<!-- for - Bill PDF (Created Date) -->
+					<apex:column >	
+						<apex:outputLabel id="createDate" value="Bill PDF (Created Date)"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="createDateField" value="{0,date,dd'/'MM'/'yyyy}">
+							<apex:param value="{!currentDate}"/>
+						</apex:outputText>
+					</apex:column>
+					
+				<!-- for - Expiration Date -->
+					<apex:column breakBefore="true" rendered="{!NOT(ISNULL(q.ExpirationDate))}">
+						<apex:outputLabel id="expirationDate" value="Expiration Date"/>
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.ExpirationDate))}">
+						<apex:outputLabel value="  :"/>
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="expirationDateField" value="{0,date,dd'/'MM'/'yyyy}">
+							<apex:param value="{!q.ExpirationDate}"/>
+						</apex:outputText>
+					</apex:column>
+				
+				<!-- for - Quote Number -->
+					<apex:column breakBefore="true" rendered="{!NOT(ISNULL(q.quoteNumber))}">
+						<apex:outputLabel id="quoteNumber" value="Quote Number"/>
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.quoteNumber))}">
+						<apex:outputLabel value="  :"/>
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="quoteNumberField1" value="{!q.quoteNumber}"/>
+					</apex:column>
+				</apex:pageBlockTable>	
+			</apex:pageBlockSection>
+		
+		<!-- Block Section for 'Contact Information' -->		
+			<apex:PageBlockSection id="contactInfo" title="Contact Information">
+				<apex:pageBlockTable id="contactInfoTble" value="{!quote}" var="q">	
+				
+				<!-- for - Prepared By (Name) -->
+					<apex:column rendered="{!NOT(AND(ISNULL($User.FirstName),ISNULL($User.LastName)))}">
+						<apex:outputLabel id="uname" value="Prepared By (Name)" />&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(AND(ISNULL($User.FirstName),ISNULL($User.LastName)))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="userName" value="{!$User.FirstName} {!$User.LastName}" />
+					</apex:column>
+					<apex:column >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+					
+				<!-- for - Contact Name -->
+					<apex:column rendered="{!NOT(name=='')}">
+						<apex:outputText id="cname" value="Contact Name"/>
+					</apex:column>
+					<apex:column rendered="{!NOT(name=='')}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="name" value="{!name}"/>
+					</apex:column>
+				
+				<!-- for - Prepared By (Phone) -->
+					<apex:column breakBefore="true" rendered="{!NOT(ISNULL($User.Phone))}">
+						<apex:outputLabel id="uphone" value="Prepared By (Phone)" />&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL($User.Phone))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="userPhone" value="{!$User.Phone}" />
+					</apex:column>
+					<apex:column >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+					
+				<!-- for - Phone -->
+					<apex:column rendered="{!NOT(ISNULL(q.Phone))}">
+						<apex:outputText id="cphone" value="Phone"/>
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.Phone))}">
+						<apex:outputLabel value="  :"/>
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="phone" value="{!q.Phone}"/>
+					</apex:column>
+				
+				<!-- for - Prepared By (Email) -->	
+					<apex:column breakBefore="true" rendered="{!NOT(ISNULL($User.Email))}">
+						<apex:outputLabel id="uemail" value="Prepared By (Email)" />&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL($User.Email))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="userEmail" value="{!$User.Email}" />
+					</apex:column>
+					<apex:column >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+					
+				<!-- for - Email -->
+					<apex:column rendered="{!NOT(ISNULL(q.Email))}">
+						<apex:outputText id="cemail" value="Email"/>
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.Email))}">
+						<apex:outputLabel value="  :"/>
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="email" value="{!q.Email}"/>
+					</apex:column>
+
+				<!-- for - Prepared By (Fax) -->
+					<apex:column breakBefore="true" rendered="{!NOT(ISNULL($User.Fax))}">
+						<apex:outputLabel id="ufax" value="Prepared By (Fax)" />&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL($User.Fax))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="userFax" value="{!$User.Fax}" />
+					</apex:column>
+					<apex:column >
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</apex:column>
+
+				<!-- for - Fax -->
+					<apex:column rendered="{!NOT(ISNULL(q.Fax))}">
+						<apex:outputText id="cFax" value="Fax"/>
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.Fax))}">
+						<apex:outputLabel value="  :"/>
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="fax" value="{!q.Fax}"/>
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:PageBlockSection>
+
+		<!-- PageBlockSection for 'Address Information' -->
+			<apex:PageBlockSection id="addrInfo" title="Address Information">
+				<apex:pageBlockTable id="addrInfoTble" value="{!quote}" var="q">
+
+				<!-- for - Bill To Name -->
+					<apex:column rendered="{!NOT(ISNULL(q.BillingName))}">
+						<apex:outputLabel id="bname" value="Bill To Name" />&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.BillingName))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="billName" value="{!q.BillingName}" />
+					</apex:column>
+					<apex:column >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+					
+				<!-- for - Ship To Name -->
+					<apex:column rendered="{!NOT(ISNULL(q.ShippingName))}">
+						<apex:outputText id="sname" value="Ship To Name"/>
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.ShippingName))}">
+						<apex:outputLabel value="  :"/>
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="shippingName" value="{!q.ShippingName}"/>
+					</apex:column>
+			
+			 	<!-- for - Bill To -->
+					<apex:column breakBefore="true" 
+					            rendered="{!NOT(AND(ISNULL(q.BillingStreet),
+					                                ISNULL(q.BillingCity),ISNULL(q.BillingPostalCode)))}">
+						<apex:outputLabel id="bto" value="Bill To" />&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(AND(ISNULL(q.BillingStreet),
+					                                 ISNULL(q.BillingCity),ISNULL(q.BillingPostalCode)))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="billTo" 
+						                 value="{!q.BillingStreet} {!q.BillingCity} {!q.BillingPostalCode}"/>
+					</apex:column>
+					<apex:column >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+					
+				<!-- for - Ship To Name -->
+					<apex:column rendered="{!NOT(AND(ISNULL(q.ShippingStreet),
+					                                 ISNULL(q.ShippingCity),ISNULL(q.ShippingPostalCode)))}">
+						<apex:outputText id="sto" value="Ship To Name"/>
+					</apex:column>
+					<apex:column rendered="{!NOT(AND(ISNULL(q.ShippingStreet),
+					                                 ISNULL(q.ShippingCity),ISNULL(q.ShippingPostalCode)))}">
+						<apex:outputLabel value="  :"/>
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="shipTo" 
+						                 value="{!q.ShippingStreet} {!q.ShippingCity} {!q.ShippingPostalCode}"/>
+					</apex:column>
+				
+				<!-- for - Quote To Name -->
+					<apex:column breakBefore="true" rendered="{!NOT(ISNULL(q.QuoteToName))}">
+						<apex:outputLabel id="qname" value="Quote To Name" />&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.QuoteToName))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="quoteName" value="{!q.QuoteToName}" />
+					</apex:column>
+					<apex:column >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+				
+				<!-- for - Additional To Name -->
+					<apex:column rendered="{!NOT(ISNULL(q.AdditionalName))}">
+						<apex:outputText id="aname" value="Additional To Name"/>
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.AdditionalName))}">
+						<apex:outputLabel value="  :"/>
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="additionalName" value="{!q.AdditionalName}"/>
+					</apex:column>
+				
+				<!-- for - Quote To -->
+					<apex:column breakBefore="true" 
+					             rendered="{!NOT(AND(ISNULL(q.QuoteToStreet),
+					                                 ISNULL(q.QuoteToCity),ISNULL(q.QuoteToPostalCode)))}">
+						<apex:outputLabel id="qto" value="Quote To" />&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(AND(ISNULL(q.QuoteToStreet),
+					                                 ISNULL(q.QuoteToCity),ISNULL(q.QuoteToPostalCode)))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="quoteTo" 
+						                 value="{!q.QuoteToStreet} {!q.QuoteToCity} {!q.QuoteToPostalCode}" />
+					</apex:column>
+					<apex:column >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:column>
+				
+				<!-- for - Additional To Name -->
+					<apex:column rendered="{!NOT(AND(ISNULL(q.AdditionalStreet),
+					                                 ISNULL(q.AdditionalCity),ISNULL(q.AdditionalPostalCode)))}">
+						<apex:outputText id="ato" value="Additional To Name"/>
+					</apex:column>
+					<apex:column rendered="{!NOT(AND(ISNULL(q.AdditionalStreet),
+					                                 ISNULL(q.AdditionalCity),ISNULL(q.AdditionalPostalCode)))}">
+						<apex:outputLabel value="  :"/>
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="additionalTo" 
+						                 value="{!q.AdditionalStreet} {!q.AdditionalCity} {!q.AdditionalPostalCode}"/>
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:PageBlockSection>
+		
+		<!-- PageBlockSection for 'Quote Line Item' -->
+			<apex:PageBlockSection id="quoteLineItem" title="Quote Line Item">
+				<apex:pageBlockTable id="quoteLineItemTable" value="{!quotePurchaseList}" var="q">
+					<apex:column value="{!q.Product1__c}" width="100"/>
+					<apex:column value="{!q.Sales_Price__c}" width="100"/>
+					<apex:column value="{!q.Quantity__c}" width="100"/>
+					<apex:column value="{!q.Discount__c}" width="100"/>
+					<apex:column value="{!q.Total_Price__c}" width="100"/>
+				</apex:pageBlockTable>
+			</apex:PageBlockSection>
+		
+		<!-- PageBlockSection for 'Totals' -->
+			<apex:PageBlockSection id="totals" title="Totals">
+				<apex:pageBlockTable id="totalsTable" value="{!purchaseOrder}" var="q">
+				
+				<!-- for - Total Price -->
+					<apex:column rendered="{!NOT(ISNULL(q.Total_Bill__c))}">	
+						<apex:outputLabel id="totalPrice" value="Total Price"/>&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.Total_Bill__c))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="totalPriceField" value="{!q.Total_Bill__c}"/>
+					</apex:column>
+					<apex:column breakBefore="true">&nbsp;</apex:column>
+				 </apex:pageBlockTable>
+			</apex:PageBlockSection>
+			
+			<apex:PageBlockSection id="totals1"> 
+				<apex:pageBlockTable id="totalsTable1" value="{!quote}" var="q">
+			
+			<!-- for - Tax -->
+					<apex:column breakBefore="true" rendered="{!NOT(ISNULL(q.Tax))}">	
+						<apex:outputLabel id="tax" value="Tax"/>&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.Tax))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column >
+						<apex:outputText id="taxField" value="{!q.Tax}"/>
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:PageBlockSection>
+			
+			<apex:PageBlockSection id="totals2">			
+				<apex:pageBlockTable id="totalsTable3" value="{!purchaseOrder}" var="q">
+ 			
+ 			<!-- for - Grand Total -->
+					<apex:column breakBefore="true" rendered="{!NOT(ISNULL(q.Grand_Total__c))}">	
+						<apex:outputLabel id="grandTotal" value="Grand Total"/>&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.Grand_Total__c))}">
+						<apex:outputLabel value="  :"/>&nbsp;
+					</apex:column>
+					<apex:column rendered="{!NOT(ISNULL(q.Grand_Total__c))}">
+						<apex:outputText id="grandTotalField" value="{!q.Grand_Total__c}"/>
+					</apex:column>
+				</apex:pageBlockTable>
+			</apex:PageBlockSection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

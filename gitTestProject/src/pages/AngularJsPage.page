@@ -1,0 +1,197 @@
+<apex:page controller="AngularJsController" docType="html-5.0">
+
+<!--    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.2/angular.min.js"/> -->
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+
+    <script>
+        function testController($scope) {
+        //alert('111111111');
+        
+//      alert('{!lstAccount}');
+//      alert('{!listStr}');
+//      alert('{!mapAccName}');
+        
+        $scope.temp = angular.toJson('{!mapAccName}');
+        console.log('--> '+$scope.temp);
+        
+        $scope.array = angular.toJson('{!mapAccName}').split('=[Account');
+        console.log('--> '+$scope.array);
+        
+//      $scope.name= [];
+        
+//      for(var i=0; i<$scope.array.length; i++)
+//      {
+//          var firstIndex = $scope.array[i].indexOf('(');
+//          var secondIndex = $scope.array[i].lastIndexOf(')');
+//          if(firstIndex != -1 && secondIndex != -1)
+//          {
+//              var str = '{' + $scope.array[i].substring(firstIndex+1, secondIndex) + '}';
+//              alert('111'+str);
+//              $scope.name.push(str);
+//          }
+//      }
+//      console.log('***'+$scope.name);
+        
+    //  $scope.test = 'Ket';
+           /* $scope.name= [
+                {first:'Ketaki', last:'Virkar', city:'pune'},
+                {first:'Shraddha', last:'Patil', city:'mumbai'},
+                {first:'Chetna', last:'Bedse', city:'pune'}
+            ];*/
+            
+            
+            $scope.name = {!JsonLstAcc};
+            
+            
+//          $scope.name.push({first:'Chetna1', last:'Bedse1', city:'pune1'});
+        }
+        
+        
+//         function custome($scope,$http) {
+// 		  $http.get({!lstAccount})
+// 		  .success(function(response) {$scope.names = response;});
+		  
+// 		  alert('1111'+$scope.names);
+// 		}
+         
+        
+        function firstController($scope) {
+            $scope.reverseStr = function() {
+                return $scope.text.split('').reverse().join('').toUpperCase();
+            };
+            
+            //$scope.isHide = false;
+            
+            $scope.toggle = function() {
+                $scope.isHide = !$scope.isHide;
+              //  alert('11');
+                //return true;
+            };
+        }
+        
+        
+        function validationController($scope) {
+            $scope.name = 'Ketaki Virkar';
+            $scope.email = 'ketaki.virkar@gmail.com';
+        }
+        
+        
+        function ctrl($scope) {
+        
+            //$scope.accountList = {!lstAccount};
+        }
+        
+        
+    </script>
+     
+
+    <apex:form id="formId" html-ng-app="">
+    <apex:outputPanel id="outerPanelId" >
+<!--        <apex:outputPanel html-ng-init="fname='First'; lname='Last'"> -->
+        <apex:outputPanel >
+            First Name: &nbsp; <apex:inputText html-ng-model="fname"/><br/><br/>
+            Last Name: &nbsp; <apex:inputText html-ng-model="lname"/><br/><br/>
+            Full Name: &nbsp; <apex:outputText value="{{fname + ' ' + lname}}"/>
+        </apex:outputPanel>
+        <br/><br/><br/>
+        <apex:outputPanel >
+            First No: &nbsp; <apex:input type="number" value="{!firstNo}" html-ng-model="fno"/><br/><br/>
+            
+            Second No: &nbsp; <apex:input type="number" value="{!secondNo}" html-ng-model="sno"/><br/><br/>
+<!--            First No: &nbsp; <apex:outputText html-ng-init="numbers={fno:30, sno:{!secondNo}}" value="{{numbers.fno}}" html-ng-model="numbers.fno"/><br/><br/> -->
+<!--            Second No: &nbsp; <apex:outputText value="{{numbers.sno}}" html-ng-model="numbers.sno"/><br/><br/> -->
+<!--            First No: &nbsp; <input ng-init="numbers={fno:30, sno:{!secondNo}}" value="{{numbers.fno}}" html-ng-model="numbers.fno"/><br/><br/> -->
+<!--            Second No: &nbsp; <inpu value="{{numbers.sno}}" html-ng-model="numbers.sno"/><br/><br/> -->
+            Addition: &nbsp; <apex:outputText value="{!secondNo} = {{fno + sno}}"/>
+            
+            <apex:commandButton value="Save" action="{!testMethod1}"/>
+        
+        </apex:outputPanel>
+    
+        <br/><br/><br/>
+        
+<!--        <apex:outputPanel html-ng-controller="testController" html-ng-init="search='chet'"> -->
+        <apex:outputPanel html-ng-controller="testController">
+<!--            <ul> -->
+<!--                <li ng-repeat="var in name | orderBy:'first'"> -->
+<!--                    {{ var.first + ' ' +var.last}} -->
+<!--                </li> -->
+<!--            </ul> -->
+            
+            Search: &nbsp; <apex:inputText html-ng-model="search"/><br/>
+<!--            Search by city: &nbsp; <apex:inputText html-ng-model="searchCity.city"/> -->
+            <br/>
+            <table border="1">
+<!-- by default orders in asc order. if wanted in dec then add -. i.e if order by first in des then orderBy:'-first'. -->
+<!-- for limit ->  limitTo:3 will give first 3 and  limitTo:-3 will give last 3 -->
+<!--                 <tr ng-repeat="var in name | filter:searchCity | filter:test | orderBy:'first' | limitTo:2"> -->
+<!--                     <td> {{var.first | uppercase}} </td> -->
+<!--                     <td> {{var.last | uppercase}} </td> -->
+<!--                     <td> {{var.city | lowercase}} </td> -->
+<!--                 </tr> -->
+                
+               <tr ng-repeat="var in name | filter:search">
+                   <td> {{var.Id}} </td>
+                   <td> {{var.Name | uppercase}} </td>
+                   <td> {{var.Phone}} </td>
+               </tr>
+                
+                
+            </table>
+            
+        </apex:outputPanel>
+        
+        <br/><br/><br/>
+        
+        <apex:outputPanel html-ng-controller="firstController">
+            <apex:inputText html-ng-model="text"/><br/>
+            Entered String: &nbsp;<apex:outputText value="{{text}}"/><br/>
+            Reversed String in Uppercase: &nbsp;<apex:outputText value="{{reverseStr()}}"/><br/>
+        </apex:outputPanel>
+        
+        <br/><br/><br/>
+        
+        <apex:outputPanel html-ng-controller="firstController">
+        <apex:outputPanel id="panelId">
+            <apex:commandButton value="Toggle" html-ng-click="toggle()" rerender="panelId"/>
+            <apex:outputText id="textId" value="text" html-ng-hide="isHide"/><br/>
+        </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <br/><br/><br/>
+        
+<!--        <apex:outputPanel id="innerPanelId" html-ng-controller="validationController"> -->
+<!--            Name: &nbsp; <apex:inputText id="nameInputId" html-ng-model="name"/><br/> -->
+<!--            <apex:outputPanel html-ng-show="j_id0:formId:nameInputId.$dirty"> -->
+<!--                <apex:outputText style="color:red;" value="Name is required" html-ng-show="j_id0:formId:nameInputId.$error.required"/> -->
+<!--            </apex:outputPanel> -->
+<!--            <apex:outputText style="color:red;" value="Name is required" html-ng-if="{{name.length == 0}}"/> -->
+<!--            Email: &nbsp; <apex:inputText html-ng-model="email"/><br/> -->
+<!--            <apex:commandButton value="Submit" html-ng-click=""/> -->
+<!--        </apex:outputPanel> -->
+        
+<!--        <br/><br/><br/> -->
+            
+<!--        <apex:outputPanel html-ng-controller="ctrl"> -->
+<!--            <table border="1"> -->
+<!--                <tr ng-repeat="var in accountList"> -->
+<!--                    <td> {{var.Id}} </td> -->
+<!--                    <td> {{var.Name}} </td> -->
+<!--                </tr> -->
+<!--            </table> -->
+<!--        </apex:outputPanel> -->
+        
+        
+        </apex:outputPanel>
+    </apex:form>
+    
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script> -->
+
+
+
+
+
+
+
+    
+</apex:page>

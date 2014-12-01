@@ -1,0 +1,5 @@
+<apex:page id="thePage" showHeader="false" tabStyle="Account">
+	<apex:form id="theForm">
+		<c:AccountLookupVC id="mainComp" />
+	</apex:form>
+</apex:page>

@@ -1,0 +1,33 @@
+<apex:page controller="CnP_PaaS.Items_Top_Ten_Payment_names_Count" tabStyle="C_P_Reports__tab">
+<style>
+#title h1{
+//padding-left:10px;
+//margin:5px 0 0 0;
+}
+.bPageTitle {
+padding-bottom:0px;
+margin:0px 0 0 0;
+}
+</style>
+<span id="title">
+<apex:sectionHeader title="Items Label Top 10 #"/></span>  
+<div align="right" style="padding-bottom:10px;" class="test">
+<apex:outputLink value="/apex/downloadTopTenPaymentNamesCount" style="text-decoration:none;display:block;border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 4px 4px;float:right;background-color:#FFFFFF;" target="CnP_PaaS_Evt_Download">Download</apex:outputLink>
+</div>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar">  
+      <apex:column headerValue="Serial #" value="{!ar.Sno}"/>
+          <apex:column headerValue="Payment Name" value="{!ar.DonationsName}"/>  
+           <apex:column headerValue="Number Of Donations" value="{!ar.DonationsNumber}"/>  
+      </apex:pageBlockTable>
+      {!IF(ResultSet.size==0,"NO records available.",NULL)} 
+      </apex:pageBlock>
+      
+      </apex:page>

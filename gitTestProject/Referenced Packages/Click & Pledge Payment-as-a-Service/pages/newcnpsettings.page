@@ -1,0 +1,7 @@
+<apex:page standardController="CnP_PaaS__XML_Setting__c"  >
+    <script>
+         window.location.href='/apex/CnP_PaaS__xmlsettings';  
+    </script>
+
+    
+</apex:page>

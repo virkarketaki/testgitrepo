@@ -1,0 +1,1343 @@
+<apex:page controller="CnP_PaaS_EVT.EventRegistration" showHeader="false" standardStylesheets="false" action="{!checkcookie}">
+<head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+        <link type="text/css" rel="stylesheet" href="{!URLFOR($Resource.jquerygird, "media/css/demo_page.css")}" />
+        <link type="text/css" rel="stylesheet" href="{!URLFOR($Resource.jquerygird, "media/css/demo_table_jui.css")}" />
+        <link type="text/css" rel="stylesheet"  href="{!URLFOR($Resource.jquerygird, "media/jquery-ui-1.8.4.custom.css")}" />       
+        <link type="text/css" rel="stylesheet"  href="{!URLFOR($Resource.datepicker, "datepicker/jquery.datepick.css")}" /> 
+           
+  </head>
+   <style> 
+
+/* CSS Document */
+.summaryright {
+        padding-right:17px;
+        text-align:right;
+        font-weight:bold;
+        display:block;
+        float:left;
+        width: 111px;
+        height:20px;
+       color: #666666;
+}
+.summaryleft {
+    padding-left:5px;
+    font-weight:bold;
+    text-align:right;
+    width: 75%;
+    display:block;
+    float:left;
+            height:20px;
+            color: #666666;
+}
+
+
+ table.display {
+    border-collapse: collapse;
+    clear: both;
+    margin: 0 auto;
+    width: 100%;
+}
+a.appcou {
+    float:right;
+    clear:both;
+    display:block;
+    text-decoration:none;
+    margin:5px 13px 0 0;
+    font-size: 11px;
+    padding: 5px 8px;
+    background-color:#DFDFDF;
+    font-size:11px;
+    color:#333333;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    font-weight:bold;
+    border-radius:5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+ background: url( {
+!URLFOR($Resource.jquerygird, "media/images/ui-bg_highlight-soft_75_cccccc_1x100.png")
+}
+) repeat-x scroll 50% 50% #CCCCCC;
+}
+#cnp {
+    line-height:25px;
+    color:#CCC;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:11px;
+    max-width:700px;
+    text-align:center;
+    margin:0 auto;
+}
+.errorMsg {
+    color:#ff0000;
+    font-size:11px;
+}
+.ttt {
+    text-align:left;
+}
+.add_btn {
+ // background:url( {!URLFOR($Resource.PopupPage, "add_text_btn.png")}) no-repeat top;
+ border: medium none;
+ cursor: pointer;
+ height: 26px;
+ width: 70px;
+}
+a.Edit {
+    width: 25px;
+*/  border: medium none;
+    cursor: pointer;
+    display:block;
+    float:left;
+    color:#09F;
+    text-decoration:none;
+    padding:2px;
+}
+a.Delete {
+ background:url( {!URLFOR($Resource.PopupPage, "del_btn.png")} ) no-repeat top;
+height: 28px;
+ border: medium none;
+ cursor: pointer;
+ display:block;
+           /*  float:left;             width: 25px; */
+             color:#09F;
+ text-decoration:none;
+ padding:2px;
+}
+.custPopup {
+    background-color: white;
+    /* border-width: 3px;
+            border-style: solid;*/
+            z-index: 9999;
+    left: 48%;
+    padding:10px 10px 10px 60px;
+    position: absolute;
+    /* These are the 3 css properties you will need to change so the popup 
+            displays in the center of the screen. First set the width. Then set 
+            margin-left to negative half of what the width is. You can add 
+            the height property for a fixed size pop up if you want.*/
+            width: 500px;
+    margin-left: -250px;
+    top:100px;
+    box-shadow:inset 0px 1px 5px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow:inset 0px 1px 5px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow:inset 0px 1px 5px rgba(0, 0, 0, 0.5);
+    border-radius:10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+.Close, .cls { 
+ height: 30px;
+ width: 30px;
+ border: medium none;
+ cursor: pointer;
+ color: black;
+ line-height: 20px;
+ position: absolute;
+ background:url( {!URLFOR($Resource.PopupPage, "close-button.png")}) no-repeat top;
+ right: 10px;
+ top: 10px;
+}
+.overlay {
+    
+ background-color:black;
+ display:none;
+ background:url( {!URLFOR($Resource.PopupPage, "overlay.png")}) repeat;
+ opacity: 0.40;
+ filter: alpha(opacity = 40);
+ position: absolute;
+ width: 100%;
+ z-index: 9999;
+ top: 0;
+ left: 0;
+}
+.popupBackground {
+
+ opacity: 0.70;
+ filter: alpha(opacity = 70);
+ position: absolute;
+ width: 100%;
+ height: 1000px;
+ top: 0;
+  background:url( {!URLFOR($Resource.PopupPage, "overlay.png")}) repeat;
+ left: 0;
+ z-index: 9998;
+}
+.datepick-popup {
+    z-index: 9999;
+}
+.TotalAlign {
+    text-align:center;
+}
+.dateFormat {
+    display:none;
+}
+.datepick-trigger {
+    Padding-left:2px;
+}
+.pbSubsection .requiredBlock {
+    background-color: transparent;
+    bottom: 1px;
+    height: 27px;
+    left: -4px;
+    position: absolute;
+    top: 4px;
+    width: 3px;
+    color: #CC0000;
+}
+select {
+    margin-left:3px;
+}
+.Valid {
+    color: #090;
+    display: block;
+    float:right;
+    font-size:11px;
+    font-weight:normal;
+}
+.Invalid {
+    color: #FF0000;
+    display: block;
+    font-weight:normal;
+    float:right;
+    font-size:11px;
+}
+.displaylevel tr td {
+   border-bottom: 1px solid #DDDDDD;
+    overflow: hidden;
+    padding: 10px 0 3px;
+    height: 42px;
+}
+.displaylevel, .display {
+   color: #666;
+
+}
+.display tr td {
+      border-bottom: 1px solid #DDDDDD;
+
+}
+a.linktip {
+    text-decoration:none;
+    color: #007CA5;
+    padding: 0 5px;
+}
+a.linktip:hover {
+    color:#999;
+}
+.toolTip {
+    /* background: none repeat scroll 0 0 #FFFFCC;
+    border: 1px solid #FF9900;
+    bottom: 16%;
+    font-family: tahoma;
+    font-size: 11px;
+   // margin-left: 75px;
+    padding: 3px;
+    margin-left: 10px;
+    margin-top: 5px;
+    position: absolute;
+    width: 449px;   
+    line-height: 19px;
+    display:block;
+    z-index:200;*/
+    position:absolute;
+    z-index:200; /* aaaalways on top*/
+    padding: 3px;
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 450px;
+    border: 1px solid #FF9900;
+    background: none repeat scroll 0 0 #FFFFCC;
+    font-family: tahoma;
+    font-size: 11px;
+}
+#dialog-overlay {
+    /* set it to fill the whil screen */
+    width:100%;
+    height:100%;
+    /* transparency for different browsers */
+    filter:alpha(opacity=50);
+    -moz-opacity:0.6;
+    -khtml-opacity: 0.6;
+    opacity: 0.6;
+    /* make sure it appear behind the dialog box but above everything else */
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:3000;
+    /* hide it by default */
+    display:none;
+}
+#dialog-box {
+    /* css3 drop shadow */
+    -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    /* css3 border radius */
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    background:#FFF;
+    /* styling of the dialog box, i have a fixed dimension for this demo    width:328px; */ 
+ 
+    
+    /* make sure it has the highest z-index */
+    position:absolute;
+    z-index:5000;
+    /* hide it by default */
+    display:none;
+}
+#dialog-box .dialog-content {
+    /* style the content */
+    text-align:left;
+    padding:10px;
+    margin:13px;
+    color:#666;
+    font-family:arial;
+    font-size:12px;
+    width: 549px;
+}
+/*
+a.button {
+    /* styles for button background-color: #e33100;*/
+    margin:10px auto 0 auto;
+ text-align:center;
+ display: block;
+ width:50px;
+ padding: 5px 10px 6px;
+ color: #fff;
+ text-decoration: none;
+ font-weight: bold;
+ line-height: 1;
+    
+    /* css3 implementation :) */
+    -moz-border-radius: 5px;
+ -webkit-border-radius: 5px;
+ -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+ -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+ text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+ border-bottom: 1px solid rgba(0,0,0,0.25);
+ position: relative;
+ cursor: pointer;
+}
+a.button:hover {
+    background-color: #c33100;
+}
+*/ /* extra styling */
+#dialog-box .dialog-content p {
+ font-weight:700;
+margin:0;
+}
+#dialog-box .dialog-content ul {
+    margin:10px 0 10px 20px;
+    padding:0;
+    height:50px;
+}
+.ui-widget-header {
+    height:20px;
+
+}
+.req{
+color: #CC0000;
+
+}
+ </style>     
+    
+<script type="text/javascript">
+
+$(document).ready(function () {
+
+   $('.add_btn').click(function(){
+             $('body,html').animate({ scrollTop: 0 }, 0);
+           
+    });
+         
+    // if user clicked on button, the overlay layer or the dialogbox, close the dialog  
+    $('a.btn-ok, #dialog-overlay, #dialog-box').click(function () {     
+        $('#dialog-overlay, #dialog-box').hide();       
+        return false;
+    });
+    
+    // if user resize the window, call the same function again
+    // to make sure the overlay fills the screen and dialogbox aligned to center    
+    $(window).resize(function () {        
+        //only do it if the dialog box is not hidden
+        if (!$('#dialog-box').is(':hidden')) popup();       
+    });
+    
+    
+});
+
+//Popup dialog
+function popup(message) {
+    
+    //alert(message);
+    // get the screen height and width  
+    var maskHeight = $(document).height();  
+    var maskWidth = $(window).width();
+    
+    // calculate the values for center alignment
+    var dialogTop =  (maskHeight/3) - ($('#dialog-box').height());  
+    var dialogLeft = (maskWidth/2) - ($('#dialog-box').width()/2); 
+    if(message != "")
+    {
+
+    $('#dialog-overlay').css({height:maskHeight, width:'100%'}).show();
+    $('#dialog-box').css({top:'100px'}).show();
+    
+   
+    $('body,html').animate({ scrollTop: 0 }, 0);
+  
+   
+       $('#dialog-message').html(message);
+    }
+   if(message == "")
+    {
+         
+    $('#dialog-overlay').css({height:maskHeight, width:'100%'}).show();
+    $('#dialog-box').css({top:'100px'}).show();
+    
+    // $('#dialog-overlay').css({height:maskHeight, width:maskWidth}).show();
+   // $('#dialog-box').css({top:dialogTop, left:dialogLeft}).show();
+
+    $('body,html').animate({ scrollTop: 0 }, 0);
+    // display the message
+   
+    $('#dialog-message').html('Sorry! No Description');
+         
+         
+    }
+            
+} 
+   function FormValidation()
+   {        
+                var t=0;
+                $(".required").each(function(){                    
+                     var required_fields=$.trim($(this).val()); 
+                     $(this).attr('value',required_fields);
+                     if(required_fields=="")                      
+                     {    t=t+1;
+                          alert("Please enter required fields");
+                          $(this).focus();
+                          return false;   
+                     }               
+               });  
+             
+              if(t==0){     
+               var fn = $(".FirstName").val();
+               var ln = $(".LastName").val();
+               var email = $(".Email").val();
+               var dob = $(".Birthdate").val();
+               var phone = $(".Phone").val();               
+               var an = $(".AssistantName").val();
+               var ap = $(".AssistantPhone").val();
+               var fax = $(".Fax").val();               
+               var dp = $(".Department").val();
+               var dis = $(".Description").val();
+               var HomePhone = $(".HomePhone").val();
+               var LeadSource = $(".LeadSource").val();
+               var MailingCity = $(".MailingCity").val();
+               var MailingCountry = $(".MailingCountry").val();
+               var MailingState = $(".MailingState").val();
+               var MailingStreet = $(".MailingStreet").val();
+               var MailingPostalCode = $(".MailingPostalCode").val();
+               var MobilePhone = $(".MobilePhone").val();
+               var OtherCity = $(".OtherCity").val();
+               var OtherCountry = $(".OtherCountry").val();
+               var OtherPhone = $(".OtherPhone").val();
+               var CnP_PaaS__Other_Province__c = $(".CnP_PaaS__Other_Province__c").val();
+               var OtherState = $(".OtherState").val();
+               var OtherStreet = $(".OtherStreet").val();
+               var OtherPostalCode = $(".OtherPostalCode").val();
+               var Salutation = $(".Salutation").val();
+               var Title_1 = $(".Title").val();
+               var DateField=$(".DATE").val();
+               var PhoneField =$(".PHONE").val();
+               var EmailField=$(".EMAIL").val();
+               var DateTimeField=$(".DATETIME").val();
+              
+               var UrlField =$(".URL").val();
+               var PercentageField=$(".PERCENT").val(); 
+               var NumberField= $(".DOUBLE").val();
+               
+               var Textareafield= $(".TEXTAREA").val(); 
+               
+              
+               var Checkbox =$(".BOOLEAN").attr('checked');
+               var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+               var reg_fname=/^([a-zA-Z0-9\.\,\#\&\-\'\ ])+$/;
+               var reg_billingcity=/^([a-zA-Z0-9\.\,\&\-\'\ ])+$/;
+               var reg_billingprovince=/^([a-zA-Z0-9\.\,\&\-\'\ ])+$/;
+               var reg_billingpostalcode=/^([a-zA-Z0-9\.\-\ ]{2,20})+$/;
+               var reg_billingphone=/^([0-9\.\-\(\)\+\ ])+$/;
+               var reg_billingaddress1=/^([a-zA-Z0-9\.\,\#\&\-\'\ ])+$/;
+               
+               
+               var reg_text=/^([a-zA-Z0-9\'\,\.\-\@\ ])+$/;
+               var reg_textCustom=/^([a-zA-Z0-9\'\,\.\-\@\&\ ])+$/;
+               var reg_num=/^([0-9\.\-\(\)\ ])+$/;
+               var reg_zip=/^([A-Za-z0-9\.\-\ ])+$/;
+               var reg_Phone=/^([0-9\.\-\+\(\)\ ])+$/;
+               var reg_dob=/^\d{1,2}\/\d{1,2}\/\d{4}$/;
+               
+               var validformattime = /^\d{1,2}:\d{2}$/;
+               var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+               var validatepercentage =/^(100(?:\.0{1,2})?|0*?\.\d{1,2}|\d{1,2}(?:\.\d{1,2})?)$/;
+               var check=new Date();
+               var c_mo=(check.getMonth()+1);
+               var c_ye=check.getFullYear();
+               c_ye =c_ye.toString().slice(2);
+               var mo = $(".select_ExpirationMonth").val();
+               var yr = $(".select_ExpirationYear").val();
+               c_mo += '';
+                
+               if(c_mo.length==1){
+                   c_mo = '0'+c_mo;
+               }
+               
+               var  numvalidation =/^([0-9])+$/;
+               var  stringnumsvalidation=/^([a-zA-Z0-9\.\,\#\&\-\'\ ])+$/;
+               if(fn!="" && ( reg_fname.test(fn)==false ))
+               {
+                  t=t+1;
+                  alert("Please enter a valid data");
+                  $(".FirstName").focus();
+                  return false;
+               }
+               
+               if(fn.length > 40){
+               t=t+1;
+               alert("Length of first name should be 40 characters");
+                  $(".FirstName").focus();
+                  return false;
+               }
+               if(ln!="" && ( reg_fname.test(ln)==false )){
+                  t=t+1;
+                  alert("Please enter a valid data");
+                  $(".LastName").focus();
+                  return false;
+               }
+               if(ln.length > 39){
+               t=t+1;
+               alert("Length of last name should be 39 characters");
+                  $(".LastName").focus();
+                  return false;
+               }               
+               if(email!="" &&  reg.test(email)==false && email!=undefined)
+               {
+                   t=t+1;
+                   alert("Please enter a valid Email");
+                   $(".Email").focus();
+                   return false;
+               }            
+                 reg_dob = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+                
+               if(dob!="" && reg_dob.test(dob)==false && dob!=undefined)
+               {                  
+                    alert("Please enter the valid date ");
+                    $(".Birthdate").focus();
+                    return false;
+               }               
+               if(phone!="" && phone!=undefined && ( reg_Phone.test(phone)==false)){
+                   t=t+1;
+                   alert("Please enter a valid phone number");
+                   $(".Phone").focus();
+                   return false;
+               }  
+                         
+               if(an!="" && an!=undefined && (reg_text.test(an)==false )){
+                  t=t+1;
+                   alert("Please enter a valid data");
+                   $(".AssistantName").focus();
+                   return false;
+               }
+               
+               if(ap!="" && ap!=undefined  && ( reg_Phone.test(ap)==false)){
+                   t=t+1;
+                   alert("Please enter a valid phone number");
+                   $(".AssistantPhone").focus();
+                   return false;
+               }    
+               if(fax!="" && fax!=undefined  && ( reg_num.test(fax)==false)){
+                   t=t+1;
+                   alert("Please enter a valid fax number");
+                   $(".Fax").focus();
+                   return false;
+               }                 
+               if(dp!="" && dp!=undefined  && (reg_text.test(dp)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".Department").focus();
+                   return false;
+               }
+               if(dis!="" && dis!=undefined  && (reg_text.test(dis)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".Description").focus();
+                   return false;
+               }
+              if(HomePhone!="" && HomePhone!=undefined && ( reg_billingphone.test(HomePhone)==false )){
+                  t=t+1;
+                   alert("Please enter a valid number");
+                   $(".HomePhone").focus();
+                   return false;
+               }    
+               
+               if(MailingCity!="" && MailingCity!=undefined  && (reg_billingcity.test(MailingCity)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MailingCity").focus();
+                   return false;
+               }
+              if(MailingCountry!="" && MailingCountry!=undefined && (reg_text.test(MailingCountry)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MailingCountry").focus();
+                   return false;
+               }
+               if(MailingState!="" && MailingState!=undefined && (reg_billingprovince.test(MailingState)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MailingState").focus();
+                   return false;
+               }
+               if(MailingStreet!="" && MailingStreet!=undefined && (reg_billingaddress1.test(MailingStreet)==false)){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MailingStreet").focus();
+                   return false;
+               }
+              if(MailingPostalCode!="" && MailingPostalCode!=undefined && (reg_billingpostalcode.test(MailingPostalCode)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MailingPostalCode").focus();
+                   return false;
+               }
+              if(MobilePhone!="" && MobilePhone!=undefined && (reg_billingphone.test(MobilePhone)==false)){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".MobilePhone").focus();
+                   return false;
+               }
+               if(OtherCity!="" && OtherCity!=undefined && (reg_billingcity.test(OtherCity)==false)){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherCity").focus();
+                   return false;
+               }
+              if(OtherCountry!="" && OtherCountry!=undefined  && (reg_text.test(OtherCountry)==false)){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherCountry").focus();
+                   return false;
+               }
+              if(OtherPhone!="" && OtherPhone!=undefined  && (reg_billingphone.test(OtherPhone)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherPhone").focus();
+                   return false;
+               }
+               if(CnP_PaaS__Other_Province__c!="" && CnP_PaaS__Other_Province__c!=undefined && (reg_text.test(CnP_PaaS__Other_Province__c)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".CnP_PaaS__Other_Province__c").focus();
+                   return false;
+               }
+               if(OtherState!="" && OtherState!=undefined && (reg_billingprovince.test(OtherState)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherState").focus();
+                   return false;
+               }
+              if(OtherStreet!="" && OtherStreet!=undefined && (reg_billingaddress1.test(OtherStreet)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherStreet").focus();
+                   return false;
+               }
+               if(OtherPostalCode!="" && OtherPostalCode!=undefined && (reg_billingpostalcode.test(OtherPostalCode)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".OtherPostalCode").focus();
+                   return false;
+               }                                           
+               if(Title_1!="" && Title_1!=undefined && (reg_text.test(Title_1)==false )){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".Title").focus();
+                   return false;
+               }
+               if(DateField!="" && DateField!=undefined && (reg_dob.test(DateField)==false || !DateField.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".DATE").focus();
+                   return false;
+               }
+           
+              if(DateTimeField!="" && DateTimeField!=undefined ){
+       
+               var parts = DateTimeField.split(" ");
+                
+              if(parts.length == 3){
+                 var date = parts[0];
+                 var time = parts[1];
+                 var ampm = parts[2].trim();
+               
+                 if(ampm.length == 2 && (ampm.toLowerCase() == "am" || ampm.toLowerCase() == "pm")){
+                
+                     if (reg_dob.test(date)){
+                        
+                            if (validformattime.test(time) ==false)  {                     
+                           
+                               t=t+1;
+                               alert("Please enter a valid data");
+                               $(".DATETIME").focus();
+                               return false;
+                            }
+                    }else{
+                           t=t+1;
+                           alert("Please enter a valid data");
+                           $(".DATETIME").focus();
+                           return false;
+                    
+                    }
+                 }else{
+                       t=t+1;
+                       alert("Please enter a valid data");
+                       $(".DATETIME").focus();
+                       return false;
+             
+                 }
+             }else{
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".DATETIME").focus();
+                   return false;
+          
+          
+             }
+             }
+            
+            if(NumberField!="" && NumberField!=undefined && (numvalidation.test(NumberField)==false || !NumberField.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".DOUBLE").focus();
+                   return false;
+            }
+             if(PhoneField !="" && PhoneField !=undefined && ( reg_Phone.test(PhoneField)==false || !PhoneField.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid phone number");
+                   $(".PHONE").focus();
+                   return false;
+             }
+             if(EmailField!="" &&  reg.test(EmailField)==false && EmailField!=undefined)
+               {
+                   t=t+1;
+                   alert("Please enter a valid Email");
+                   $(".EMAIL").focus();
+                   return false;
+               }
+             
+               
+             if(UrlField!="" && UrlField!=undefined && (pattern.test(UrlField)==false || !UrlField.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".URL").focus();
+                   return false;
+            }
+            
+            if(PercentageField!="" && PercentageField!=undefined && (validatepercentage.test(PercentageField)==false || !PercentageField.indexOf(' ',0))){
+                   t=t+1;
+                   alert("Please enter a valid data");
+                   $(".PERCENT").focus();
+                   return false;
+            }
+        
+            
+            
+           // if(Checkbox ==false){
+                  // t=t+1;
+                  // alert("Please Check the box");
+                 
+                   //$(".BOOLEAN").focus();
+                  // return false;
+           // }
+              }
+               $('.textbox').each( function(){
+                     var t1=$.trim($(this).val()); 
+                    
+                     $(this).attr('value',t1);
+                    if(t1!="" && (!reg_textCustom.test(t1)) ){
+                          t=t+1;
+                          alert("Please enter valid data");
+                          $(this).focus();
+                          return false; 
+                     }
+               })  
+               
+              
+               $('.textarea').each( function(){
+                     var r1=$.trim($(this).val());
+                    
+                     $(this).attr('value',r1);
+                     if(r1!="" && (!reg_textCustom.test(r1))){
+                          t=t+1;
+                          alert("Please enter valid data");
+                          $(this).focus();
+                          return false; 
+                     }
+               }) 
+             
+              
+               if(t==0)
+               {  var ro = $(".rowvalues").val();
+               
+                  for(var i=0;i<ro;i++)
+                  {
+                       var ch=0;
+                       var re=0;                       
+                       $(".checkbox"+i+" input:checkbox").each(function(){
+                            re=1;    
+                            if($(this).is(':checked')==true)
+                            {                           
+                                 ch=1;                                
+                            }                   
+                       });
+                       
+                       if(ch==0 && re==1)
+                       {
+                           alert("Please select at least one checkbox");
+                           return false;
+                       }
+                       var ra=0;
+                       var cr=0;
+                       $(".radiobox"+i+" input:radio").each(function(){
+                            cr=1;        
+                            if($(this).is(':checked')==true)
+                            {
+                                ra=1;
+                            }
+                       
+                       })
+                       
+                       if(ra==0 && cr==1)
+                       {
+                               alert("Please select at least one radiobox");
+                               return false;
+                       }                       
+                       
+                  }
+               }
+              
+               if(t==0)
+               {
+                   return true; 
+               }else{
+                   return false;
+               }        
+              
+   } 
+   function trimvalue(value,fieldclass)
+   {
+     var replace=$.trim(value); 
+     $("."+fieldclass).attr('value',replace);
+   }
+   function DeleteAlert(){   
+       if(confirm("Are you sure?")==true){  
+            return true;
+       }else{   
+             return false;
+       }   
+  }
+  
+ </script>
+<apex:messages />
+<apex:outputpanel rendered="{!levelcheck}">
+
+ <apex:pageBlock rendered="{!if(StyleRec.CnP_PaaS_EVT__Theme_Selection__c=='Standard Theme',true,false)}">
+ <apex:form >
+ 
+ 
+ <apex:include pageName="CnP_PaaS_EVT__EventRegistrationLayout"/>
+ 
+  <div id="popupBackground" class="overlay"></div>
+ <div id="Main">
+  
+  <div id="Header" style="display:{!IF(StyleRec.Display_Banner__c==true,'block','none')}">
+    <div id="HeaderLeft"> <span class="Title"><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Upload_banner__c}" escape="false" /></span></div>
+   
+  </div>
+  <div id="ContentArea">
+  <div id="Right">
+     <apex:outputLink value="/servlet/servlet.FileDownload?file={!pdfId}" target="_blank" style="text-decoration:none">
+     <div align="right" class="DownloadAgenda" id="{!pdfId}" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Show_ajenda__c==true && pdfId!="",'block','none')}">
+         <div style="margin-top:2px;float:left;"><apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__pdf_icon)}" style="border:0;" /></div>{!if(EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c!="",EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c,'Download Agenda')}
+        
+     </div>
+     </apex:outputLink>
+  <div id="ContentTop" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Display_Title_Information__c==true,'block','none')}">
+      
+         <div>
+             
+             <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Title_and_information__c}" escape="false" />
+         </div>  
+    </div>
+        <div id="ContentBott">
+        <div class="Box">
+                              
+                            <div class="Top">
+                                  <!-- <div class="T-Left"></div>-->
+                                    <div class="Title1" style="display:{!IF(StyleRec.Display_Title__c==true,'block','none')}">
+                                        <h3 class="t1"><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Section_Title__c}" escape="false"/></h3>
+                                        
+                                    </div>  
+                                   <!-- <div class="T-Right"></div>-->
+                            </div>
+                            <div class="ContMiddle" >
+                            
+                            <div style="display:{!IF(StyleRec.Display_Description__c==true,'block','none')}">
+                             <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Section_Description__c}" escape="false"/>
+                            </div>
+        
+                            
+      <!--<fieldset class="FormFields">-->
+      <apex:outputPanel id="NextAttendeeForm">
+<apex:pageBlockSection columns="1"  collapsible="false">
+     <apex:variable value="0" var="rowpop"/>
+    <!--<apex:outputtext value="Naresh"/>
+    <apex:outputtext value="{!RegisteredAttensees.size}"/>-->
+      <apex:dataTable columns="5" value="{!availableLevelFields}" width="590px" border="0" bgcolor="white" styleClass="displaylevel"  var="field" cellpadding="3px"  style="text-align:center;" cellspacing="2px"  >
+        
+        <apex:inputHidden value="{!field.Id}"/>
+        <apex:column headervalue="" style="text-align:center;width:70px">                    
+                       <apex:actionsupport event="onclick" rerender="consel,allcons" action="{!showPopup}" immediate="true">  
+                        <input type="button" name="test" class="add_btn" style="background:url({!URLFOR($Resource.PopupPage, if(field.Limit_for_this_type__c==0&& field.Inventory_Sold__c==field.Limit_for_this_type__c,'soldout.png','add_text_btn.png'))}) no-repeat top" >                                                                
+                            <apex:param name="conid" value="{!field.Id}" assignTo="{!LevelName}" />
+                            <apex:param name="EditAttendeeId" value="test" assignTo="{!EditAttendeeId}"/>
+                        </input></apex:actionsupport>                            
+                    </apex:column>
+               <apex:column headerValue="" >
+                
+                 <div style="text-align:left;display:block;">
+                 <a href="javascript:popup('{!field.Description__c}');" class="linktip" >
+               <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__Tooltip)}" style="border:0;float:left;" styleClass="descimg" /> 
+                <apex:OutputText value="{!field.Name}" />&nbsp; 
+                  </a>
+                 <!--<div id="toolTip{!rowpop}" class="toolTip"  style="display:none;">
+                    <apex:OutputText value="{!field.Description__c}" escape="false" /> 
+                 </div>-->
+                  </div>
+                  
+        </apex:column>
+       <!-- <apex:column headerValue="Description" styleClass="ttt" style="text-align:left;">
+       
+        <apex:OutputText value="{!field.Description__c}" escape="false"/></apex:column>-->
+        <apex:column headerValue=" Price" style="text-align:right;">
+         
+        <apex:outputText value="{0, number,$###,###,##0.00}" style="text-align:center;display:block;">
+        <apex:param value="{!field.CnP_PaaS_EVT__Price__c}" /></apex:outputText>
+        </apex:column>
+        
+        <apex:column headerValue=" +Fee" style="text-align:right;">
+        <apex:outputText value="{0, number,$###,###,##0.00}"  style="text-align:center;display:block;">
+        <apex:param value="{!field.CnP_PaaS_EVT__Additional_Fee__c}" /></apex:outputText>
+        </apex:column>
+    
+         <apex:column headerValue="Tax Deductible Portion" style="text-align:right;">
+         <apex:outputText value="{0, number,$###,###,##0.00}"  style="text-align:center;display:block;">
+         <apex:param value="{!field.CnP_PaaS_EVT__Tax_Deductible__c}" /></apex:outputText>
+               
+
+         <apex:variable var="rowpop" value="{!VALUE(rowpop) + 1}"/></apex:column> 
+
+        </apex:dataTable>
+                      <div id="dialog-overlay" class="popupBackground"></div>
+<div id="dialog-box">
+    <div class="dialog-content">
+        <div id="dialog-message"></div>
+        <a href="#" class="button cls"></a>
+    </div>
+</div>      
+       <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.jquerygird, "media/js/jquery.dataTables.js")}"></script>
+        
+          <script type="text/javascript">
+            $(document).ready(function() {
+            trlen = $(".displaylevel").attr('rows').length;
+              
+                   if (trlen <= 10 )
+                    {
+                        disp = false;
+                    }
+                     if (trlen >= 11 )
+                    {
+                    disp = true;
+                    }
+           
+
+                oTable = $('.displaylevel').dataTable({
+                    "bJQueryUI": true,
+                    "bFilter": disp ,
+                     "bPaginate" : disp  ,
+                    aoColumnDefs: [
+                      { aTargets: [0], bSortable: false }]                           
+                }
+               
+                
+                );
+            } );
+        </script>
+        
+         <apex:outputPanel id="consel">
+         
+         <apex:outputPanel rendered="{!LevelName!=null}">
+        
+         <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopup}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopup}">
+       
+
+        <script type="text/javascript" language="javascript" src="{!URLFOR($Resource.datepicker, "datepicker/jquery.datepick.js")}"></script>   
+        <script src="{!URLFOR($Resource.DateTimePicker, "DateTimePicker/jquery.calendar.js")}" type="text/javascript"></script>   
+        <link type="text/css" rel="stylesheet"  href="{!URLFOR($Resource.DateTimePicker, "DateTimePicker/jquery.calendar.css")}" />        
+            <script type="text/javascript">
+            
+          //   $('.Birthdate').datepick({yearRange: 'c+0:1920',maxDate:-0,showTrigger: '<img src="{!URLFOR($Resource.datepicker, "datepicker/calendar.gif")}" alt="Calendar"></img>'});
+             
+             $('.Close').click(function(){
+                     $('.custPopup').slideUp(10);
+                     $('.popupBackground').fadeOut(10);
+                     $('.overlay').fadeOut(10);
+             });   
+              $('.Save').click(function(){
+                     $('.overlay').fadeOut();
+             });   
+             $('.Update').click(function(){
+                     $('.overlay').fadeOut();
+             }); 
+             
+             $('.reqvalue').html("*") ;             
+          /*   $('.requiredBlock').html("*") ;    */             
+             $('.reqvalue').attr("style","color:#CC0000;background-color:#FFF;margin:0;") ;        
+             </script>
+              <script type="text/javascript">
+
+      
+
+            $(document).ready(function (){ 
+
+              $(".DATETIME").calendar({
+                
+                dateFormat:'MDY/',
+                autoPopUp: "both",
+                buttonImageOnly:true,
+                buttonImage:'{!URLFOR($Resource.datepicker, "datepicker/calendar.gif")}',
+                buttonText:'',              
+                timeSeparators:[' ',':',' AM',' PM'],
+                }
+                
+                );
+               
+                        
+                         
+               $('.Birthdate').datepick({yearRange: 'c+0:1920',maxDate:-0,showTrigger: '<img src="{!URLFOR($Resource.datepicker, "datepicker/calendar.gif")}" alt="Calendar"></img>'});
+               
+               $('.DATE').datepick({
+                       
+                         
+                         
+                         showTrigger: '<img src="{!URLFOR($Resource.datepicker, "datepicker/calendar.gif")}" alt="Calendar"></img>'
+             });
+               
+
+            });
+
+       
+
+        </script>
+             
+             <apex:outputPanel rendered="{!leveltimeout}">
+                <apex:outputtext value="{!rlc.CnP_PaaS_EVT__End_date_message__c}" escape="false"/>
+             
+         </apex:outputPanel>
+         <apex:outputPanel rendered="{!levelsoldout}">
+                <apex:outputtext value="{!rlc.CnP_PaaS_EVT__Message_to_display_when_limit_is_reached__c}" escape="false"/>             
+         </apex:outputPanel>
+         <apex:outputPanel rendered="{!contdisplay}">
+         <div id="AttendeeInfo_1">
+         <apex:Messages />        
+         
+         
+  <apex:pageBlockSection columns="1" title="Attendee Information" collapsible="false" >
+      <apex:repeat value="{!availableAttendeeFields}" var="field">
+        <apex:pageBlockSectionItem rendered="{!IF(field.visible==true,true,false)}">
+         <apex:outputPanel >
+   <apex:OutputText value="{!field.Label}" />
+  <apex:outputtext value="{!IF(field.req==true,'<span class=req>*</span>','')}"  escape="false"></apex:outputText>
+   </apex:outputPanel>
+         
+          <apex:outputPanel >
+          <div style="margin-left:38px">
+            <apex:inputHidden value="{!acc.Id}" rendered="{!IF((EditAttendeeId!=null && EditAttendeeId!='test'),true,false)}"/>
+                   
+            <apex:inputField value="{!acc[field.Field]}"    style="width:{!if(field.Label=="Title",'45px;','')}"     onblur="trimvalue(this.value,'{!IF(field.req==true ,field.Field,field.Field)}');" styleClass="{!IF(field.req==true ,IF($ObjectType.Contact.fields[field.Field].Custom==false,field.Field&' required',field.FieldType&' required'),if($ObjectType.Contact.fields[field.Field].Custom==false,field.Field,field.Fieldtype))}"/>
+                                 </div></apex:outputPanel>
+         </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!IF(field.visible==false,false,false)}">
+         <apex:OutputText value="{!field.Label}" />
+        <apex:inputField value="{!acc[field.Field]}"    style="width:{!if(field.Label=="Title",'45px;','')}" />
+        </apex:pageBlockSectionItem>
+        </apex:repeat>
+        </apex:pageBlockSection>
+       
+        </div>
+        <div id="AttendeeForm_1">
+        <apex:pageBlockSection collapsible="false"  columns="1">
+        <apex:variable value="0" var="rowNum"/>
+      <apex:repeat value="{!availableAttendeeCustomFields}" var="field1">
+     
+     <apex:outputText value="{!field1.SectionName}"  rendered="{!IF(field1.SectionName!=null,true,false)}" style="font-weight:900;width:100%;"></apex:outputText>
+      <apex:pageBlockSectionItem dataStyle="border-bottom:3px" rendered="{!field1.visible}">     
+        <apex:outputPanel >
+      <!--  <apex:outputPanel rendered="{!field1.req}" styleClass="reqvalue"></apex:outputPanel> -->
+        <apex:outputText value="{!field1.label}"  rendered="{!IF(availableAttendeeCustomFields.size>0,true,false)}"></apex:outputText>
+        <apex:outputtext value="{!IF(field1.req==true,'<span class=req>*</span>','')}"  escape="false"></apex:outputText>
+        </apex:outputPanel>
+        <apex:outputPanel >
+                  
+        <apex:inputText value="{!field1.DefaultValue}" rendered="{!IF(field1.FieldType=='Text box',true,false)}" required="{!field1.req}" styleClass="{!IF(field1.req==true,'textbox required','textbox')}"></apex:inputText>
+        <apex:inputTextarea value="{!field1.DefaultValue}"  rendered="{!IF(field1.FieldType=='Text area',true,false)}"  required="{!field1.req}" styleClass="{!IF(field1.req==true,'textarea required','textarea')}"/>
+        <apex:selectRadio value="{!field1.DefaultValue}"  layout="pageDirection" rendered="{!IF(field1.FieldType=='Radio button',true,false)}" required="{!field1.req}" styleClass="{!IF(field1.req==true,'radiobox'+rowNum,'test')}">
+        <apex:selectOptions value="{!field1.Fieldvalues}"/>
+        </apex:selectRadio>
+        <apex:selectList value="{!field1.DefaultValue}" style="width:155px"  size="1" rendered="{!IF(field1.FieldType=='Select list',true,false)}" required="{!field1.req}" styleClass="{!IF(field1.req==true,'selectbox'+rowNum,'test')}">
+           <apex:selectOptions value="{!field1.Fieldvalues}"/>
+        </apex:selectList>
+        
+        <apex:selectcheckboxes value="{!field1.checkedboxValues}" layout="pageDirection"  rendered="{!IF(field1.FieldType=='Check box',true,false)}" required="{!field1.req}" styleClass="{!IF(field1.req==true && field1.FieldType=='Check box','checkbox'+rowNum,'test')}" >
+        <apex:selectOptions value="{!field1.Fieldvalues}" />
+        </apex:selectcheckboxes>
+        <apex:inputhidden value="{!field1.QuestionId}"/>
+        <apex:inputhidden value="{!field1.SectionNamehidden}"/> <br/>
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem rendered="{!(field1.visible==false)}">
+        <apex:outputpanel >
+        <apex:inputHidden value="{!field1.DefaultValue}"/>
+        <apex:inputhidden value="{!field1.QuestionId}"/>
+        <apex:inputhidden value="{!field1.SectionNamehidden}"/> 
+        </apex:outputpanel>
+        </apex:pageBlockSectionItem>
+        <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}"/>
+        </apex:repeat>
+         <input type="hidden" value="{!rowNum}" class="rowvalues" name="rowvalues"/> 
+        <apex:pageBlockSectionItem >
+        <apex:outputPanel >
+        <apex:actionStatus id="mySaveStatus_2">
+        <apex:facet name="stop">
+        <apex:commandButton value="Save" action="{!AttendeeForm}" onclick="if(!FormValidation()) return false" reRender="consel,RefreshAttendeeList,RefreshTotals,submitbuttondetail,NextAttendeeForm" styleClass="Submit Save" style="margin-bottom:10px;margin-left:173px;text-align:center;" status="mySaveStatus_2">
+        <apex:param assignTo="{!AutoSelectRadio}" value="{!LevelName}"/> 
+        
+        </apex:commandButton>
+        </apex:facet>
+        <apex:facet name="start">
+                 <apex:outputPanel >
+
+                 <apex:image value="/img/loading32.gif" style="height: 15px;"/>
+
+                 <apex:commandbutton value="Processing..." status="mySaveStatus_2" disabled="true"/>
+                 
+               </apex:outputPanel>
+
+           </apex:facet>
+        </apex:actionStatus>
+         
+         <apex:commandButton value="Update" action="{!UpdateAttendee}" reRender="consel,RefreshAttendeeList" rendered="{!IF((EditAttendeeId!=null && EditAttendeeId!='test'),true,false)}"  styleClass="Submit Update" style="color:black"/>
+       </apex:outputPanel>
+       </apex:pageBlockSectionItem>
+            <!-- <div align="right">
+             <apex:commandButton value="Done goto payment" action="{!GotoPage_4}" styleClass="test1 Submit" immediate="true"  styleClass="next Submit"/>
+            </div> -->
+        </apex:pageBlockSection>
+        </div>
+        </apex:outputPanel>
+        <!--<div class="Close"></div>-->
+        <apex:commandButton action="{!ClosePopUp}" reRender="consel,RefreshAttendeeList" immediate="true" styleClass="Close" style="color:black"/>
+         
+        </apex:outputPanel>
+        
+        </apex:outputPanel>
+       
+        </apex:outputPanel>       
+        
+        
+       </apex:pageBlockSection>
+        
+       <div id="EditAttendee">
+       <apex:pageBlockSection columns="1"  collapsible="false">
+       <apex:outputpanel id="RefreshAttendeeList">
+       
+     <apex:outputpanel rendered="{!IF(RegisteredAttensees.size>0,true,false)}">
+      <h3 style="margin:0px;padding:5px;">Registration Summary</h3>
+      </apex:outputpanel>
+       
+                <div class="demo_jui">
+
+     <apex:dataTable columns="5" cellpadding="3px" cellspacing="2px"  value="{!RegisteredAttensees}" width="590px" border="0" bgcolor="white" styleClass="display"  var="field"  rendered="{!IF(RegisteredAttensees.size>0,true,false)}">
+     <apex:column headerValue=" " style="text-align:center;width:24px"  >
+        <!--<apex:commandLink styleClass="Edit" value="Edit" action="{!showPopup}" immediate="true" rerender="consel,allcons">  
+        <apex:param name="LevelName" value="{!field.Registration_level__r.Id}" assignTo="{!LevelName}"/>
+        <apex:param name="EditAttendeeId" value="{!field.ContactId__r.Id}" assignTo="{!EditAttendeeId}"/>
+        </apex:commandLink><span style="color:#ccc;float:left;line-height: 20px;">|</span>--> 
+        <apex:commandlink styleClass="Delete"  value=""  action="{!DaleteAttendee}"  onclick="if(!window.confirm('Are you sure?')) return false;" rerender="RefreshAttendeeList,RefreshTotals,submitbuttondetail"><apex:param name="DeleteAttendeeId" value="{!field.Id}" assignTo="{!DeleteAttendeeId}"/></apex:commandlink></apex:column>
+        <apex:column headerValue="" style="text-align:left;">
+         <apex:OutputText value="{!field.Registration_level__r.Name}" /> </apex:column>
+        
+      <apex:column headerValue="First Name">
+        <apex:OutputText value="{!field.CnP_PaaS_EVT__First_name__c}" /> </apex:column>
+        <apex:column headerValue="Last Name">
+        <apex:OutputText value="{!field.CnP_PaaS_EVT__Last_name__c}" /> </apex:column>
+        
+        <apex:column headerValue="Total" styleClass="TotalAlign" >
+        <apex:outputText value="{0, number,$###,###,##0.00}" style="text-align:right;display:block;margin-right:5px;">
+        <apex:param value="{!field.Registration_level__r.CnP_PaaS_EVT__Current_inventory__c}" /></apex:outputText>
+        </apex:column>
+        
+        
+      </apex:dataTable>
+      </div>
+     
+      <script>
+       $(".Edit").click(function(){
+           $('.overlay').fadeIn("fast");
+        }); 
+             
+       </script>
+       <script type="text/javascript" charset="utf-8">
+            $(document).ready(function() {
+                trlength = $(".display").attr('rows').length;
+                if (trlength <= 10 )
+                    {
+                      displ = false;
+                    }
+                     if (trlength >= 11 )
+                    {
+                      displ = true;
+                    }
+                oTable = $('.display').dataTable({
+                    "bJQueryUI": true,
+                    "bFilter":displ ,
+                    "bPaginate" : displ ,
+                    aoColumnDefs: [
+                      { aTargets: [0], bSortable: false }]  
+                                   });
+            } );
+        </script>
+      </apex:outputpanel>
+        
+      <br/>
+      <div style="border-bottom: 1px solid #DDDDDD;width:97%;"></div>
+     
+      <apex:outputpanel id="RefreshTotals">
+      
+                 
+      <apex:pageBlockSectionItem >
+
+                 <apex:outputLabel value="Total Fee"  styleClass="summaryleft"></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" styleClass="summaryright"><apex:param value="{!GrossPrice}"/></apex:outputText>
+                 
+                 </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Total Discount" styleClass="summaryleft" ></apex:outputLabel>
+                 <apex:outputText value="{0, number,-$###,###,##0.00}" styleClass="summaryright">
+                 <apex:param value="{!TotalDiscount}"/>
+                 </apex:outputText>
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Total Tax" styleClass="summaryleft" ></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}" styleClass="summaryright">
+                 <apex:param value="{!TotalTax}"/>
+                 </apex:outputText>
+                 </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Grand Total" styleClass="summaryleft" ></apex:outputLabel>
+                 <apex:outputText value="{0, number,$###,###,##0.00}"  styleClass="summaryright">
+                 <apex:param value="{!NetPrice}"/>
+                 </apex:outputText>
+                 </apex:pageBlockSectionItem>
+                <!-- <apex:pageBlockSectionItem datastyle="padding-left:5px;font-weight:bold;text-align:right;width: 440px;display:block;float:left; " rendered="{!IF(CheckCouponSize>0,true,false)}">
+                 <apex:outputLabel value="Coupon Code" style="padding-left:5px;font-weight:bold;text-align:right;width: 440px;display:block;float:left; " />
+                 <apex:inputText id="CouponValue" value="{!CouponValue}" style="float:right;width:84px;margin-right: 18px;"/>
+                 </apex:pageBlockSectionItem>-->
+                 
+      <apex:pageBlockSectionItem rendered="{!If(RegisteredAttensees.size>0,true,false)}">
+                 <apex:dataTable columns="3" style="float:right;width:300px;margin-right: 15px;font-weight:bold;" value="{!CouponsList_page}" var="var">
+                 <apex:column style="text-align:right;vertical-align: top;width: 185px;color:#666666;" ><apex:outputLabel value="{!var.CouponName}" /> </apex:column>
+                 <apex:column ><apex:inputtext value="{!var.Couponval}" style=" border: 1px solid #DDDDDD; color: #888888; width: 60px;font-size: 11px;    padding: 5px;float:right" />
+                 <div style="clear:both;"></div>
+                 <apex:outputtext value="{!var.CouponError}" styleclass="{!If(var.CouponError=='Valid','Valid','Invalid')}"/> </apex:column>
+               <!--   <apex:column style="text-align:right;" > </apex:column> -->
+                 <apex:column ><apex:inputhidden value="{!var.Levelid}" /> </apex:column>
+
+                 </apex:dataTable>
+                 
+                 <apex:outputpanel >
+
+                 <apex:actionStatus id="mySaveStatus1">
+                 <apex:facet name="stop">
+                 
+                 <apex:commandLink value="Apply Coupon" styleClass="appcou" reRender="RefreshTotals" action="{!CountCoupons}" status="mySaveStatus1" rendered="{!IF(CouponsList_page.Size>0,true,false)}"/>
+
+                 </apex:facet>
+
+                 <apex:facet name="start">
+
+                 <apex:outputPanel >
+
+
+                 <apex:commandlink value="Processing..." styleClass="appcou" status="mySaveStatus1"/>
+                 <apex:image value="/img/loading32.gif"   style="height: 15px;float:right;clear:both;margin-right:50px;margin-top:5px;"/>
+
+               </apex:outputPanel>
+
+           </apex:facet>
+
+                 </apex:actionStatus>
+                 </apex:outputpanel>
+                 </apex:pageBlockSectionItem>
+                 </apex:outputpanel>
+        </apex:pageBlockSection>
+        </div>
+       </apex:outputPanel>
+       </div>
+                           
+                        </div>
+
+      </div>
+      
+      <apex:outputPanel id="submitbuttondetail" >
+      <div id="ContentBot" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Show_terms_conditions__c==true,'block','none')}">      
+                <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Acknowledgement_mandatory__c==true && RegisteredAttensees.size>0,'block','none')}"/>                            
+                <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Terms_conditions__c}" escape="false"/>                 
+        </div>
+       
+        <div align="right" style="display:{!IF(RegisteredAttensees.size>0,'block','none')}">
+             
+        
+            
+              <apex:commandButton value="{!StyleRec.CnP_PaaS_EVT__Button_Label__c}" action="{!GotoPayment}" styleClass="next Submit test1" id="Submit" immediate="true" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Acknowledgement_mandatory__c==true,'none','block')}" >
+              </apex:commandButton>
+      
+                         
+       
+         </div>
+          </apex:outputPanel>
+  </div>
+  </div>
+   <div id="Footer" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Display_Footer__c==true,'block','none')}">
+            <span><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Footer_information__c}" escape="false"/></span>
+       </div> 
+  </div>
+  </apex:form>
+ </apex:pageBlock>
+</apex:outputpanel>
+ 
+  <apex:pageBlock rendered="{!if(StyleRec.CnP_PaaS_EVT__Theme_Selection__c=='Custom Theme',true,false)}">
+           <apex:include pageName="CnP_PaaS_EVT__RegistrationEngine"/>   
+  </apex:pageBlock>
+  <div id="cnp">Powered by Click &amp; Pledge</div>
+</apex:page>

@@ -1,0 +1,108 @@
+<apex:page showHeader="false" standardStylesheets="false" controller="CnP_PaaS_EVT.EventRegistration" action="{!GotoPage_3}"> 
+<style>
+     #cnp {
+            line-height:25px;
+            color:#CCC;
+            font-family:Arial, Helvetica, sans-serif;
+            font-size:11px;
+            max-width:700px;
+            text-align:center;
+            margin:0 auto;
+    
+    } 
+
+</style>
+<apex:form >
+ <apex:messages />
+
+<apex:outputPanel id="DisplayPage" rendered="{!levelcheck}">
+<apex:pageBlock rendered="{!if(StyleRec.CnP_PaaS_EVT__Theme_Selection__c=='Standard Theme',true,false)}">
+<apex:include pageName="CnP_PaaS_EVT__EventRegistrationLayout"/>
+<div id="Main">
+ 
+  <div id="Header" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Display_Banner__c==true,'block','none')}">
+    <div id="HeaderLeft"> <span class="Title"><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Upload_banner__c}" escape="false"/></span></div>
+   
+  </div>
+  <div id="ContentArea">
+  <div id="Right">
+    
+     <apex:outputLink value="/servlet/servlet.FileDownload?file={!pdfId}" target="_blank" style="text-decoration:none" title="{!EventRec.CnP_PaaS_EVT__Event_title__c}" >
+     <div align="right" class="DownloadAgenda" id="{!pdfId}" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Show_ajenda__c==true && pdfId!="",'block','none')}">
+         <div style="margin-top:2px;float:left;"><apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__pdf_icon)}" /></div>{!if(EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c!="",EventRec.CnP_PaaS_EVT__Agenda_Display_Name__c,'Download Agenda')}
+        
+     </div>
+     </apex:outputLink>
+  <div id="ContentTop" style="display:{!IF(StyleRec.Display_Title_Information__c==true,'block','none')}">  
+     <div >
+         <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Title_and_information__c}" escape="false" /> 
+          
+     </div>    
+   </div>
+        <div id="ContentBott">
+           <div class="Box">
+                       <div class="Top">
+                                <!-- <div class="T-Left"></div>-->
+                                 <div class="Title1" style="display:{!IF(StyleRec.Display_Title__c==true,'block','none')}">
+                                       <h3 class="t1"><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Section_Title__c}" escape="false"/></h3>
+                                 </div>  
+                                <!-- <div class="T-Right"></div> -->
+                       </div>
+                       <div class="ContMiddle">
+                                <div style="display:{!IF(StyleRec.Display_Description__c==true && timeout==false && eventsoldout==false,'block','none')}">
+                                    <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Section_Description__c}" escape="false" />
+                                </div>
+                                <div style="display:{!if(timeout==true,'block','none')}">
+                                     <apex:outputtext value="{!EventRec.CnP_PaaS_EVT__Event_Ended__c}" escape="false"/> 
+                                </div> 
+                                <div style="display:{!if(eventsoldout==true,'block','none')}">
+                                      <apex:outputtext value="{!EventRec.CnP_PaaS_EVT__Sold_Out__c}" escape="false"/> 
+                                </div> 
+                       </div>
+                       <!--<div class="Bottom">
+                                    <div class="B-Left"></div>
+                                    <div class="B-Middle"></div>
+                                    <div class="B-Right"></div>
+                       </div>-->
+                       
+               </div> 
+                
+               
+                  
+        </div>
+        <div id="ContentBot" style="padding-bottom:10px;display:{!IF(StyleRec.Show_terms_conditions__c==true,'block','none')}">      
+                <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Acknowledgement_mandatory__c==true,'block','none')}"/>                         
+                <div>
+                <apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Terms_conditions__c}" escape="false" />  
+                </div>              
+        </div>       
+        <div style="display:{!if(timeout==true || eventsoldout==true,'none','block')}">        
+       <apex:commandButton value="{!StyleRec.CnP_PaaS_EVT__Button_Label__c}" action="{!Page_1_topage3}" styleClass="Submit test1 next" id="Submit" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Acknowledgement_mandatory__c==true,'none','block')}" >
+                                   <apex:param id="eventId" assignTo="{!eid}" value="{!EventRec.Id}"/>
+                                   <apex:param id="PageName" assignTo="{!LayoutPageName}" value="Page 2-Registrant Info"/>
+       </apex:commandButton>      
+       </div>
+  </div>
+  
+  </div>
+
+      <div id="Footer" style="display:{!IF(StyleRec.CnP_PaaS_EVT__Display_Footer__c==true,'block','none')}">
+           <span><apex:outputtext value="{!StyleRec.CnP_PaaS_EVT__Footer_information__c}" escape="false"/></span>
+       </div> 
+  </div>
+ 
+
+  </apex:pageBlock>
+  
+  </apex:outputPanel>
+ 
+  </apex:form>
+  <apex:outputPanel rendered="{!levelcheck}">
+  <apex:pageBlock rendered="{!if(StyleRec.CnP_PaaS_EVT__Theme_Selection__c=='Custom Theme',true,false)}">
+ 
+        <apex:include pageName="CnP_PaaS_EVT__RegistrationEngine"/>   
+  </apex:pageBlock>
+   </apex:outputPanel>
+  <div id="cnp">Powered by Click &amp; Pledge</div>
+
+</apex:page>

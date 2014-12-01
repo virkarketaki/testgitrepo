@@ -1,0 +1,24 @@
+<apex:page >
+  <head>
+    <apex:includeScript value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/js/jquery-1.8.3.js')}"  />
+    <apex:includeScript value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.min.js')}"  />
+    <apex:stylesheet value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/css/ui-lightness/jquery-ui-1.9.2.custom.css')}"  />
+    
+    <script>
+        $j = jQuery.noConflict();
+       $j(document).ready(function() {
+            $j("#a").click(function(){
+                $j(this).hide();
+                alert("Hello All");
+                $j(this).show();
+            });
+        });
+    </script>
+  </head>
+  
+  <body>  
+  <apex:form >
+      <a href="" id="a"><apex:outputText id="a" value="Hello"></apex:outputText></a><br/>
+  </apex:form>
+  </body>
+</apex:page>

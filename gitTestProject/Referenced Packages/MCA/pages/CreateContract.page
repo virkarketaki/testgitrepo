@@ -1,0 +1,713 @@
+<apex:page Controller="McaApp.CreateContractController" action="{!populateData}" sidebar="false">
+    <apex:form id="form">
+         <script type = "text/javascript">
+            window.onload=function()       
+            {        
+                if({!wizardType == 'Deal'})
+                    changeWizard('Deal');
+            };
+        </script>
+        <script>
+            if({!wizardType == 'Offer'})
+            {
+               document.getElementById('Offer').className = 'selecttabctive';
+                document.getElementById('Deal').className = 'selecttab';
+                document.getElementById('Receivable').className = 'selecttab';
+                document.getElementById('Payable').className = 'selecttab';
+                document.getElementById('Syndication').className = 'selecttab';
+                document.getElementById('Preview').className = 'lasttab';
+            }
+            if({!wizardType == 'Deal'})
+            {
+                document.getElementById('Deal').className = 'selecttabctive';
+                document.getElementById('Offer').className = 'selecttab';
+                document.getElementById('Receivable').className = 'selecttab';
+                document.getElementById('Payable').className = 'selecttab';
+                document.getElementById('Syndication').className = 'selecttab';
+                document.getElementById('Preview').className = 'lasttab';
+            }
+            else if({!wizardType == 'Payable'})
+            {
+                document.getElementById('Payable').className = 'selecttabctive';
+                document.getElementById('Deal').className = 'selecttab';
+                document.getElementById('Offer').className = 'selecttab';
+                document.getElementById('Receivable').className = 'selecttab';
+                document.getElementById('Syndication').className = 'selecttab';
+                document.getElementById('Preview').className = 'lasttab';
+            }
+            else if({!wizardType == 'Receivable'})
+            {
+               document.getElementById('Receivable').className = 'selecttabctive';
+                document.getElementById('Payable').className = 'selecttab';
+               document.getElementById('Deal').className = 'selecttab';
+                document.getElementById('Offer').className = 'selecttab';
+                document.getElementById('Syndication').className = 'selecttab';
+                document.getElementById('Preview').className = 'lasttab';
+            }
+            else if({!wizardType == 'Syndication'})
+            {
+               document.getElementById('Syndication').className = 'selecttabctive';
+               document.getElementById('Receivable').className = 'selecttab';
+                document.getElementById('Payable').className = 'selecttab';
+               document.getElementById('Deal').className = 'selecttab';
+                document.getElementById('Offer').className = 'selecttab';
+                document.getElementById('Preview').className = 'lasttab';
+            }
+            else if({!wizardType == 'Preview'})
+            {
+                document.getElementById('Preview').className = 'selecttabctive';
+                document.getElementById('Syndication').className = 'selecttab';
+               document.getElementById('Receivable').className = 'selecttab';
+                document.getElementById('Payable').className = 'selecttab';
+               document.getElementById('Deal').className = 'selecttab';
+                document.getElementById('Offer').className = 'selecttab';
+            }
+            
+            function changeTabs(objId) {
+                document.getElementById('Offer').className = 'selecttab';
+                document.getElementById('Deal').className = 'selecttab';
+                document.getElementById('Receivable').className = 'selecttab';
+                document.getElementById('Payable').className = 'selecttab';
+                document.getElementById('Syndication').className = 'selecttab';
+                document.getElementById('Preview').className = 'lasttab';
+                
+                if (objId == 'Offer') {
+                    document.getElementById('Offer').className = 'selecttabctive';
+                }
+                if({!isOfferSelected}){
+                    if (objId == 'Deal') {
+                        document.getElementById('Deal').className = 'selecttabctive';
+                    }
+                    if (objId == 'Receivable') {
+                        
+                        document.getElementById('Receivable').className = 'selecttabctive';
+                    }
+                    if (objId == 'Payable') {
+                        document.getElementById('Payable').className = 'selecttabctive';
+                    }
+                    if (objId == 'Syndication') {
+                        document.getElementById('Syndication').className = 'selecttabctive';
+                    }
+                    if (objId == 'Preview') {
+                        document.getElementById('Preview').className = 'lasttabactive';
+                    }
+                }else if(objId != 'Offer'){
+                    alert('{!$Label.CreateContract_CannotSkipOffer}')
+                    objId = 'Offer';    
+                }
+                    
+                changeWizard(objId);
+            }
+        </script>
+        <apex:stylesheet value="{!URLFOR($Resource.McaApp__BankAssets_Resources, 'css/master.css')}" />
+
+        <div style="position: relative; z-index: 1;" class="tablist"
+            id="divId">
+            <ul>
+                <li style="display: block" id="Offer" class="selecttabctive"
+                    onclick="changeTabs(this.id);"><a href="javascript:void(0)">
+                        Offers </a></li>
+                <li style="display: block" id="Deal" class="selecttab"
+                    onclick="changeTabs(this.id);"><a href="javascript:void(0)">
+                        Deal Information </a></li>
+                <li style="display: block" id="Receivable" class="selecttab"
+                    onclick="changeTabs(this.id);"><a href="javascript:void(0)">
+                        Receivables </a></li>
+                <li style="display: block" id="Payable" class="selecttab"
+                    onclick="changeTabs(this.id);"><a href="javascript:void(0)">
+                        Payables </a></li>
+                <li style="display: block" id="Syndication" class="selecttab"
+                    onclick="changeTabs(this.id);"><a href="javascript:void(0)">
+                        Syndication </a></li>
+                <li style="display: block" id="Preview" class="lasttab"
+                    onclick="changeTabs(this.id);"><a href="javascript:void(0)">
+                         Preview </a></li>
+            </ul>
+        </div>
+        <br />
+        <br />
+        <apex:actionfunction name="changeWizard" action="{!changeWizard}"
+                             immediate="true" reRender="form,pgMsgId" status="loadingStatus">
+            <apex:param name="wizardType" assignto="{!wizardType}"
+                                          id="wizardType" 
+                                          value="{!wizardType}" />
+        </apex:actionfunction>
+        
+        <apex:outputPanel rendered="{!WizardType == 'Offer'}">
+            <table width="100%">
+                <tr>
+                    <td width="50%" style="padding-left: 80px;"><b>
+                            <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Name.Label}" /></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="/{!objOpp.Id}" target="_blank">        
+                            <apex:outputField value="{!objOpp.Name}" />
+                       </a></td>
+                </tr>
+            </table>
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{!NOT(WizardType == 'Offer')}">
+            <table width="100%">
+                <tr>
+                    <td width="50%" style="padding-left: 80px;"><b>
+                            <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.Name.Label}" /></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="/{!objOpp.Id}" target="_blank">        
+                            <apex:outputField value="{!objOpp.Name}" />
+                       </a></td>
+                    <td width="50%" style="padding-left: 80px;"><b><apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Bank_Name__c.Label}" /></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:outputField value="{!objOpp.McaApp__Bank_Name__c}" /></td>
+                </tr>
+                 <tr>
+                    <td width = "50%" style="padding-left: 62px;">
+                        <b><apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Funding_Amount__c.Label}"/></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <apex:outputField value="{!objOpp.McaApp__Funding_Amount__c}"/>
+                       </td>
+                    <td width = "50%" style="padding-left: 63px;">
+                        <b><apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Term_Months__c.Label}"/></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       <apex:outputField value="{!objOpp.McaApp__Term_Months__c}"/>
+                       </td>
+                </tr>
+                <tr>
+                    <td width = "50%" style="padding-left: 54px;">
+                       <b><apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Payback_Amount__c.Label}"/></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       <apex:outputField value="{!objOpp.McaApp__Payback_Amount__c}"/>
+                    </td>
+                       <td width = "50%" style="padding-left: 80px;">
+                       <b><apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Factor_Rate__c.Label}"/></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       <apex:outputField value="{!objOpp.McaApp__Factor_Rate__c}"/>
+                    </td>
+                </tr>
+            </table>
+        </apex:outputPanel>
+        <br />
+        <br />
+        
+        <apex:pageMessages id="pgMsgId" />
+        
+        <apex:outputPanel id="screens">
+        
+        <apex:actionStatus id="loadingStatus" stopText="">
+            <apex:facet name="start">
+                <apex:outputPanel >
+                    <apex:image url="/img/loading.gif" />
+                    <apex:outputLabel value="Processing..." />
+                </apex:outputPanel>
+            </apex:facet>
+        </apex:actionStatus>
+        
+            <!-- Start of Offer Screen -->
+            <apex:pageBlock title="Select Offer" rendered="{!wizardType == 'Offer'}" id="offerScreen">
+                      <apex:variable var="rowNum" value="{!0}"  />
+                    <apex:pageBlockTable value="{!offerWrapperList}" var="wrapper" width="100%"> 
+<!--                     columnsWidth="100px, 100px"> -->
+                        <apex:column >
+                            <apex:actionsupport action="{!selectedOffer}" event="onclick"
+                                rerender="form,pgMsgId" status="loadingStatus">
+                                <input type="radio" name="SelectedOffer"
+                                    value="{!wrapper.isSelected}" />
+                                <apex:param name="offerId" assignTo="{!offerId}"
+                                    value="{!wrapper.offer.Id}" />
+                            </apex:actionsupport>
+                        </apex:column>
+                        
+                        <apex:column width="500px" headerValue="Action">
+                            
+                            <apex:variable var="rowNum" value="{!rowNum+1}"  />
+
+                             <apex:outputPanel rendered="{!NOT(wrapper.offer['Id'] == null)}">
+                                <a href="/{!wrapper.offer['Id']}" target="_blank"> <apex:outputText value="View |" /> </a>
+                             </apex:outputPanel>
+                             <apex:commandLink value="Del" action="{!deleteOffer}"  rerender="form"
+                                                             status="loadingStatus" immediate="true">
+                                                             <!--                              rerender="offerScreen"  -->
+                                <apex:param name="delname" value="{!wrapper.offer['Id']}" > </apex:param>
+                                 <apex:param value="{!rowNum}" name="index" />
+                            </apex:commandLink>
+                        </apex:column>
+                        
+                        <apex:column headerValue="Funder">
+                            <apex:inputField value="{!wrapper.offer['Funder__c']}"/>
+                        </apex:column>
+<!--                        <apex:column headerValue="Opportunity"> -->
+<!--                            <apex:outputField value="{!wrapper.offer['Opportunity__c']}"/> -->
+<!--                        </apex:column> -->
+                       
+                        <apex:column headerValue="Submission" >
+                            <apex:inputField value="{!wrapper.offer['Submission__c']}"/>
+                        </apex:column>
+                        <apex:column headerValue="Deal Type">
+                            <apex:inputField value="{!wrapper.offer['Deal_Type__c']}" />
+                        </apex:column>
+                        <apex:column headerValue="Funding Amount">
+                            <apex:inputField value="{!wrapper.offer['Amount__c']}" />
+                        </apex:column>
+                        <apex:column headerValue="Payback Amt">
+                            <apex:inputField value="{!wrapper.offer['Payback_Amt__c']}" />
+                        </apex:column>
+                        <apex:column headerValue="Factor Rate">
+                            <apex:inputField value="{!wrapper.offer['Rate__c']}" />
+                        </apex:column>
+                        <apex:column headerValue="Term (Months)">
+                            <apex:inputField value="{!wrapper.offer['Term_Months__c']}" />
+                        </apex:column>
+                        <apex:column headerValue="Holdback%">
+                            <apex:inputField value="{!wrapper.offer['Holdback__c']}" />
+                        </apex:column>
+                        <apex:column headerValue="Payment Amt">
+                            <apex:inputField value="{!wrapper.offer['Payment_Amt__c']}" />
+                        </apex:column>
+                        <apex:column headerValue="PMT Schedule">
+                            <apex:inputField value="{!wrapper.offer['PMT_Schedule__c']}" />
+                        </apex:column>
+                        <apex:column headerValue="Status">
+                            <apex:inputField value="{!wrapper.offer['Status__c']}" />
+                        </apex:column>
+                    </apex:pageBlockTable>
+                <apex:pageBlockButtons >
+                   
+                    <apex:commandButton action="{!addRowOffer}" value="Add Row" 
+                                        rerender="offerScreen,pgMsgId" status="loadingStatus" immediate="true"/>
+                    <apex:commandButton action="{!quickSaveOffer}" value="Quick Save" 
+                                        rerender="offerScreen,pgMsgId" status="loadingStatus"/>
+                    <apex:commandButton action="{!cancel}" value="Cancel" immediate="true"/>
+<!--                     <apex:commandButton action="{!next}" value="Next" rendered="{!isOfferSelected}" -->
+<!--                         rerender="form,pgMsgId" status="loadingStatus" onclick="changeTabs('Deal');"/> -->
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            <!--End of Offer Screen -->
+
+            <!--Start of Deal Screen -->
+            <apex:pageblock title="Deal Information"
+                rendered="{!wizardType == 'Deal'}" id="dealScreen">
+                <apex:pageBlockSection >
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Bank_Name__c.Label}" />
+                        <apex:inputField value="{!objOpp.McaApp__Bank_Name__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.StageName.Label}" />
+                        <apex:inputField value="{!objOpp.StageName}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Deal_Type__c.Label}" />
+                        <apex:inputField value="{!objOpp.McaApp__Deal_Type__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Contract_Requested_Date__c.Label}" />
+                        <apex:inputField value="{!objOpp.McaApp__Contract_Requested_Date__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Funding Amount" />
+                        <apex:inputField value="{!objOpp.McaApp__Funding_Amount__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Date_Contract_Signed__c.Label}" />
+                        <apex:inputField value="{!objOpp.McaApp__Date_Contract_Signed__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Payback Amount" />
+                        <apex:inputField value="{!objOpp.McaApp__Payback_Amount__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Date_Funded__c.Label}" />
+                        <apex:inputField value="{!objOpp.McaApp__Date_Funded__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Factor_Rate__c.Label}" />
+                        <apex:inputField value="{!objOpp.McaApp__Factor_Rate__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem />
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Term_Months__c.Label}" />
+                        <apex:inputField value="{!objOpp.McaApp__Term_Months__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Contract.Fields.McaApp__Renewal_Eligibility_Percent__c.Label}" />
+                        <apex:inputField value="{!objContract.McaApp__Renewal_Eligibility_Percent__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Holdback_Percentage__c.Label}" />
+                        <apex:inputField value="{!objOpp.McaApp__Holdback_Percentage__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Contract.Fields.McaApp__Renewal_Eligibility_Days_from_funding__c.Label}" />
+                        <apex:inputField value="{!objContract.McaApp__Renewal_Eligibility_Days_from_funding__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Payment_Amount__c.Label}" />
+                        <apex:inputField value="{!objOpp.McaApp__Payment_Amount__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Contract.Fields.McaApp__Anticipated_Renewal_Date__c.Label}" />
+                        <apex:inputField value="{!objContract.McaApp__Anticipated_Renewal_Date__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Schedule__c.Label}" />
+                        <apex:inputField value="{!objOpp.McaApp__Schedule__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Contract.Fields.McaApp__Notes__c.Label}" />
+                        <apex:inputField value="{!objContract.McaApp__Notes__c}" style="width:65%;"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!previous}" value="Previous"
+                                        rerender="form,pgMsgId" status="loadingStatus" />
+                    <apex:commandButton action="{!save}" value="Quick Save"
+                                        rerender="form,pgMsgId" status="loadingStatus" />
+                    <apex:commandButton action="{!next}" value="Next"
+                                        rerender="form,pgMsgId" status="loadingStatus" />
+<!--                    <apex:commandButton action="{!cancel}" value="Cancel" /> -->
+
+                </apex:pageBlockButtons>
+            </apex:pageblock>
+            <!-- End of Deal Screen -->
+
+            <!--    Start of Receivable Screen -->
+            <apex:pageBlock id="receivableScreen" title="Receivables" rendered="{!wizardType == 'Receivable'}">
+                <apex:pageBlockSection columns="1" id="receivableTable">
+                    <apex:variable var="rowNum" value="{!0}"  />
+                    <apex:pageBlockTable id="receivableTable" value="{!receivableList}"
+                        var="receivable" width="100%">
+                        <apex:column >
+                            <apex:commandLink value="Del" action="{!deletReceivables}" rerender="form" 
+                                                             status="loadingStatus">
+                                <apex:param name="index" value="{!rowNum+1}" > </apex:param>
+                            </apex:commandLink>
+                            <apex:variable var="rowNum" value="{!rowNum+1}"/>
+                        </apex:column>
+                        <apex:column headerValue="Type">
+                            <apex:inputField value="{!receivable.McaApp__Type__c}" />
+                        </apex:column>
+                        
+                        <apex:column headerValue="Amount">
+                            <apex:inputField value="{!receivable.McaApp__Amount__c}" />
+                            <apex:facet name="footer">
+                                Sum: <apex:outputText value="${0, number, ###,###,###,###.00}"> <apex:param value="{!receivableAmtTotal}"/></apex:outputText>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column headerValue="{!$ObjectType.McaApp__Receivable__c.Fields.McaApp__Percentage__c.Label}">
+                            <apex:inputField value="{!receivable.McaApp__Percentage__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Payback/Funded">
+                            <apex:inputField value="{!receivable.McaApp__Payback_Funded__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Due From Account">
+                            <apex:inputField value="{!receivable.McaApp__Due_From_Account__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Due Date">
+                            <apex:inputField value="{!receivable.McaApp__Due_Date__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Status">
+                            <apex:inputField value="{!receivable.McaApp__Status__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Memo">
+                            <apex:inputField value="{!receivable.McaApp__Memo__c}" />
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!previous}" value="Previous"
+                        rerender="form,pgMsgId" status="loadingStatus" />
+                    <apex:commandButton value="Add Row" action="{!addRowReceivable}" rerender="receivableTable,pgMsgId"
+                                                        status="loadingStatus"/> 
+                    <apex:commandButton value="Quick Save" action="{!quickSaveReceivable}" rerender="receivableTable,pgMsgId"
+                                                           status="loadingStatus"/> 
+                    <apex:commandButton action="{!next}" value="Next"
+                        rerender="form,pgMsgId" status="loadingStatus" onclick="changeTabs('Payable');"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            <!--    End of Receivable Screen -->
+            
+            <!--     Start of Payable Screen -->
+            <apex:variable value="{!0.00}" var="total1" />
+            <apex:pageBlock id="payableScreen" title="Payables" rendered="{!wizardType == 'Payable'}">
+            
+                <apex:pageBlockSection columns="1" >
+                    <apex:variable var="rowNum" value="{!0}"  />
+                    <apex:pageBlockTable id="payableTable" value="{!payableList}"
+                                                            var="payable" width="100%" rendered="true">
+                        <apex:column >
+                            <apex:commandLink value="Del" action="{!deletPayables}" rerender="payableScreen" status="loadingStatus">
+                                <!--  <apex:param name="delname" value="{!payable.Name}" > </apex:param>-->
+                                 <apex:param name="index" value="{!rowNum+1}" > </apex:param>
+                            </apex:commandLink>
+                            <apex:variable var="rowNum" value="{!rowNum+1}"/>
+                        </apex:column>
+                        <apex:column headerValue="Type">
+                            <apex:inputField value="{!payable.McaApp__Type__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Amount">
+                            <apex:inputField value="{!payable.McaApp__Amount_Due__c}" />
+                            <apex:facet name="footer">
+                                Sum: <apex:outputText value="${0, number, ###,###,###,###.00}"> <apex:param value="{!payableAmtTotal}"/></apex:outputText>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column headerValue="{!$ObjectType.McaApp__Payable__c.Fields.McaApp__Percentage__c.Label}">
+                            <apex:inputField value="{!payable.McaApp__Percentage__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Payback/Funded">
+                            <apex:inputField value="{!payable.McaApp__Payback_Funded__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Due to Account">
+                            <apex:inputField value="{!payable.McaApp__Account__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Due Date">
+                            <apex:inputField value="{!payable.McaApp__Due_Date__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Status">
+                            <apex:inputField value="{!payable.McaApp__Status__c}" />
+                        </apex:column>
+                        <apex:column headerValue="{!$ObjectType.McaApp__Payable__c.Fields.McaApp__Receivable_Dependency__c.Label}">
+                            <apex:inputField value="{!payable.McaApp__Receivable_Dependency__c}" />
+                        </apex:column>
+                        <apex:column headerValue="Memo">
+                            <apex:inputField value="{!payable.McaApp__Memo__c}" />
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!previous}" value="Previous"
+                        rerender="form,pgMsgId" status="loadingStatus" />
+                    <apex:commandButton value="Add Row" action="{!addRowPayable}"
+                                                            rerender="form,pgMsgId" status="loadingStatus" />
+                    <apex:commandButton value="Quick Save" action="{!quickSavePayable}"
+                                                            rerender="form,pgMsgId" status="loadingStatus" />
+                    <apex:commandButton action="{!next}" value="Next"
+                        rerender="form,pgMsgId" status="loadingStatus" onclick="changeTabs('Syndication');"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            <!--    End of Payable Screen -->
+            
+            <!-- Start of Syndication Screen -->
+            <apex:pageBlock rendered="{!wizardType == 'Syndication'}" id="syndicationScreen" title="Syndication"> 
+                <apex:pageBlockSection columns="1" >
+                
+                <apex:variable var="rowNumSyn" value="{!0}"  />
+                    <apex:pageBlockTable id="syndTable" value="{!syndicationList}"
+                        var="synd" width="100%">
+                        <apex:column headerValue="">
+                            <apex:commandLink value="Del" action="{!deletSyndications}" rerender="syndicationScreen" 
+                                                             status="loadingStatus">
+                                 <apex:param name="index" value="{!rowNumSyn+1}" > </apex:param>
+                            </apex:commandLink>
+                            <apex:variable var="rowNumSyn" value="{!rowNumSyn+1}"/>
+                        </apex:column>
+                        <apex:column headerValue=" Syndication Amount">
+                            <apex:inputField value="{!synd.McaApp__Syndication_Amt__c}" />
+                            <apex:facet name="footer">
+                                Sum: <apex:outputText value="${0, number, ###,###,###,###.00}"> <apex:param value="{!syndAmtTotal}"/> </apex:outputText>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column headerValue="Servicing Fee">
+                            <apex:inputField value="{!synd.McaApp__Servicing_Fee__c}" />
+                            <apex:facet name="footer">
+                                Sum: <apex:outputText value="${0, number, ###,###,###,###.00}"> <apex:param value="{!syndFeeTotal}"/> </apex:outputText>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column headerValue="{!$ObjectType.McaApp__Syndication__c.Fields.McaApp__Commission_Fee__c.Label}">
+                            <apex:inputField value="{!synd.McaApp__Commission_Fee__c}"/>
+                        </apex:column>
+                        <apex:column headerValue="Syndication %">
+                            <apex:inputField value="{!synd.McaApp__Syndication_per__c}"/>
+                        </apex:column>
+                        <apex:column headerValue="{!$ObjectType.McaApp__Syndication__c.Fields.McaApp__Anticipated_Term_Months__c.Label}">
+                            <apex:inputField value="{!synd.McaApp__Anticipated_Term_Months__c}"/>
+                        </apex:column>
+                        <apex:column headervalue="Deal Funding Amount">
+                            <apex:inputField value="{!synd.McaApp__Deal_Funding_Amount__c}"/>
+                        </apex:column>
+                        <apex:column headervalue="Servicing Bank" >
+                            <apex:inputField value="{!synd.McaApp__Servicing_Bank__c}"/>
+                        </apex:column>
+                        <apex:column headervalue="{!$ObjectType.McaApp__Syndication__c.Fields.McaApp__Disbursment_Schedule__c.Label}" >
+                            <apex:inputField value="{!synd.McaApp__Disbursment_Schedule__c}"/>
+                        </apex:column>
+                        <apex:column headervalue="{!$ObjectType.McaApp__Syndication__c.Fields.McaApp__ROR_per__c.Label}" >
+                            <apex:inputField value="{!synd.McaApp__ROR_per__c}"/>
+                        </apex:column>
+                        <apex:column headervalue="{!$ObjectType.McaApp__Syndication__c.Fields.McaApp__Syndicated_By__c.Label}" >
+                            <apex:inputField value="{!synd.McaApp__Syndicated_By__c}"/>
+                        </apex:column>
+                        <apex:column headervalue="{!$ObjectType.McaApp__Syndication__c.Fields.McaApp__Memo__c.Label}" >
+                            <apex:inputField value="{!synd.McaApp__Memo__c}"/>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!previous}" value="Previous"
+                                                             rerender="form,pgMsgId" status="loadingStatus" />
+                    <apex:commandButton action="{!addRowSyndication}" value="Add Row"
+                                                             rerender="syndicationScreen,pgMsgId" status="loadingStatus" />
+                    <apex:commandButton action="{!quickSaveSyndication}" value="Quick Save"
+                                                             rerender="syndicationScreen,pgMsgId" status="loadingStatus" />
+                                                             
+                    <apex:commandButton action="{!next}" value="Next"
+                                                         rerender="form,pgMsgId" 
+                                                         status="loadingStatus" onclick="changeTabs('Preview');"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            <!-- End of Syndication Screen -->
+            
+            <!--    Start of Preview Screen -->
+            <apex:pageBlock id="previewScreen" rendered="{!wizardType == 'Preview'}" mode="maindetail">
+                
+                <!--  Start of Deal Info Preview -->
+                <apex:pageBlockSection title="Deal Information">
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Bank_Name__c.Label}" />
+                        <apex:outputField value="{!objOpp.McaApp__Bank_Name__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.StageName.Label}" />
+                        <apex:outputField value="{!objOpp.StageName}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Contract.Fields.McaApp__Deal_Type__c.Label}" />
+                        <apex:outputField value="{!objContract.McaApp__Deal_Type__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Contract_Requested_Date__c.Label}" />
+                        <apex:outputField value="{!objOpp.McaApp__Contract_Requested_Date__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Funding Amount" />
+                        <apex:outputField value="{!objOpp.McaApp__Funding_Amount__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Date_Contract_Signed__c.Label}" />
+                        <apex:outputField value="{!objOpp.McaApp__Date_Contract_Signed__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Payback Amount" />
+                        <apex:outputField value="{!objOpp.McaApp__Payback_Amount__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Date_Funded__c.Label}" />
+                        <apex:outputField value="{!objOpp.McaApp__Date_Funded__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Factor_Rate__c.Label}" />
+                        <apex:outputField value="{!objOpp.McaApp__Factor_Rate__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem />
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Term_Months__c.Label}" />
+                        <apex:outputField value="{!objOpp.McaApp__Term_Months__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Contract.Fields.McaApp__Renewal_Eligibility_Percent__c.Label}" />
+                        <apex:outputField value="{!objContract.McaApp__Renewal_Eligibility_Percent__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Holdback_Percentage__c.Label}" />
+                        <apex:outputField value="{!objOpp.McaApp__Holdback_Percentage__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Contract.Fields.McaApp__Renewal_Eligibility_Days_from_funding__c.Label}" />
+                        <apex:outputField value="{!objContract.McaApp__Renewal_Eligibility_Days_from_funding__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Payment_Amount__c.Label}" />
+                        <apex:outputField value="{!objOpp.McaApp__Payment_Amount__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Contract.Fields.McaApp__Anticipated_Renewal_Date__c.Label}" />
+                        <apex:outputField value="{!objContract.McaApp__Anticipated_Renewal_Date__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Opportunity.Fields.McaApp__Schedule__c.Label}" />
+                        <apex:outputField value="{!objOpp.McaApp__Schedule__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Contract.Fields.McaApp__Notes__c.Label}" />
+                        <apex:outputField value="{!objContract.McaApp__Notes__c}" style="width:65%;"/>
+                    </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    <!--  End of Deal Info Preview -->
+                <br/>
+                
+                <!--  Start of Receivables Preview -->
+                <apex:pageBlockSection columns="1" title="Receivables" >
+                    <apex:pageBlockTable id="receivableTable" value="{!receivableList}" var="receivable" width="100%">
+                        <apex:column headervalue="Receivable Name">
+                            <apex:outputLink value="/{!receivable.Id}" id="theLink" target="_blank">{!receivable.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column value="{!receivable.McaApp__Type__c}"/>
+                      
+                        <apex:column headerValue="Amount">
+                            <apex:outputField value="{!receivable.McaApp__Amount__c}" />
+                            <apex:facet name="footer">
+                                Sum: <apex:outputText value="${0, number, ###,###,###,###.00}"> <apex:param value="{!receivableAmtTotal}"/></apex:outputText>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column value="{!receivable.McaApp__Percentage__c}"/>
+                        <apex:column value="{!receivable.McaApp__Payback_Funded__c}"/>
+                        <apex:column value="{!receivable.McaApp__Due_From_Account__c}"/>
+                        <apex:column value="{!receivable.McaApp__Due_Date__c}"/>
+                        <apex:column value="{!receivable.McaApp__Status__c}"/>
+                        <apex:column value="{!receivable.McaApp__Memo__c}"/>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <!--  End of Receivables Preview -->
+                <br/>
+                
+                <!--  Start of Payables Preview -->
+                <apex:pageBlockSection columns="1" title="Payables">
+                    <apex:pageBlockTable id="payableTable" value="{!payableList}" var="payable" width="100%" rendered="true">
+                        <apex:column headervalue="Payable Name">
+                            <apex:outputLink value="/{!payable.Id}" id="theLink" target="_blank">{!payable.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column value="{!payable.McaApp__Type__c}"/>
+                        <apex:column headerValue="Amount">
+                            <apex:outputField value="{!payable.McaApp__Amount_Due__c}" />
+                            <apex:facet name="footer">
+                                Sum: <apex:outputText value="${0, number, ###,###,###,###.00}"> <apex:param value="{!payableAmtTotal}"/></apex:outputText>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column value="{!payable.McaApp__Percentage__c}"/>
+                        <apex:column value="{!payable.McaApp__Payback_Funded__c}"/>
+                        <apex:column value="{!payable.McaApp__Account__c}"/>
+                        <apex:column value="{!payable.McaApp__Due_Date__c}"/>
+                        <apex:column value="{!payable.McaApp__Status__c}"/>
+                        <apex:column value="{!payable.McaApp__Receivable_Dependency__c}"/>
+                        <apex:column value="{!payable.McaApp__Memo__c}"/>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                 <!--  End of Payables Preview -->
+                <br/>
+                <!--  End of Syndication Preview -->       
+                <apex:pageBlockSection columns="1" title="Syndication">
+                    <apex:pageBlockTable id="syndTable" value="{!syndicationList}" var="synd" width="100%">
+                        <apex:column headervalue="Syndication Name">
+                            <apex:outputLink value="/{!synd.Id}" id="theLink" target="_blank">{!synd.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column headerValue=" Syndication Amount">
+                            <apex:outputField value="{!synd.McaApp__Syndication_Amt__c}" />
+                            <apex:facet name="footer">
+                                Sum: <apex:outputText value="${0, number, ###,###,###,###.00}"> <apex:param value="{!syndAmtTotal}"/> </apex:outputText>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column headerValue=" Syndication Fee">
+                            <apex:outputField value="{!synd.McaApp__Servicing_Fee__c}" />
+                            <apex:facet name="footer">
+                                Sum: <apex:outputText value="${0, number, ###,###,###,###.00}"> <apex:param value="{!syndFeeTotal}"/> </apex:outputText>
+                            </apex:facet>
+                        </apex:column>
+                        <apex:column value="{!synd.McaApp__Syndication_per__c}" headervalue="Syndication %"/>
+                        <apex:column value="{!synd.McaApp__Deal_Funding_Amount__c}" headervalue="Deal Funding Amount"/>
+                        <apex:column value="{!synd.McaApp__Servicing_Bank__c}" headervalue="Servicing Bank"/>
+                    </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                    <!--  End of Syndication Preview -->
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!previous}" value="Previous" 
+                                        rerender="form,pgMsgId" status="loadingStatus"/>
+                    <apex:commandButton action="{!cancel}" value="Finish" />
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            <!-- End of Preview screen -->
+            
+        </apex:outputPanel>
+    </apex:form>
+    
+</apex:page>

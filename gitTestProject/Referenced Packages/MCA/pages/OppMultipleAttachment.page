@@ -1,0 +1,208 @@
+<apex:page standardController="Opportunity" extensions="McaApp.MultipleUploadController" id="pid">  
+
+ <head>
+        
+        <style type="text/css">
+            body {
+              text-align: center;
+              padding: 1.125em;
+            }
+            
+            #dropbox {
+              width: 90%;
+             height:30px;
+             padding: 1.145em;
+             margin: 0 auto;
+             margin-bottom:14px;
+             border: 6px white double;
+             color:white;
+             font:weight:bold;
+             font-size:14px;
+             border-color: white !important;
+             border-radius:20px;
+             background-color:#69c;
+            }
+            
+            #preview {
+              display: none;
+              margin: 1.125em auto;
+              border: 1px solid pink;
+            }
+        </style>
+        
+    </head>
+    <body>
+    <div style="border-width:2px;border:4px #69c;height:auto;width:auto;border-radius:17px;">  &nbsp; 
+        <div id="dropbox">
+            <span id="droplabel">Drop file here for upload...</span>
+        </div>
+          <apex:outputPanel id="Op1">
+            <img id="preview" src="" alt="[ image will display here ]" />
+          </apex:outputPanel>
+      </div>   
+    </body>
+
+    <apex:form >  
+     <apex:actionFunction action="{!CollectData}" name="collectDataBase64" reRender="Op" oncomplete="top.location.reload(true);">
+            <apex:param name="data" id="data" value="" />
+            <apex:param name="name" id="name" value="" />
+        </apex:actionFunction>
+    &nbsp;
+        <apex:pageBlock title="Upload Multiple Opportunity Documents">  
+            <apex:pageMessages />
+            <apex:pageBlockButtons >  
+                
+                <!--       Target Type attribute description
+                  _parent :The response is displayed in the parent frame
+                  _top    : The response is displayed in the full body of the window
+                  _self   : The response is displayed in the same frame (this is default)
+                  _blank  : The response is displayed in a new window or tab
+                  framename : The response is displayed in a named iframe  --> 
+                
+                  <!-- upload and save the selected file and return to same page -->
+                  <apex:commandLink value="Upload" target="_parent" styleClass="btn" style="text-decoration:None" action="{!SaveAttachments}"/>  
+            </apex:pageBlockButtons>  
+            
+                 
+                 <!-- execute when picklist value change  -->
+                <apex:actionFunction name="ChangeCount" action="{!ChangeCount}"/>  
+                    <apex:pageblocksection >  
+                        <apex:pageBlockSectionItem >  
+                            <apex:outputLabel value="How many files you want to upload?"/>  
+                                <apex:selectList onchange="ChangeCount() ;" multiselect="false" size="1" value="{!FileCount}">  
+                                    <apex:selectOption itemLabel="--None--" itemValue=""/>  <!-- By default value -->
+                                    <apex:selectOptions value="{!filesCountList}"/>  <!-- count number of file to be uploaded  -->
+                                </apex:selectList>  
+                        </apex:pageBlockSectionItem>  
+                    </apex:pageblocksection>  
+              
+               <!-- Rendering based on a condtion -->
+            <apex:pageBlockSection title="Select Files" rendered="{!IF(FileCount != null && FileCount != '', true , false)}"> 
+             
+                 <!-- get the uploaded file details  -->
+                <apex:repeat value="{!allFileList}" var="AFL">  
+                    <apex:inputfile value="{!AFL.Body}" filename="{!AFL.Name}" /> 
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="Description"/>                      
+                            <apex:inputText value="{!AFL.description}"/> 
+                        </apex:pageBlockSectionItem>  
+                </apex:repeat>  
+            </apex:pageBlockSection>                     
+                          
+        </apex:pageBlock>  
+        
+        
+<apex:pageBlock title="Attachments" id="Op" mode="inlineEdit">&nbsp;
+
+     <apex:pageBlockButtons location="top" >  
+        <apex:commandButton action="{!saveme}" id="saveButton" value="Save" style="margin-left:-380px;height:25px; width:90px;font-weight:bold;"/>  
+          
+    </apex:pageBlockButtons>  
+
+        <apex:pageBlockTable value="{!Oplist}" var="item" cellpadding="10" rules="all" styleclass="pageblock" > 
+                <apex:column HeaderValue="Title" style="text-align: left;" >
+                    <apex:commandLink action="/{!item.Id}" target="_blank" value="{!item.Name}"  />
+                </apex:column>
+                
+                <apex:column HeaderValue="File Description">
+                    <apex:actionRegion >
+                        <apex:outputField value="{!item.description}">
+                            <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" />
+                        </apex:outputField>
+                    </apex:actionRegion>  
+                </apex:column>
+                <apex:column value="{!item.LastModifiedDate}" style="text-align: left;"/> 
+                
+                <apex:column HeaderValue="Created By" style="text-align: left;">
+                    <apex:outputField value="{!item.Createdbyid }"  style="text-align: left;" /> 
+                </apex:column>  
+        </apex:pageBlockTable>
+</apex:pageBlock>
+
+</apex:form>  
+     <script type="text/javascipt">
+        function Reload(){
+        alert('hi----');
+            window.location.href=window.location.href;
+        }
+     </script>
+    
+    <script type="text/javascript">
+        var fName = '';
+        var dropbox = document.getElementById('dropbox');
+    
+        // # Using an EventListener object
+        var dropListener = {
+    
+            handleEvent: function(event){
+                if (event.type === 'dragenter') { this.onDragEnter(event); }
+                if (event.type === 'dragexit') { this.onDragExit(event); }
+                if (event.type === 'dragover') { this.onDragOver(event); }
+                if (event.type === 'drop') { this.onDragDrop(event); }
+            },
+    
+            onDragEnter: function(event){
+                event.preventDefault();
+                event.stopPropagation();
+                console.debug('enter')
+            },
+    
+            onDragExit: function(event){
+                event.preventDefault();
+                event.stopPropagation();
+            },
+    
+            onDragOver: function(event){
+                event.preventDefault();
+                event.stopPropagation();
+            },
+    
+            onDragDrop: function(event){
+                event.preventDefault();
+                event.stopPropagation();
+            
+                var files = event.dataTransfer.files,
+                file = files;
+    
+                if (files.length) {
+                    file = files[0];
+                    document.getElementById('droplabel').innerHTML = 'Uploading ' +
+                    file.name;
+    
+                    this.processImage(file);
+                }
+            },
+    
+            processImage: function(file){
+                
+                fName = file.name;
+                if (! file.type.match('image.*')) {
+                    document.getElementById('droplabel').innerHTML ='Uploading ' +
+                    file.name;
+                   // return;
+                }
+    
+                var reader = new FileReader();
+            
+                reader.onloadend = this.onReaderLoadEnd;
+                
+                reader.readAsDataURL(file);
+            },
+            
+            onReaderLoadEnd: function(event){
+                var img = document.getElementById("preview");
+                img.src = event.target.result;
+                collectDataBase64(img.src,fName );
+            }
+        };
+    
+        // ## Adding drag and drop event listeners
+    
+        dropbox.addEventListener('dragenter', dropListener, false);
+        dropbox.addEventListener('dragexit', dropListener, false);
+        dropbox.addEventListener('dragover', dropListener, false);
+        dropbox.addEventListener('drop', dropListener, false);
+    
+    </script>
+    
+</apex:page>

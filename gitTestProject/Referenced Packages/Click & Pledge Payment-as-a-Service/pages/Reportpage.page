@@ -1,0 +1,20 @@
+<apex:page controller="CnP_PaaS.dynamic_report" tabStyle="C_P_Reports__tab" title="C&P Custom Reports">
+<apex:sectionHeader title="C&P Custom Reports" subtitle="Report Types"/>
+
+    <apex:form >
+  <apex:pageBlock >
+ 
+  
+         <apex:selectRadio value="{!Reportpage}"  layout="pageDirection">
+        
+          <apex:selectOptions value="{!items}"  /><p/>
+            </apex:selectRadio> <p/>
+            
+ 
+  <apex:pageBlockButtons >        
+  <apex:commandButton value="Create" action="{!test}" rerender="out" status="status"/>
+  </apex:pageBlockButtons> 
+   </apex:pageBlock>
+     </apex:form>
+  
+</apex:page>

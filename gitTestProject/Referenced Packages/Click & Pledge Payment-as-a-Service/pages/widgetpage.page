@@ -1,0 +1,56 @@
+<apex:page standardController="CnP_PaaS__CnP_Widget__c" extensions="CnP_PaaS.widgetpage">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+
+ <script type="text/javascript">
+  
+   function fnredirect(){
+      var widgetname= $(".widgetname").val();
+      reg_text=/^([a-zA-Z0-9\.\,\#\&\-\'\ ])+$/;
+      var widgetcode= $(".widgetcode").val().replace(/\n/g,'');
+         
+      
+       if(widgetname == '')
+       {
+          alert('Please enter a Widget Name');     
+          $(".widgetname").focus();
+          return false;
+       }
+       if(!reg_text.test(widgetname))
+        {
+            alert("Widget Name should contain only alphanumeric and some special characters");
+             $(".widgetname").focus();
+              return false; 
+         }
+       if(widgetcode=='')
+       {
+           alert('Please enter the Widget Code');
+           $(".widgetcode").focus();
+           return false;
+       }    
+       if(widgetcode != ''){
+      
+           $(".widgetcode").val(widgetcode);
+       }
+      return true;
+     }
+</script>
+
+ <apex:form >
+   <apex:pageBlock >
+     <apex:pageBlockButtons >
+       <apex:commandButton value="Save" action="{!Save}" onclick="if(!fnredirect()) return false;" />
+       <apex:commandButton value="Cancel" action="{!Cancel}"/>
+     </apex:pageBlockButtons>
+     <apex:pageblockSection Title="Widget Information" Columns="1">
+       <apex:pageblockSectionItem >
+          <apex:outputLabel value="Widget Name"></apex:outputLabel>
+          <apex:inputfield value="{!element.Name}" styleclass="widgetname" required="true" id="widgetname"/>
+       </apex:pageblockSectionItem>
+       <apex:pageBlockSectionItem >
+         <apex:outputlabel value="Widget Code"/>                   
+         <apex:inputtextarea rows="7" value="{!element.CnP_PaaS__Widget_Code__c}" style="width:40%" styleclass="widgetcode"/>        
+       </apex:pageBlockSectionItem>  
+     </apex:pageblockSection>
+   </apex:pageBlock>
+ </apex:form>
+</apex:page>

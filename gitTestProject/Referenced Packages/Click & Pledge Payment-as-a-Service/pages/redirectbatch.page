@@ -1,0 +1,3 @@
+<apex:page standardController="CnP_PaaS__CnPBatchUpload__c" extensions="CnP_PaaS.SaveClass" action="{!Redirectbatch}">
+<h1> Opportunity Record Type Select </h1>
+</apex:page>

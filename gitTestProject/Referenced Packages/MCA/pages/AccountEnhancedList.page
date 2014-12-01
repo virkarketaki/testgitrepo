@@ -1,0 +1,3 @@
+<apex:page >
+	<apex:enhancedlist type="Account" height="730" customizable="false" rowsPerPage="25" Listid="{!$Label.mcaapp__ISOListId}" />
+</apex:page>

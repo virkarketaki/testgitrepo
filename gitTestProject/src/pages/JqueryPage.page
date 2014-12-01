@@ -1,0 +1,100 @@
+<apex:page standardController="Account" extensions="JqueryPageController">
+    <head>
+        <apex:includeScript value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/js/jquery-1.8.3.js')}"  />
+        <apex:includeScript value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.min.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.jQuery, '/jquery-ui-1.9.2.custom/css/ui-lightness/jquery-ui-1.9.2.custom.css')}" />
+        
+        <script> 
+        $j = jQuery.noConflict();
+        $j(document).ready(function(){
+            $j("#r1").hide();
+          $j('[id*=abc],[id*=pqr]').hide();
+            $j('[id*=r3]').sortable();
+            
+            $j('[id*=r2]').click(function(){
+            
+            
+            var myValue = [1,2,3];
+            console.log($j.isArray(myValue));
+            console.log(myValue[2]+'*********'+myValue[3]);
+            
+            
+                if($j('[id*=i1]').val() == 1234)
+                {
+                    $j('[id*=r3]').show();
+                    $j('[id*=r1]').show();
+                }
+                else
+                {
+                    $j('[id*=pqr]').hide();
+                //  $j('tr[id]').hide();
+                    $j('[id$=r3]').hide();
+                }
+            });
+    
+            $j('[id*=r1]').click(function(){
+                if($j('[id*=txt1]').is(':text'))
+                {
+                    $j('[id*=r3]').show();
+                    $j('[id*=r2]').show();
+                }
+                else
+                {
+                    $j('[id*=r3]').hide();
+                    $j('[id*=r2]').hide();
+                }
+            });
+        });
+   });     
+    </script>
+     </head>
+    
+    <body>
+        <apex:form >
+
+        <style type="text/css">
+            stl {font-weight: bold;}            
+        </style>
+        
+            <apex:pageBlock id="block1">
+                <apex:pageBlockSection id="a">
+                    <apex:pageBlockSectionItem id="abc" >
+                        <apex:outputLabel id="lbl" value="Name " />
+                        <apex:inputField id="txt" value="{!account.name}"/>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            
+            <apex:pageBlock id="block2">        
+                <apex:pageBlockSection id="b">  
+                    <apex:pageBlockSectionItem id="pqr" dataStyleClass="stl">
+                        <apex:outputLabel id="lbl1" value="Phone " />
+                        <apex:inputField id="txt1" value="{!account.phone}" />
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="xyz" >
+                        <apex:outputLabel id="lbl2" value="A/c Number " />
+                        <apex:inputField id="txt2" value="{!account.AccountNumber}" />
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            
+        
+            
+            <table id="tab">
+                <tr id="r1">
+<!--                    <td>Name: <input type="text" value="{!account.name}"/> </td> -->
+<td>Name: <input id="dt" type="text"/></td> 
+                </tr>
+                <tr id="r2">
+                    <td>Phone: <input id="i1" type="text" value="{!account.phone}"/> </td>
+                </tr>
+                <tr id="r3">
+                    <td>A/c Number1: <input id="i1" type="text" value="{!account.AccountNumber}"/> </td>
+                    <td>A/c Number2: <input type="text" value="{!account.AccountNumber}"/> </td>
+                </tr>
+            </table>
+         
+         </apex:form>
+    </body>
+</apex:page>

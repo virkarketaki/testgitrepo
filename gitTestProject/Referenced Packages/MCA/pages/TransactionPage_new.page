@@ -1,0 +1,289 @@
+<apex:page standardController="McaApp__Transaction__c" tabStyle="McaApp__Transaction__c" extensions="McaApp.TransactionController_New" id="thepage" sidebar="false">
+ 	<style type="text/css">
+		.myClass2 {  
+			 overflow:auto;
+			 height:500px; }
+		  .MyClass{
+			   overflow:auto;
+			   height:1000px; }
+	</style>
+<!-- script to check all the checkboxes -->
+	<script type="text/javascript">
+		function checkAll(cb,cbid)
+		{
+		    var inputElem = document.getElementsByTagName("input");     
+		    var amount = 10;               
+		    for(var i=0; i<inputElem.length; i++)
+		    {            
+		         if(inputElem[i].id.indexOf(cbid)!=-1){                                       
+		            inputElem[i].checked = cb.checked;
+		        }
+		    }
+		}
+	</script>
+	<script type="text/javascript">
+		function expandList()
+		{ 
+		      document.getElementById("thepage:theform:j_id27:innerDebit").className = "MyClass";
+		      //document.getElementById("thepage:theform:j_id27:tableDebit").className = "MyClass";
+		      this.preventDefault();
+		 }
+		 function expandListCredit()
+		{ 
+		      document.getElementById("thepage:theform:j_id27:innerCredit").className = "MyClass";
+		      //document.getElementById("thepage:theform:j_id27:tableDebit").className = "MyClass";
+		      this.preventDefault();
+		 }
+	</script>
+	<script>
+		function getCheckboxId(val)
+		{  
+		     var checkboxId = val;  
+		     alert('hi'+val);
+		     var amt = document.getElementById("thepage:theform:j_id27:table:0:invoiceDueAmount").value;
+		     alert(document.getElementById("thepage:theform:j_id27:table:0:j_id78").value);
+		     alert(amt);
+		     if(checkboxId.checked){
+		     	document.getElementById("thepage:theform:j_id27:table:0:j_id78").value = document.getElementById("thepage:theform:j_id27:table:0:j_id75").value;
+		     	//thepage:theform:j_id27:table:0:j_id80
+		     }
+		     else{
+		     	document.getElementById("thepage:theform:j_id27:table:0:j_id78").value = 0;
+		     }         
+		}
+		function focusOn(val)
+		{
+		     var checkboxId = val;           
+		     document.getElementById(checkboxId).focus();
+		}
+	</script>
+	<apex:sectionHeader title="Transaction Edit" subtitle="New {!strTransName} Transaction"  />
+    	<apex:form id="theform">
+    		<apex:pagemessages id="hiddenblock" />
+    		<apex:pageBlock title="Transaction Edit">
+      		<apex:pageBlock >
+        		<apex:pageBlockSection title="Transaction Information" columns="2"> 
+		             <apex:outputField value="{!objTranscation.McaApp__Account__c}" rendered="{!AND(IF(!blnEditMode,true,false),IF(!blnNewMode,true,false))}"/>
+		             <apex:inputField value="{!objTranscation.McaApp__Account__c}" rendered="{!OR(IF(blnEditMode,true,false),IF(blnNewMode,true,false))}">
+                  		<apex:actionSupport event="onchange" rerender="creditTransBlock,debitTransBlock" status="panelStatus" action="{!create}"/>
+		              </apex:inputField>
+		              <apex:pageBlockSectionItem >
+		                <apex:outputLabel value="Status"/>
+		                <apex:outputText value="Pending"/>
+             		  </apex:pageBlockSectionItem>
+         		 </apex:pageBlockSection>
+          		 <apex:pageBlockSection columns="2">
+              		<apex:repeat value="{!column1Fields}" var="f">
+		                <apex:outputField value="{!objTranscation[f.fieldPath]}" rendered="{!AND(IF(!blnEditMode,true,false),IF(!blnNewMode,true,false))}"/>
+		                <apex:inputField value="{!objTranscation[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}" rendered="{!OR(IF(blnEditMode,true,false),IF(blnNewMode,true,false))}"/>
+              		</apex:repeat>     
+          		</apex:pageBlockSection>
+          		<apex:pageBlockSection columns="1">
+	              	<apex:repeat value="{!column2Fields}" var="f">
+		                <apex:outputField value="{!objTranscation[f.fieldPath]}" rendered="{!AND(IF(!blnEditMode,true,false),IF(!blnNewMode,true,false))}"/>
+		                <apex:inputField value="{!objTranscation[f.fieldPath]}" required="{!OR(f.required, f.dbrequired)}" rendered="{!OR(IF(blnEditMode,true,false),IF(blnNewMode,true,false))}"/>
+	              	</apex:repeat>         
+          		</apex:pageBlockSection>
+       		</apex:pageBlock>
+                 <apex:inputHidden value="{!McaApp__Transaction__c.McaApp__Account__c}" rendered="{!IF(blnEditMode,true,false)}"  required="true"/>
+		   <apex:actionStatus id="panelStatus" stopText="">
+		      <apex:facet name="start">
+		          <img src="{!URLFOR('/img/loading.gif')}" />
+		          <span style="font-weight: bold"> Processing</span>
+		        <br />
+		    </apex:facet>
+		   </apex:actionStatus>
+ 
+	<apex:outputpanel id="creditTransBlock" rendered="{!IF(blnCreditTransLineItems,true,false)}" layout="block" >  
+  		<apex:outputpanel rendered="{!AND(IF(invoices.size==0,true,false),IF(blnCreditTransLineItems,true,false),IF(blnDebitTransLineItems,false,true))}" layout="block">
+            <apex:outputText rendered="{!AND(IF(strAccountName!=null,true,false),IF(blnCreditTransLineItems,true,false))}">There are no Invoice records to be displayed for the Account '{!strAccountName}'</apex:outputText>
+            <apex:outputText rendered="{!AND(IF(strAccountName==null,true,false),IF(blnCreditTransLineItems,true,false))}">Please select Account to display invoices</apex:outputText>
+  		</apex:outputpanel> 
+             
+<!-- In our table we are displaying the cContact records -->
+  	<apex:outputpanel id="innerCredit" layout="block" styleClass="myClass2" rendered="{!AND(IF(invoices.size>0,true,false),IF(blnCreditTransLineItems,true,false),IF(blnDebitTransLineItems,false,true))}">
+   		<div align="center">
+   		<apex:commandButton value="Reset" action="{!resetTransaction}" rerender="creditTransBlock, errorPanel" status="panelStatus"/> 
+    		<apex:commandButton value="Calculate Total" action="{!autopopulate}" rerender="creditTransBlock,test123" status="panelStatus"/> 
+<!--      		<apex:commandLink value="Expand" onclick="return expandListCredit()" id="cmdLink1" /> -->
+    	</div>
+    	<apex:outputpanel id="test123Credit" style="float:right;">Total : {!totalAmount}</apex:outputpanel>   
+    	<apex:pageBlockTable value="{!invoices}" var="c" id="table">
+        	<apex:column >
+                <apex:facet name="header"> 
+                	<apex:inputCheckbox onclick="checkAll(this,'checkBox');" value="{!c.selected}">
+                  		<apex:actionsupport event="onchange" action="{!getCheckedValuesCredit}" rerender="creditTransBlock" status="panelStatus"></apex:actionsupport>             
+                 	</apex:inputCheckbox>
+                </apex:facet>
+<!--                 onclick="getCheckboxId(this.id)" -->
+            	<apex:inputCheckbox value="{!c.selected}" id="checkBox" >
+                 	<apex:actionsupport event="onchange" action="{!autoPopulate1}" rerender="creditTransBlock, test1234" status="panelStatus" oncomplete="focusOn(this.id)">
+                      <apex:param name="billPaidDate1" assignto="{!c.cred.McaApp__Date__c}" value="{!currentDate}"/>
+                      <apex:param name="balanceAmt1" assignto="{!c.cred.McaApp__Amount__c}" value="{!c.invc.McaApp__Amount_Due__c}"/>
+                 	</apex:actionsupport>                   
+            	</apex:inputCheckbox> 
+        	</apex:column>
+        	<apex:inputHidden value="{!c.cred.McaApp__Transaction__c}"/>
+        	<apex:column >
+        		<apex:facet name="header">   
+        			<apex:commandLink action="{!ViewSortedData_Receivable}" value="Receivable{!IF(sortExpression=='Name',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortName" reRender="creditTransBlock" status="panelStatus">
+            			<apex:param value="Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+        			</apex:commandLink>
+        		</apex:facet>
+       			<apex:outputField value="{!c.cred.McaApp__Receivable__c}"/>
+        	</apex:column>
+         	<apex:column headerValue="Account">
+            	<apex:outputField value="{!objTranscation.McaApp__Account__c}"/>
+        	</apex:column>
+         	<apex:column >
+            	<apex:facet name="header">   
+	                <apex:commandLink action="{!ViewSortedData_Receivable}" value="Receivable Date{!IF(sortExpression=='Date_Sent__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortSentDate" reRender="creditTransBlock" status="panelStatus">
+	                	<apex:param value="Date_Sent__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+            		</apex:commandLink>
+            	</apex:facet>
+                <apex:outputField value="{!c.invc.McaApp__Date_Sent__c}"/>
+        	</apex:column> 
+        	<apex:column headerValue="Receivable Status">
+            	<apex:outputField value="{!c.invc.McaApp__Status__c}" id="invoiceStatus"/>
+        	</apex:column>
+        	<apex:column >
+	            <apex:facet name="header">   
+	            	<apex:commandLink action="{!ViewSortedData_Receivable}" value="Receivable Amount{!IF(sortExpression=='Amount__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortRecAmt" reRender="creditTransBlock" status="panelStatus">
+	            		<apex:param value="Amount__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+	             	</apex:commandLink>
+	            </apex:facet>
+            	<apex:outputField value="{!c.invc.McaApp__Amount__c}"/>
+        	</apex:column>
+        	<apex:column >
+	            <apex:facet name="header">   
+	            	<apex:commandLink action="{!ViewSortedData_Receivable}" value="Amount Due{!IF(sortExpression=='Amount_Due__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortRecAmtDue" reRender="creditTransBlock" status="panelStatus">
+	           			<apex:param value="Amount_Due__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+	            	</apex:commandLink>
+	            </apex:facet>
+	            <apex:outputField value="{!c.invc.McaApp__Amount_Due__c}" id="invoiceDueAmount"/>
+        	</apex:column>
+	        <apex:column headerValue="Amount Paid">
+	            <apex:inputField value="{!c.cred.McaApp__Amount__c}"/> 
+	        </apex:column>
+	        <apex:column headerValue="Paid Date">
+	            <apex:inputField value="{!c.cred.McaApp__Date__c}"/>
+	        </apex:column> 
+	        <apex:column headerValue="Memo">
+	            <apex:inputField value="{!c.cred.McaApp__Memo__c}"/>
+	        </apex:column>
+    	</apex:pageBlockTable>
+    </apex:outputpanel>
+<!--         </apex:pageBlock> -->
+</apex:outputpanel> 
+<!--       End of creditTransBlock -->
+           
+<apex:outputpanel id="debitTransBlock" rendered="{!IF(blnDebitTransLineItems,true,false)}" layout="block">
+<!-- <apex:form > -->
+    <apex:outputpanel rendered="{!AND(IF(bills.size==0,true,false),IF(blnDebitTransLineItems,true,false),IF(blnCreditTransLineItems,false,true))}" layout="block">
+          <apex:outputText rendered="{!AND(IF(strAccountName!=null,true,false),IF(blnDebitTransLineItems,true,false))}">There are no Bill records to be displayed for the Account '{!strAccountName}'</apex:outputText>
+           <apex:outputText rendered="{!AND(IF(strAccountName==null,true,false),IF(blnDebitTransLineItems,true,false))}">Please select Account to display Bills</apex:outputText>
+        
+     </apex:outputpanel>
+    <!-- In our table we are displaying the cContact records -->
+    
+     <apex:outputpanel id="innerDebit" layout="block" styleClass="myClass2" rendered="{!AND(IF(bills.size>0,true,false),IF(blnDebitTransLineItems,true,false),IF(blnCreditTransLineItems,false,true))}">
+       <div align="center">
+      <apex:commandButton value="Reset" action="{!resetTransaction}"  rerender="debitTransBlock, errorPanel1" status="panelStatus"/>
+       <apex:commandButton value="Calculate Total" action="{!autopopulate}" rerender="debitTransBlock,test123" status="panelStatus"/>
+<!--         <apex:commandLink value="Expand" onclick="return expandList()" id="cmdLink" /> -->
+<!--                 	<f:ajax execute="@innerDebit" render="@innerDebit" /> -->
+       </div>
+         <apex:outputpanel id="test123" style="float:right;">Total : {!totalAmount}</apex:outputpanel> 
+        <apex:pageBlockTable value="{!bills}" var="c" id="tableDebit">
+            <apex:column >
+                <apex:facet name="header"> 
+                 <apex:inputCheckbox onclick="checkAll(this,'checkBox');" value="{!c.selected}">
+                  <apex:actionsupport event="onchange" action="{!getCheckedValues}" rerender="debitTransBlock" status="panelStatus">
+                 </apex:actionsupport>             
+                 </apex:inputCheckbox>
+                 </apex:facet>
+                 <apex:inputCheckbox value="{!c.selected}" id="checkBox" >  
+                <apex:actionsupport event="onchange" action="{!autoPopulate1}" rerender="debitTransBlock" status="panelStatus" oncomplete="focusOn(this.id)">
+                      <apex:param name="billPaidDate" assignto="{!c.debt.McaApp__Date__c}" value="{!currentDate}"/>
+                      <apex:param name="balanceAmt" assignto="{!c.debt.McaApp__Amount__c}" value="{!c.bill.McaApp__Bill_Amount_Due__c}"/>   
+                 </apex:actionsupport>                  
+                 </apex:inputCheckbox>
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header">   
+                 <apex:commandLink action="{!ViewSortedData_PayableName}" value="Payable{!IF(sortExpression=='name',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortPayName" rerender="debitTransBlock" status="panelStatus">
+                    <apex:param value="name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                 </apex:commandLink>
+                </apex:facet>
+                <apex:outputLink value="/{!c.bill.Id}" id="theLink">{!c.bill.Name}</apex:outputLink>
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header">   
+                <apex:commandLink action="{!ViewSortedData_PayableName}" value="Payable Date{!IF(sortExpression=='Payable_Date__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortPayDate" rerender="debitTransBlock" status="panelStatus">
+                 <apex:param value="Payable_Date__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                </apex:commandLink>
+            </apex:facet>
+             <apex:outputField value="{!c.bill.McaApp__Payable_Date__c}"/>
+            </apex:column>
+            <apex:column headerValue="Status">
+                <apex:outputField value="{!c.bill.McaApp__Status__c}"/>
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header">   
+                <apex:commandLink action="{!ViewSortedData_PayableName}" value="Total Payable Amount{!IF(sortExpression=='Amount_Due__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortPayAmtDue" rerender="debitTransBlock" status="panelStatus">
+                <apex:param value="Amount_Due__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!c.bill.McaApp__Amount_Due__c}"/>
+             </apex:column>
+            <apex:column >
+                <apex:facet name="header">   
+                <apex:commandLink action="{!ViewSortedData_PayableName}" value="Amount Paid{!IF(sortExpression=='Bill_Amount_Paid__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortPayAmtPaid" rerender="debitTransBlock" status="panelStatus">
+                <apex:param value="Bill_Amount_Paid__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+             </apex:commandLink>
+            </apex:facet>
+            <apex:outputField value="{!c.bill.McaApp__Bill_Amount_Paid__c}"/>
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header">   
+                <apex:commandLink action="{!ViewSortedData_PayableName}" value="Total Amount Due{!IF(sortExpression=='Bill_Amount_Due__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortPayTAmtDue" rerender="debitTransBlock" status="panelStatus">
+                <apex:param value="Bill_Amount_Due__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                </apex:commandLink>
+            </apex:facet>
+            <apex:outputPanel styleClass="dueAmountCls" >
+                <apex:outputField id="AmtDue" value="{!c.bill.McaApp__Bill_Amount_Due__c}" styleClass="dueAmountClss" />
+            </apex:outputPanel>
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header">   
+                <apex:commandLink action="{!ViewSortedData_PayableName}" value="Due Date{!IF(sortExpression=='Due_Date__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortPayDueDate" rerender="debitTransBlock" status="panelStatus">
+                <apex:param value="Due_Date__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!c.bill.McaApp__Due_Date__c}"/>
+            </apex:column>
+            <apex:column headerValue="Amount">
+                <apex:inputField id="Amt" styleClass="amntCls" value="{!c.debt.McaApp__Amount__c}" /> 
+                </apex:column>
+                <apex:column headerValue="Date">
+                    <apex:inputField value="{!c.debt.McaApp__Date__c}"/>
+                </apex:column>
+                <apex:column headerValue="Memo">
+                    <apex:inputField value="{!c.debt.McaApp__Memo__c}"/>
+                </apex:column>
+                <apex:inputHidden value="{!c.debt.McaApp__Transaction__c}"/>
+            </apex:pageBlockTable>
+         </apex:outputpanel>
+	</apex:outputpanel> 
+<!--     End of debitTransBlock -->
+
+    	<div align="center">
+	    	<apex:pageBlockButtons >           
+	             <apex:commandButton action="{!save}" value="Save" rendered="{!OR(IF(blnEditMode,true,false),IF(blnNewMode,true,false))}" />
+	             <apex:commandButton action="{!cancelEdit}" value="Cancel" rendered="{!OR(IF(blnEditMode,true,false),IF(blnNewMode,true,false))}" />
+	         </apex:pageBlockButtons> 
+         </div>
+    </apex:pageBlock>
+  </apex:form>  
+   
+</apex:page>

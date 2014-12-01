@@ -1,0 +1,80 @@
+<apex:page controller="SearchController" sidebar="false">
+    <apex:form >
+    
+        <apex:pageBlock mode="edit" id="block">
+            <apex:pageBlockSection >    
+                <apex:pageBlockSectionItem >   
+                    <apex:panelGroup >
+                        <apex:inputText value="{!searchName}" id="theInputText"/>
+                        <apex:commandButton action="{!searchRecords}" value="Search"/>
+                    </apex:panelGroup>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageMessages />
+        </apex:pageBlock>
+        
+        <apex:pageBlock mode="edit" id="leadBlock" rendered="{!NOT(OR(ISNULL(leadList),leadList.size=0))}">
+            <apex:pageBlockSection title="Leads" id="leadResult" columns="1">
+                <apex:pageBlockTable value="{!leadList}" var="lead">
+                    <apex:column value="{!lead.firstName}"/>
+                    <apex:column value="{!lead.lastName}"/>
+                    
+                    <apex:column >
+                    <apex:outputLink id="leadLink" value="/{!lead.Id}">
+                        {!lead.name}
+                    </apex:outputLink>
+                    </apex:column>
+                    
+                </apex:pageBlockTable>    
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+            
+        <apex:pageBlock mode="edit" id="accountBlock" rendered="{!NOT(OR(ISNULL(accountList),accountList.size=0))}">
+            <apex:pageBlockSection title="Accounts" id="accountResult" columns="1">
+                <apex:pageBlockTable value="{!accountList}" var="account">
+                    <apex:column value="{!account.First_Name__c}"/>
+                    <apex:column value="{!account.Last_Name__c}"/>
+                    
+                    <apex:column >
+                        <apex:outputLink id="accountLink" value="/{!account.Id}">
+                            {!account.name}
+                        </apex:outputLink>
+                    </apex:column>
+                    
+                    
+                </apex:pageBlockTable>    
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+            
+        <apex:pageBlock mode="edit" id="contactBlock" rendered="{!NOT(OR(ISNULL(contactList),contactList.size=0))}">
+            <apex:pageBlockSection title="Contacts" id="contactResult" columns="1">
+                <apex:pageBlockTable value="{!contactList}" var="contact">
+                    <apex:column value="{!contact.FirstName}"/>
+                    <apex:column value="{!contact.LastName}"/>
+                    
+                    <apex:column >
+                        <apex:outputLink id="contactLink" value="/{!contact.Id}">
+                            {!contact.name}
+                        </apex:outputLink>
+                    </apex:column>
+                    
+                </apex:pageBlockTable>    
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+            
+        <apex:pageBlock mode="edit" id="opportunityBlock" rendered="{!NOT(OR(ISNULL(opportunityList),opportunityList.size=0))}">
+            <apex:pageBlockSection title="Opportunity" id="opportunityResult" columns="1">
+                <apex:pageBlockTable value="{!opportunityList}" var="opportunity">
+                    
+                    <apex:column >
+                        <apex:outputLink id="opportunityLink" value="/{!opportunity.Id}">
+                            {!opportunity.name}
+                        </apex:outputLink>
+                    </apex:column>
+                    
+                </apex:pageBlockTable>    
+            </apex:pageBlockSection>            
+        </apex:pageBlock>
+        
+    </apex:form>   
+</apex:page>

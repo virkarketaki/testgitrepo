@@ -1,0 +1,852 @@
+<apex:page showHeader="false" standardStylesheets="false" standardController="CnP_PaaS_EVT__Event_Layout__c" extensions="CnP_PaaS_EVT.EventLayout"> 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script> 
+  <script >
+  function check(val)
+  {
+    //alert(val);
+     if(val==true)
+     {
+      $(".Submit").attr('style','display:block'); 
+     }else{
+      $(".Submit").attr('style','display:none'); 
+     }
+     
+  }  
+</script>
+<style>
+#cnp {
+            line-height:25px;
+            color:#CCC;
+            font-family:Arial, Helvetica, sans-serif;
+            font-size:11px;
+            max-width:700px;
+            text-align:center;
+            margin:0 auto;
+    
+    } 
+</style>
+  <apex:form >
+ <apex:messages />
+<apex:outputPanel id="DisplayPage">
+<apex:pageBlock rendered="{!if(CreateALayout.CnP_PaaS_EVT__Theme_Selection__c=='Standard Theme',true,false)}"> 
+    
+  <style>
+@charset "utf-8";
+/* CSS Document */
+
+/* Default Element Styles */
+body{
+   
+    background-color:{!CreateALayout.CnP_PaaS_EVT__Page_background__c}
+}
+
+#Header img {
+     border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+     max-width: 640px;
+     -o-border-radius: 10px;
+     -khtml-border-radius: 10px;
+}
+/* ==============================*/
+/* Main */
+#Main{
+    width:640px;
+   /* height:1000px;*/
+  
+    margin-left:auto;
+    margin-right:auto;
+}
+/* ==============================*/
+
+/* Header */
+#Header{
+  
+    width:100%;
+  /*  height:120px;*/
+    float:left;
+   
+    border:1px solid {!CreateALayout.CnP_PaaS_EVT__Page_Section_Border_Color__c};
+    border-radius:10px;
+    moz-border-radius:10px;
+    webkit-border-radius:10px;
+    -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+#HeaderLeft{
+    float:left;
+    width:640px;
+    /*height:120px;*/
+}
+
+.Title_Header {
+    float:left;
+    width:640px;
+   /* height:120px;*/
+    font-size:25px;
+    font-weight:bold;
+   /* position:absolute;*/
+    
+}
+.DownloadAgenda{ 
+     color: #000000;
+    float: right;
+    font-family: Tahoma;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 24px;
+    margin-bottom: 5px;
+    padding: 1px 4px 1px 0;
+    border-radius:4px;
+    moz-border-radius:4px;
+    webkit-border-radius:4px;
+    background: -moz-linear-gradient(center top , #FFFFFF, #F2F2F2) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F2F2F2));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F2F2F2');
+ 
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+   
+}
+.DownloadAgenda img{
+    color: #000000;
+    font-family: Tahoma;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 24px;
+}
+div.DownloadAgenda:hover{
+        background: #FFFFFF; 
+        color:#000000;
+        cursor:pointer;
+     
+         background: -moz-linear-gradient(center top , #F2F2F2, #FFFFFF) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, left bottom, from(#F2F2F2), to(#FFFFFF));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F2F2F2', endColorstr='#FFFFFF');
+}
+.Caption{
+    float:left;
+    /*width:200px;*/
+   
+    
+    height:20px;
+    
+    position:absolute;
+    padding:15px;
+}
+
+#HeaderRight{
+    float:left;
+    width:400px;
+  /*  height:120px;*/
+    margin-left:200px;
+    padding:15px;
+    position:absolute;
+    color:Red;
+    /*font-size:20px;*/
+}
+/* ==============================*/
+
+/* ContentArea */
+#ContentArea{
+    float:left;
+       width:620px;
+       height:auto;
+    background-color:{!CreateALayout.CnP_PaaS_EVT__Main_Section_Background_Color__c};
+       border:1px solid :{!CreateALayout.CnP_PaaS_EVT__Main_Section_Background_Color__c};
+    border-radius:10px;
+    moz-border-radius:10px;
+    webkit-border-radius:10px;
+    margin-top:5px;
+    padding:10px;
+       -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+#ContentTop{
+   
+                    float:left;
+                    width:97%;
+                    height:auto;
+                    padding-top:10px;
+                   
+                    text-align:left;
+                   
+                    padding-left:20px;
+                    border:1px solid {!CreateALayout.CnP_PaaS_EVT__Title_Section_Border_Color__c};
+                    background-color:{!CreateALayout.CnP_PaaS_EVT__Page_header__c};
+                    margin-bottom:10px;
+                    border-radius:10px;
+                    moz-border-radius:10px;
+                    webkit-border-radius:10px;
+                    padding-bottom:10px;
+}
+#ContentBot{   
+                    float:left;
+                    width:97%;
+                    height:auto;                 
+                    text-align:left;                    
+                    background-color:{!CreateALayout.CnP_PaaS_EVT__Term_Background_color__c};
+                    padding: 10px 14px 10px 5px;
+                    margin-bottom:10px;
+                    border-radius:10px;
+                    moz-border-radius:10px;
+                    webkit-border-radius:10px;
+}
+
+/*#ContentBot span {
+  float:none;
+  display:block;
+
+}*/
+#ContentTop1{
+   
+                    float:left;
+                    width:100%;
+                    height:auto;
+                    padding-top:10px;
+                    text-align:left;
+                   
+                   /* padding-left:10px;*/
+                
+                    background-color:{!CreateALayout.CnP_PaaS_EVT__Page_header__c};
+                   /* margin-bottom:10px;
+                    border-radius:10px;
+                    moz-border-radius:10px;
+                    webkit-border-radius:10px;*/
+}
+
+
+              
+
+            
+           
+        
+        /* Right */
+        #Right{
+        }
+        
+        .EvtInfo{
+            
+        }
+        
+        .EvtInfo li{
+            list-style:none;
+            list-style-type:none;
+            margin:0px;
+            line-height:20px;
+        }
+        
+        .DtlAttch{
+            padding-left:40px;
+        }
+        
+        .BrochureInfo{
+            float:left;
+            margin:10px;
+        }
+        
+        #ContentBott{
+            width:100%;
+            height:auto;
+            float:left;
+            margin:10px 0px;
+             border:1px solid {!CreateALayout.CnP_PaaS_EVT__Main_Section_Border_Color__c};
+             -webkit-border-radius: 8px 8px 8px 8px;
+                -moz-border-radius: 8px 8px 8px 8px;
+              border-radius: 8px 8px 8px 8px;
+        }
+        
+        .FormTitle{
+            width:99%;
+            height:20px;
+            background-color:#82cfaf;
+            color:#fff;
+            text-align:left;
+            padding:5px 0px 0px 10px;
+        }
+        
+        .FormFields{
+            width:600px;
+           /* margin:20px 100px;*/
+            border:0px;
+        }
+        
+        .FormFields span{
+            width:220px;
+            height:10px;
+            /*float:left;*/
+        }
+        
+        .FormFields label{
+            margin:5px 0px;
+            float:left;
+            width:400px;
+        }
+        
+        .FormFields label.Slct{
+            width:220px;
+        }
+        
+        .FormFields select{
+            margin:5px 0px;
+            width:155px;
+        }
+        
+        .FormFields input{
+            /*width:150px;*/
+            
+        }
+        
+        .Submit {
+             border-radius: 0.5em 0.5em 0.5em 0.5em;
+
+            cursor: pointer;
+            display: inline-block;
+            margin: 0 2px 0 10px;
+            outline: medium none;
+            padding: 5px;
+            text-align: center;
+            text-decoration: none;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+            vertical-align: baseline;
+            /*width:100%;*/
+            color:{!CreateALayout.CnP_PaaS_EVT__Action_button_text__c};
+            font-size:{!CreateALayout.CnP_PaaS_EVT__Button_font_size__c}px;
+            font-weight:bold;
+            font-family:{!CreateALayout.CnP_PaaS_EVT__Button_font_family__c};
+           /* background-color:{!CreateALayout.CnP_PaaS_EVT__Action_button_background__c};*/
+           background: -moz-linear-gradient(center top , #F2F2F2, #FFFFFF) repeat scroll 0 0 transparent;
+          background: -webkit-gradient(linear, left top, left bottom, from(#F2F2F2), to(#FFFFFF));
+          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F2F2F2', endColorstr='#F2F2F2')
+         
+           
+        }
+        
+        
+        .Submit:hover {
+        background: -moz-linear-gradient(center top , #FFFFFF, #DCDCDC) repeat scroll 0 0 transparent;
+        }
+        
+        .Submit input{
+            background-color:#fbfbfb;
+            width:20px;
+            color:#fb2828;
+            font-weight:bold;
+            border:1px solid #999;
+            border-radius:5px;
+            box-shadow:1px 2px 5px #999999;;
+            moz-box-shadow:1px 2px 5px #999999;
+            webkit-box-shadow:1px 2px 5px #999999;
+        }
+        
+        #EventMgmt{
+            margin-left:auto;
+            margin-right:auto;
+        }
+        
+        .FldTitle{
+            font-weight:bold;
+            color:#fb2828;
+            margin:0px 30px;
+        }
+        /* ==============================*/
+
+
+/* ==============================*/
+#Footer{
+   width:612px;
+    padding:10px;
+          padding-left:20px;
+                margin-top:5px;
+                border-radius:10px;
+                moz-border-radius:10px;
+                webkit-border-radius:10px;
+          /* height:50px;*/
+           float:left;
+    
+    
+    background-color:{!CreateALayout.CnP_PaaS_EVT__Footer_background__c}; 
+   /* {!CreateALayout.CnP_PaaS_EVT__Footer_Text__c} */
+    border:1px solid {!CreateALayout.CnP_PaaS_EVT__Footer_Border_Color__c};
+     -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+#Footer a {
+    color:#999;
+}
+
+#Footer a:hover {
+    text-decoration:none;
+}
+/* Default SF Class Overwrites */
+.Title img{
+   
+    float:left;
+   /* border:0px solid #fff;*/
+   /* border-radius:10px;
+    moz-border-radius:10px;
+    webkit-border-radius:10px;*/
+}
+
+#SummaryTable {
+      background: -moz-linear-gradient(center top , #E6E6E6, #AAA) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#AAA));
+     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#E6E6E6', endColorstr='#AAAAAA'); 
+}
+.DiscountBar, .DiscountBar td{
+    background: -moz-linear-gradient(center top , #FDE9D9, #FC6) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FDE9D9), to(#FC6));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FDE9D9', endColorstr='#FED17B');  
+    color: #666666;
+    font-weight: bold;
+}
+.headerrow{
+background-color: #D9D9D9;
+   /* border-bottom: 1px solid #C0C0C0;*/
+    color: #000000;
+    line-height: 25px;
+    
+}
+.ChildRow1{
+/*background-color: #FFE096;*/
+     
+      
+}
+.ChildRow2{
+background-color: #FF825C;
+}
+.detailList{
+    border-collapse: collapse;
+    font-family: 'Arial';
+    font-size: 12px;
+    text-align: left;
+    width:70%;
+    margin-left:3px;
+}
+.detailList tr td {
+    padding-top:5px;
+    vertical-align:top;
+    line-height:17px;
+
+
+}
+td.last  {
+   padding-left:25px;
+
+}
+.FormFields td.last {
+   padding-left:0;
+
+}
+
+.data2Col .detailList, .FormFields .detailList {
+  border:none;
+
+}
+.data2Col .detailList td.last, .FormFields .detailList {
+padding-left:0px;
+  border:none;
+
+}.data2Col .detailList input[type=text], .FormFields .detailList [type=text] {
+   box-shadow: 0 0.5px 3px rgba(0, 0, 0, 0.2);
+   height:20px;
+   margin:5px 0 5px 3px;
+   border: 1px solid #CCCCCC;
+   background: -moz-linear-gradient(center top , #F7F7F7, #FFFFFF) repeat scroll 0 0 transparent;
+  background: -webkit-gradient(linear, left top, left bottom, from(#F7F7F7), to(#FFFFFF));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F7F7F7', endColorstr='#FFFFFF');
+
+}
+.data2Col .detailList textarea, .FormFields .detailList textarea{
+   box-shadow: 0 0.5px 3px rgba(0, 0, 0, 0.2);
+   margin:5px 0 5px 3px;
+    border: 1px solid #CCCCCC;
+   background: -moz-linear-gradient(center top , #F7F7F7, #FFFFFF) repeat scroll 0 0 transparent;
+  background: -webkit-gradient(linear, left top, left bottom, from(#F7F7F7), to(#FFFFFF));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F7F7F7', endColorstr='#FFFFFF');
+}
+.data2Col .detailList radio,.FormFields .detailList radio{
+
+   margin:0px 0 0px 3px;
+  border: 1px solid #CCCCCC;
+  background: -moz-linear-gradient(center top , #F7F7F7, #FFFFFF) repeat scroll 0 0 transparent;
+  background: -webkit-gradient(linear, left top, left bottom, from(#F7F7F7), to(#FFFFFF));
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F7F7F7', endColorstr='#FFFFFF');
+
+}
+.data2Col span{
+  line-height:25px;
+}
+/* Summary Page */
+.summaryPage {
+ margin-top:5px;
+
+}
+.summaryPage .first {
+    border:0px;
+    padding-top:0px;
+    font-weight:bold;
+}
+.summaryPage .detailList{
+
+    padding-top:0px;
+    font-weight:normal;
+}
+.summaryPage .data2Col {
+    padding-top:0px;
+    border:0px;
+}
+.summaryPage .data2Col .dataCell  {
+    border:0px;
+    padding:0px;
+    font-weight:normal;
+
+}
+.summaryPage .last {
+    padding-left:0px;
+
+}
+.summaryPage .data2Col .list {
+     border:0px;
+    padding:0px;
+        font-weight:normal;
+}
+.summaryPage .headerRow   {
+    border:0px;
+    padding:0px;
+
+}
+.summaryPage .labelCol {
+   padding:0px;
+   text-align:right;
+   width:508px;
+
+}
+.summaryPage .data2Col {
+   padding:0px;
+   text-align:right;
+ }
+ 
+#AttendeeForm .detailList .labelCol{
+   
+   width:170px;
+   max-width:300px;
+   
+
+}
+
+#AttendeeInfo .labelCol {
+    width: 132px;
+     max-width:300px;
+
+}
+.requiredBlock {
+      background-color: #CC0000;
+    bottom: 1px;
+    height: 27px;
+    left: -4px;
+    position: absolute;
+    top: 4px;
+    width: 3px;
+}
+}
+.requiredInput {
+height:100%;
+position:relative;
+}
+.reqvalue{
+    color:red;   
+    float: right;
+    margin-left: 10px;
+    text-align: right;
+}
+
+
+.requiredInput {
+height:100%;
+position:relative;
+}
+
+.test1{
+    float: right;
+    margin-right: 2px;
+}
+
+/* ==============================*/
+                 /*List events style*/
+.Box
+{
+    /*padding-top:100px;*/
+   /* padding-left:46px;*/
+   /* width:500px;*/
+     width:619px;
+   /* height:250px;*/
+    float:left;
+    font-family:'Arial';
+    border-radius:8px;
+    moz-border-radius:8px;
+    webkit-border-radius:8px;
+    
+}
+
+.t1
+{
+    font-size:16px;
+   // color:#006699;
+    text-align:left;
+   /* line-height:44px;*/
+   padding-left:10px;
+       
+}
+
+.Box .Top
+{
+    float:left;
+    display:block;
+   /* width:522px;*/
+     width:620px;
+   /* height:43px;*/
+}
+
+.Top .T-Left
+{
+    float:left;
+    width:11px;
+ 
+    background-repeat:no-repeat;
+    background-position:left;
+    height:43px;
+}
+
+.Top .Title1
+{
+    /*width:500px;*/
+    
+   width: 620px;
+   
+   // background-repeat:repeat-x;
+    background-color:{!CreateALayout.CnP_PaaS_EVT__Section_titleheader_background__c};
+  
+    background-repeat:repeat-x;
+    /* height:44px;*/
+    float:left;
+    -webkit-border-radius: 8px 8px 0px 0px;
+    -moz-border-radius: 8px 8px 0px 0px;
+    border-radius: 8px 8px 0px 0px;
+     /*   padding : 5px;
+            line-height:30px; */
+}
+.Top .Title1 h3 {
+   
+    padding: 8px 0 8px 10px;
+    margin:0px;
+
+}
+.Top .T-Right
+{
+    width:11px;
+    height:43px;
+    float:left;
+   
+    background-repeat:no-repeat;
+    background-position:right;
+}
+
+.ContMiddle
+{
+   /* width:500px;*/
+    width:600px;
+   /* height:250px;*/
+    float:left;
+   /* border-left:1px solid #e4e4e4;
+    border-right:1px solid #e4e4e4;*/
+    background-color:{!CreateALayout.CnP_PaaS_EVT__Section_Headers_background__c};
+   // background-color:#ffffff; 
+  //  border-top:1px solid {!CreateALayout.CnP_PaaS_EVT__Main_Section_Border_Color__c};
+   /* border-left:1px solid {!CreateALayout.CnP_PaaS_EVT__Main_Section_Border_Color__c};
+      border-right:1px solid {!CreateALayout.CnP_PaaS_EVT__Main_Section_Border_Color__c};
+    border-bottom:1px solid {!CreateALayout.CnP_PaaS_EVT__Main_Section_Border_Color__c};*/
+    -webkit-border-radius: 0px 0px 8px 8px;
+    -moz-border-radius: 0px 0px 8px 8px;
+    border-radius: 0px 0px 8px 8px;
+    padding:10px;
+    font-size:11px;
+   /* line-height:16px;*/
+}
+
+.Box .Bottom
+{
+   /* width:522px;*/
+    width:620px;
+    float:left;
+    height:17px;
+}
+
+.Bottom .B-Left
+{
+    float:left;
+    width:11px;
+    height:17px;
+    
+    background-repeat:no-repeat;
+    background-position:left;
+}
+
+.Box .B-Middle
+{
+    /*width:500px;*/
+      width:598px;
+    height:16px;
+    border-bottom:1px solid #e4e4e4;
+    background-color:#fff;
+    float:left;
+}
+
+.Box .B-Right
+{
+   
+    background-repeat:no-repeat;
+    background-position:right;
+    float:left;
+    height:17px;
+    width:11px;
+}
+.term{
+position:relative;float:left;
+margin-right: 10px;
+
+}
+.socialIcons{
+  float:left;
+  margin-top:10px;
+
+}
+ 
+</style>
+<script>
+   $(document).ready(function(){
+          var title=$(".Title").text();
+          $(".Title").html(title);
+          var img=$(".backgroundimageclass").text();
+          $(".backgroundimageclass").html(img);
+          var b_image=$(".backgroundimageclass img").attr('src');          
+          $('body').css('background-image', 'url('+b_image+')'); 
+          var information=$(".information").text();
+          $(".information").html(information);
+          var t1=$(".t1").text();
+          $(".t1").html(t1);
+          var middlecontent=$(".middlecontent").text();
+          $(".middlecontent").html(middlecontent);
+          var cont=$(".cont").text();
+          $(".cont").html(cont);
+          var footercont=$(".footercont").text();
+          $(".footercont").html(footercont);
+          $('#Header img').removeAttr('width');
+          $('#Header img').removeAttr('height');  
+   })
+</script>
+
+
+ <title>{!CreateALayout.Event_name__r.CnP_PaaS_EVT__Event_title__c}</title>
+<apex:outputLabel value="{!CreateALayout.CnP_PaaS_EVT__Upload_background_image__c}" style="display:none" styleClass="{!IF(CreateALayout.CnP_PaaS_EVT__Show_Page_Image__c==true ,'backgroundimageclass','nontest')}"/>
+<div id="Main">
+
+  <div id="Header" style="display:{!IF(CreateALayout.CnP_PaaS_EVT__Display_Banner__c==true,'block','none')}">
+    <div id="HeaderLeft"> <span class="Title">
+           <apex:outputtext value="{!CreateALayout.CnP_PaaS_EVT__Upload_banner__c}" style="display:none" />  
+    </span></div>
+  
+  </div>
+ 
+  <div id="ContentArea">
+  <div id="Right">
+    
+     <div align="right" class="DownloadAgenda" style="display:{!IF(CreateALayout.CnP_PaaS_EVT__Show_ajenda__c==true,'block','none')}">
+         <div style="margin-top:2px;float:left;"><apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__pdf_icon)}" /></div>{!if(CreateALayout.Event_name__r.Agenda_Display_Name__c!="",CreateALayout.Event_name__r.Agenda_Display_Name__c,'Download Agenda')}        
+        
+     </div>
+  <div id="ContentTop"  style="display:{!IF(CreateALayout.Display_Title_Information__c==true,'block','none')}">  
+     <div class="information">
+         <apex:outputtext value="{!CreateALayout.CnP_PaaS_EVT__Title_and_information__c}" style="display:none" /> 
+                
+     </div>
+        
+   </div>
+        <div id="ContentBott">
+           <div class="Box">
+                       <div class="Top">
+                                <!-- <div class="T-Left"></div>-->
+                                 <div class="Title1" style="display:{!IF(CreateALayout.Display_Title__c==true,'block','none')}">
+                                       <h3 class="t1"><apex:outputtext value="{!CreateALayout.CnP_PaaS_EVT__Section_Title__c}" style="display:none" /></h3>
+                                 </div>  
+                                <!-- <div class="T-Right"></div> -->
+                       </div>
+                       <div class="ContMiddle">
+                       <div class="middlecontent" style="display:{!IF(CreateALayout.Display_Description__c==true,'block','none')}">
+                                <apex:outputtext value="{!CreateALayout.CnP_PaaS_EVT__Section_Description__c}" style="display:none" />
+                        </div>        
+                       </div>
+                       <!--<div class="Bottom">
+                                    <div class="B-Left"></div>
+                                    <div class="B-Middle"></div>
+                                    <div class="B-Right"></div>
+                       </div>-->
+                       
+               </div>  
+                  
+        </div>
+        <div id="ContentBot" style="padding-bottom:10px;display:{!IF(CreateALayout.Show_terms_conditions__c==true,'block','none')}">      
+                <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(CreateALayout.CnP_PaaS_EVT__Acknowledgement_mandatory__c==true,'block','none')}"/>                           
+                <span class="cont">
+                <apex:outputtext value="{!CreateALayout.CnP_PaaS_EVT__Terms_conditions__c}" style="display:none" /> </span>              
+        </div>
+       <apex:commandButton value="{!CreateALayout.CnP_PaaS_EVT__Button_Label__c}"  styleClass="Submit test1" id="Submit"  style="display:{!IF(CreateALayout.CnP_PaaS_EVT__Acknowledgement_mandatory__c==true,'none','block')}" >
+                                  
+       </apex:commandButton>
+  </div>
+  
+  </div>
+  
+      <div id="Footer" style="display:{!IF(CreateALayout.CnP_PaaS_EVT__Display_Footer__c==true,'block','none')}">
+            <span class="footercont"><apex:outputtext value="{!CreateALayout.CnP_PaaS_EVT__Footer_information__c}" style="display:none" /></span>
+       </div> 
+  </div>
+
+  
+</apex:pageBlock>
+  
+  </apex:outputPanel>
+ 
+  </apex:form>
+  <apex:pageBlock rendered="{!if(CreateALayout.CnP_PaaS_EVT__Theme_Selection__c=='Custom Theme',true,false)}">
+         <style>
+         <apex:outputtext value="{!CreateALayout.CnP_PaaS_EVT__Engine_CSS__c}"/>     
+        </style>
+   <apex:form >  
+   <apex:outputtext value="{!pdfcontent[0]}" escape="false" rendered="{!pdf}"/>
+    <apex:outputLink value="" target="_blank" style="text-decoration:none">
+              <div align="right" class="DownloadAgenda"  style="display:{!IF(pdfshow=='true','block','none')}">
+                    <div style="margin-top:2px;float:left;"><apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__pdf_icon)}" /></div>{!if(pdfshow=='true',CreateALayout.Event_name__r.CnP_PaaS_EVT__Agenda_Display_Name__c,'Download Agenda')}
+            
+              </div>
+    </apex:outputLink>
+    <apex:outputtext value="{!themecontent[0]}" escape="false" />
+    <div>
+   <apex:inputCheckbox id="term" styleClass="term" onclick="return check(this.checked);" style="display:{!IF(re==true && tc==true,'block','none')}"/>                           
+                <apex:outputtext value="{!termcontent[0]}" escape="false" />              
+    </div>
+   
+   <apex:commandButton value="Continue"  styleClass="Submit test1" id="Submit" rendered="{!ck}" style="display:{!IF(re==true,'none','block')}">
+                                   
+   </apex:commandButton>
+   <apex:outputtext value="{!themecontent[1]}" escape="false" /> 
+   </apex:form> 
+  </apex:pageBlock>
+  <div id="cnp">Powered by Click &amp; Pledge</div>
+</apex:page>

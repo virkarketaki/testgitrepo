@@ -1,0 +1,131 @@
+<apex:page standardController="Opportunity" extensions="McaApp.LoanCalculatorController" sidebar="false" showHeader="false" >
+    <style type="text/css">
+    body{
+    color:#039;
+    }
+        .roundtable { 
+            width:500px;
+            border: 1px solid #ddd;
+            border-collapse: separate;
+            border-radius: 0px;
+            border-spacing: 0px;
+            background: #F4F7FB;
+            color:#039;
+        }
+        .roundtable th
+        {
+            width:80%;
+            padding: 8px;
+            font-weight: normal;
+            color: #039;
+            background: #DEE3E8;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 00px;
+            border-bottom-left-radius: 0 px;
+            border-bottom-right-radius: 0 px;
+            height: 10px;
+        }
+        p{ 
+            width:500px;
+            top:0; left:0; padding: 5px 10px;
+            color:white;   
+            text-align:justify;
+            font-family: "Open Sans", Arial, Helvetica, sans-serif; font-size: 20px;  font-weight: bold;
+            letter-spacing:2pt;word-spacing:10pt;line-height: 1em;
+            background: #4A597A!important; 
+            border-radius: 10px;
+        }
+    </style>
+    <script language="JavaScript" type="text/javascript">
+        function ClosePage(){
+            <!-- window.opener.location.href="/{!$CurrentPage.parameters.id}"; -->
+            window.top.close();
+        }
+    </script>
+    <form onload="check();">
+    </form>
+            <center style="width:100%; font-size:12px;">
+            <apex:form ><apex:commandButton value="Close" oncomplete="javascript:ClosePage()" style="height:25px; width:48px;"  /></apex:form>
+            <p> BUSINESS LOAN ESTIMATION</p>
+            <table border="0"  cellpadding="3" cellspacing="2" style=" font-size:12px; font-weight:bold; " class="roundtable">
+                <tr>
+                    <th  ><b><u>LOAN TERM AND RATE:</u> </b></th>
+                    <th  ></th>
+                </tr>
+                <tr>
+                    <td  >Loan Term: </td>
+                    <td  >{!term}</td>
+                </tr>
+                <tr>
+                    <td  >Interest Rate</td>
+                    <td  >{!rate} %</td>
+                </tr>
+             </table><br/>
+             <table border="0"  cellpadding="3" cellspacing="2" style=" font-size:12px; font-weight:bold; " class="roundtable">
+                <tr>
+                    <th  ><b><u>LOAN PROCEEDS:</u> </b></th>
+                    
+                    <th  ></th>
+                </tr>
+                <tr>
+                    <td  >Loan Amount: </td>
+                    <td  >$<apex:outputtext value="{0,number ,  #,###,###.00}">
+                       <apex:param value="{!VALUE(amount)}"></apex:param>
+    </apex:outputtext></td>
+                </tr>
+                <tr>
+                    <td  >Origination Fee:</td>
+                    <td  >$<apex:outputtext value="{0,number ,  #,###,###.00}">
+                       <apex:param value="{!VALUE(closing_fee)}"></apex:param>
+    </apex:outputtext></td>
+                </tr>
+                <tr>
+                    <td  ><b>Net Loan Amount:</b></td>
+                    <td  >$<apex:outputtext value="{0,number ,  #,###,###.00}">
+                       <apex:param value="{!VALUE(netAmount)}"></apex:param>
+    </apex:outputtext></td>
+                </tr>
+             </table><br/>
+             
+             <table border="0"  cellpadding="3" cellspacing="2" style=" font-size:12px; font-weight:bold; " class="roundtable">
+                <tr>
+                    <th  ><b><u>DAILY PAYMENT</u> </b></th>
+                    
+                    <th  ></th>
+                </tr>
+                <tr>
+                    <td  >Number of Payments: </td>
+                    <td  >{!pay_count}</td>
+                </tr>
+                <tr>
+                    <td  >Principal and Interest:</td>
+                    <td  >$ <apex:outputtext value="{0,number ,  #,###,###.00}">
+                       <apex:param value="{!VALUE(daily_prin_int)}"></apex:param>
+    </apex:outputtext></td>
+                </tr>
+                <tr>
+                    <td  >Loan Guaranty Fee:</td>
+                    <td  >$ <apex:outputtext value="{0,number ,  #,###,###.00}">
+                       <apex:param value="{!VALUE(daily_gfee)}"></apex:param>
+    </apex:outputtext></td>
+                </tr>
+                <!--<tr>
+                    <td  ><b>Daily Payment(A+B):</b></td>
+                    <td  ></td>
+                </tr>-->
+                <tr>
+                    <td  ><b>Loan Guaranty Fee 2:</b></td>
+                    <td  >$ <apex:outputtext value="{0,number ,  #,###,###.00}">
+                       <apex:param value="{!VALUE(daily_gfee_2 )}"></apex:param>
+    </apex:outputtext></td>
+                </tr>
+                 <!--<tr>
+                    <td  ><b>Total Payback:</b></td>
+                    <td  ></td>
+                </tr>-->
+             </table><br/>
+            
+            </center>
+    <!--Term: <apex:outputField value="{!Opportunity.Term_Requested__c}"/> <br/>
+    Payment Amount: <apex:outputField value="{!Opportunity.Amount_Requested__c}"/> -->
+</apex:page>

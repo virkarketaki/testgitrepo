@@ -1,0 +1,93 @@
+<apex:page standardController="Lead" extensions="McaApp.LeadLoanCalculatorController" sidebar="false" showHeader="false" >
+    <style type="text/css">
+        .roundtable { 
+            border: 1px solid #ddd;
+            border-collapse: separate;
+            border-radius: 10px;
+            border-spacing: 0px;
+            background: #e8edff;
+        }
+        .roundtable th
+        {
+            padding: 8px;
+            font-weight: normal;
+            color: #039;
+            background: #b9c9fe;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+            border-bottom-left-radius: 10 px;
+            border-bottom-right-radius: 10 px;
+            height: 10px;
+        }
+        p{ 
+            top:0; left:0; padding: 5px 10px;
+            color:white;   
+            text-align:justify;
+            font-family: "Open Sans", Arial, Helvetica, sans-serif; font-size: 24px;  font-weight: bold;
+            letter-spacing:2pt;word-spacing:10pt;line-height: 1em;
+            background: #1E90FF!important; 
+            border-radius: 10px;
+        }
+    </style>
+    <script language="JavaScript" type="text/javascript">
+        function ClosePage(){
+            <!-- window.opener.location.href="/{!$CurrentPage.parameters.id}"; -->
+            window.top.close();
+        }
+    </script>
+    <center style="width:100%; font-size:12px; font-weight:bold;"><p>  Loan Calculator </p></center>
+    <form onload="check();">
+    </form>
+    <apex:form >
+        <apex:pageBlock >
+                    <apex:pageMessages />
+            <apex:pageBlockButtons style="height:40px;font-weight:bold;">
+                <apex:commandButton value="Close" oncomplete="javascript:ClosePage()" style="height:25px; width:48px;"  />
+            </apex:pageBlockButtons>
+            <table border="0"  cellpadding="3" cellspacing="2" style="width:80%; font-size:12px; font-weight:bold; margin-left:10%; " class="roundtable">
+                <tr>
+                    <td  >Loan Amount </td>
+                    <td  > : </td>
+                    <td  >${!amount}</td>
+                </tr>
+                <tr>
+                    <td  >Origination Fee</td>
+                    <td  > : </td>
+                    <td  >{!closing_fee}</td>
+                </tr>
+                <tr>
+                    <td  >Daily Gfee (Loan Guaranty Fee – Lower Limit)</td>
+                    <td  > : </td>
+                    <td  >{!daily_gfee}</td>
+                </tr>
+                <tr>
+                    <td  >Daily Gfee2 (Loan Guaranty Fee – Upper Limit)</td>
+                    <td  > : </td>
+                    <td  >{!daily_gfee_2}</td>
+                    <tr>
+                    <td  >daily_prin_int (The daily loan principal including interest and excluding Guaranty Fee. <br/>Clients can use the lower and upper Guaranty Fee values to show the total payment range.)</td>
+                    <td  > : </td>
+                    <td  >{!daily_prin_int}</td>
+                </tr>
+                <tr>
+                    <td  >Pay Count (Total number of Loan Payments.)</td>
+                    <td  > : </td>
+                    <td  >{!pay_count}</td>
+                </tr>
+                <tr>
+                    <td  >Rate (The loan's interest rate)</td>
+                    <td  > : </td>
+                    <td  >{!rate}</td>
+                </tr>
+                <tr>
+                    <td  >Term (Term of Loan. 6 or 12 Months)</td>
+                    <td  > : </td>
+                    <td  >{!term}</td>
+                </tr>
+                </tr>
+            </table>
+        </apex:pageBlock>
+    </apex:form> 
+    <!--Term: <apex:outputField value="{!Opportunity.Term_Requested__c}"/> <br/>
+    Payment Amount: <apex:outputField value="{!Opportunity.Amount_Requested__c}"/> -->
+</apex:page>

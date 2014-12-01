@@ -1,0 +1,8 @@
+<apex:page standardController="case" extensions="CreateNewCaseController">
+
+    <flow:interview name="Create_Case" interview="{!caseFlow}" finishLocation="{!FinishPage}">
+        <apex:param name="sub" value="hard coded subject"/>
+ <!--       <apex:outputLabel value="case.Contact"/> -->
+ <!--       <apex:include pageName="demoPage"/> -->
+    </flow:interview>
+</apex:page>

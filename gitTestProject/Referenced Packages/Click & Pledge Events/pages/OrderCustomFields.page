@@ -1,0 +1,138 @@
+<apex:page standardController="CnP_PaaS_EVT__Custom_fields__c" extensions="CnP_PaaS_EVT.CustomFields">
+<apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/demos/demos.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/themes/base/jquery.ui.all.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/jquery-1.5.1.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/ui/jquery.ui.core.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/ui/jquery.ui.widget.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/ui/jquery.ui.mouse.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JqueryUi, '/development-bundle/ui/jquery.ui.sortable.js')}"/>
+
+<style>
+    #classtable {cursor: pointer;padding: 0.4em; padding-left: 1.5em; font-size: 1.2em; height: 18px;border-top: 1px solid #D4DADC;border-bottom: 1px solid #D4DADC;border-right: 1px solid #D4DADC;border-left: 1px solid #D4DADC;}
+    #classtable classspan {width:50%}
+    #sortable { list-style-type: none; margin: 0; padding: 0; width: 100%; background-color:white;border:1px 1px 1px 1px;}
+    #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
+    #sortable li span { position: absolute; margin-left: -1.3em; }
+    </style>
+    <script>
+  
+    
+
+    $(function() {
+        $( "#sortable" ).sortable();
+        $( "#sortable" ).disableSelection();
+        
+    });
+    
+    function SaveData(){
+    var result = $('#sortable').sortable('toArray');
+    //alert(result.length);
+    var ResultSet="";
+    for(i = 0; i < result.length; i++){
+    ResultSet+=result[i]+",";
+}
+    //alert(ResultSet);
+    if(ResultSet==""){alert("Please select value from drop down");}
+    else{
+    SendResult(ResultSet);
+   }
+    }
+    
+    function LoadFunction(){
+//alert('naresh');
+window.location.reload();
+}
+function testing()
+    {
+        // alert('testing');
+         $(".submitbutton").attr('style','display:none'); 
+    }
+    </script>
+
+<apex:form id="OrderFields">
+<apex:outputpanel id="DisplayReorder">
+        <apex:pageBlock title="Order the Custom Fields">
+                <apex:pageBlockButtons >
+                        <apex:outputLabel value="Submit" styleClass="btn submitbutton" onclick="SaveData()"/>
+                         <apex:outputLink value="/{!backid}" styleClass="btn" style=" text-decoration: none;" >Back</apex:outputLink>
+                        <apex:actionFunction id="SendResult" name="SendResult" action="{!saveGroup}" reRender="jsvalues" oncomplete="testing()">
+                                <apex:param name="firstParam" assignTo="{!resultset}" value="" />
+                        </apex:actionFunction>
+                        
+                </apex:pageBlockButtons>
+                <apex:pageblocksection columns="1">
+                <apex:pageblocksectionitem rendered="{!IF(EventName!=null,true,false)}">
+                <apex:outputlabel value="Event Name"/>
+                <apex:outputtext value="{!Eventname}" />
+                </apex:pageblocksectionitem>
+                <apex:pageblocksectionitem rendered="{!IF(OrderEventName!=null,true,false)}">
+                <apex:outputlabel value="Event Name"/>
+                <apex:outputtext value="{!OrderEventName}" />
+                </apex:pageblocksectionitem>
+                <apex:pageblocksectionitem rendered="{!IF(RegistrationLevelName!=null,true,false)}">
+                <apex:outputlabel value="Registration Level Name"/>
+                <apex:outputtext value="{!RegistrationLevelName}" />
+                </apex:pageblocksectionitem>
+                <apex:pageblocksectionitem >
+                <apex:outputlabel value="Reorder" />
+                <apex:outputpanel >
+                 <apex:selectradio id="chooseReorder" value="{!ReorderRadio}">
+                 <apex:actionSupport event="onchange"/> 
+                 <apex:selectOption itemValue="Reorder Sections" itemLabel="Sections"/>                               
+                 <apex:selectOption itemValue="Reorder Questions" itemLabel="Questions"/>
+                 
+                 </apex:selectradio>
+                 </apex:outputpanel>
+                 </apex:pageblocksectionitem>
+                  </apex:pageblocksection>
+                <apex:pageBlockSection id="CustomOrder" title="{!ReorderRadio}" collapsible="false" columns="1">
+                        <apex:pageBlockSectionItem >
+                        
+                        <apex:outputPanel id="jsvalues"> 
+                                <apex:outputPanel rendered="{!ReorderRadio=='Reorder Questions'}">
+                                <apex:outputlabel value="Select Section" for="values" />
+                                        <apex:selectList value="{!Selectgroup}" size="1" id="values">
+                                                <apex:actionSupport event="onchange" action="{!DisplayGroup}"/>            
+                                                <apex:selectOptions value="{!GroupList}"/>
+                                        </apex:selectList><br /><br />
+                                       </apex:outputPanel>
+                
+                        <div id="sortable">
+                                <apex:repeat var="var" value="{!ListCustomFields}" rendered="{!ReorderRadio=='Reorder Questions'}">
+                                        <div id="{!var.Id}">
+                                                <div id="classtable"> 
+                                                        <table width="100%">
+                                                            <tr>
+                                                                <td width="60%">{!var.Name}</td>
+                                                                <td width="25%">{!var.Field_type__c}</td>
+                                                                <!--<td width="35%">{!var.Select_group__c}</td>-->
+                                                                <td width="10%">{!FLOOR(var.Int_order_Number__c)}</td>
+                                                            </tr>
+                                                        </table>
+                                                </div>
+                                        </div>
+                                </apex:repeat>
+                                
+                                <apex:repeat var="var" value="{!Sectionslist}" rendered="{!ReorderRadio=='Reorder Sections'}">
+                 <div id="{!var.Id}">
+                 <div id="classtable">
+                <table width="100%">
+                <tr>
+                <td width="60%">{!var.Name}</td>
+                
+                <td width="30%">{!FLOOR(var.CnP_PaaS_EVT__Section_Order__c)}</td>
+                </tr>
+                </table>
+                </div>
+                </div>
+                </apex:repeat>
+                
+                        </div>
+                </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                        
+        </apex:pageBlock>
+</apex:outputPanel>        
+</apex:form>
+</apex:page>

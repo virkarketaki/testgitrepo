@@ -1,0 +1,354 @@
+<apex:page Controller="McaApp.MovingRenewalController"
+           sidebar="false" action="{!Init}" showHeader="true" >
+
+    <style type="text/css">
+        .custPopup { 
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 9999;
+            left: 50%;
+            padding: 10px;
+            position: absolute;
+            /* These are the 3 css properties you will need to change so the popup
+                    displays in the center of the screen. First set the width. Then set
+                    margin-left to negative half of what the width is. You can add
+                    the height property for a fixed size pop up if you want.*/
+            width: 500px;
+            margin-left: -250px;
+            /*             top:100px; */
+            top: 50%;
+        }
+
+        .popupBackground {
+            background-color: black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9998;
+        }
+</style>
+    <!-- script to check all the checkboxes -->
+    <script type="text/javascript">
+        function checkAll(cb, cbid) {
+            var inputElem = document.getElementsByTagName("input");
+            for ( var i = 0; i < inputElem.length; i++) {
+                if (inputElem[i].id.indexOf(cbid) != -1) {
+                    inputElem[i].checked = cb.checked;
+                }
+            }
+        rerenderformId();
+        }
+    </script>
+    <apex:sectionHeader title="Manage Renewals" />
+    <apex:form Id="formId">
+        <apex:outputPanel id="manageRenewal" rendered="{!NOT(showThankyouPage)}">
+            
+            <!-- Code for the popup -->
+            <apex:outputPanel id="tstpopup">
+                <apex:outputPanel styleClass="popupBackground" layout="block"
+                    rendered="{!displayPopUp}" />
+                <apex:outputPanel styleClass="custPopup" layout="block"
+                    rendered="{!displayPopUp}">
+                    <apex:pageBlock title="Delay Eligibility" >
+                        <apex:selectList id="SelectDelayTime" value="{!DelayTime}" size="1" >
+                            <apex:selectOption itemLabel="--None--" itemValue="0" />
+                            <apex:selectOption itemLabel="1 Week" itemValue="1" />
+                            <apex:selectOption itemLabel="2 Week" itemValue="2" />
+                            <apex:selectOption itemLabel="3 Week" itemValue="3" />
+                            <apex:selectOption itemLabel="4 Week" itemValue="4" />
+                            <apex:selectOption itemLabel="5 Week" itemValue="5" />
+                            <apex:selectOption itemLabel="6 Week" itemValue="6" />
+                            <apex:selectOption itemLabel="7 Week" itemValue="7" />
+                            <apex:selectOption itemLabel="8 Week" itemValue="8" />
+                        </apex:selectList>
+                    </apex:pageBlock>
+                    <div align="center">
+                        <apex:commandButton value="Delay Time" action="{!delayTime}"
+                            rerender="tstpopup,pgmTable,pageMessageId" status="loadingAttachment" />
+                        <apex:CommandButton value="Cancel" action="{!ClosePopup}"/>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <!--    End of Popup -->
+            <apex:outputPanel id="chart">
+            <table width="100%">
+                <tr>
+                    <td width = "50%">
+                        <apex:chart height="300" width="350" data="{!pieDataBankWithCount}" name="Bank with Contract Count" resizable="false"> 
+                            <apex:axis type="Numeric" position="left" fields="data" 
+                                       title="# Contracts" minimum="0"/>    
+                            <apex:axis type="Category" position="bottom" fields="name" title="Bank"/>            
+                            <apex:barSeries orientation="vertical" axis="left" xField="name" yField="data">
+<!--                                <apex:chartTips height="20" width="170"/> -->
+                            </apex:barSeries> 
+                        </apex:chart>
+                    </td>
+                    <td width = "50%">
+                        <apex:chart height="300" width="350" data="{!pieDataBankWithBalance}" name="Bank with Balance"> 
+                            <apex:axis type="Numeric" position="left" fields="data" 
+                                       title="Current Balance Amount" minimum="0"/>    
+                            <apex:axis type="Category" position="bottom" fields="name" title="Bank"/>            
+                            <apex:barSeries orientation="vertical" axis="left" xField="name" yField="data"> 
+<!--                                <apex:chartTips height="26" width="170"/> -->
+                            </apex:barSeries> 
+                        </apex:chart>
+                    </td>
+                </tr>
+            </table>
+            </apex:outputPanel>
+<!--        </apex:pageBlock> -->
+
+            <apex:pageBlock id="PageBlockId">
+                <apex:pageMessages id="pageMessageId" />
+                <apex:actionStatus id="loadingAttachment" stopText="">
+                    <apex:facet name="start">
+                        <apex:outputPanel >
+                            <apex:image url="/img/loading.gif" />
+                            <apex:outputLabel value="Loading..." />
+                        </apex:outputPanel>
+                    </apex:facet>
+                </apex:actionStatus>
+        
+                <apex:pageBlockButtons id="ButtonsId" location="both">
+                    <apex:commandButton action="{!save}" value="Save"
+                        rerender="pageMessageId,chart" status="loadingAttachment" />
+    <!--                <apex:commandButton action="{!callEmailBank}" value="Email Bank" /> -->
+                    <apex:commandButton action="{!createOpportunities}"
+                        value="Create Opportunities" />
+                    <apex:commandButton action="{!displayDelayEligibility}"
+                        value="Delay Eligibility" rerender="tstpopup,pageMessageId" 
+                        status="loadingAttachment" />
+                    <apex:CommandButton action="{!createFollowupTask}"
+                        value="Create FollowUp Task"  />
+                </apex:pageBlockButtons>
+
+                <apex:outputPanel >
+                    <br />
+                    <table width="100%">
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td><apex:outputLabel value="Renewal Eligibility %" /></td>
+                                        <td><apex:inputField value="{!cont.McaApp__Renewal_Eligibility_Percent__c}" /></td>
+                                    </tr>
+    
+                                    <tr>
+                                        <td><apex:outputLabel value="Bank Name" /></td>
+                                        <td><apex:inputField value="{!cont.McaApp__Bank__c}" /></td>
+                                    </tr>
+                                </table>
+    
+                            </td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td><apex:outputLabel value="Credit Balance Date" /></td>
+                                        <td><apex:inputField value="{!cont.McaApp__Current_Balance_Date__c}" /></td>
+                                    </tr>
+    
+                                    
+                                </table>
+                            
+                            
+    
+                            </td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td><apex:outputLabel value="Renewal Eligibility Date" /></td>
+                                        <td><apex:inputField value="{!cont.McaApp__Anticipated_Renewal_Date__c}" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><apex:outputLabel value="Funded Date" /> </td>
+                                        <td><apex:inputField value="{!cont.McaApp__Funded_Date__c}" /></td>
+                                    </tr>
+                                    
+                                </table>
+                            
+    
+                            </td>
+                        </tr>
+                        <tr>
+    
+                        </tr>
+                        <tr>
+    
+                        </tr>
+                    </table>
+    
+                    <table width="487%">
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td><apex:commandButton value="Filter"
+                                    action="{!getContractsAfterFilter}" rerender="pgmTable,pageMessageId"
+                                    status="loadingAttachment"/>
+                            </td>
+                        </tr>
+                    </table>
+    
+                </apex:outputPanel>
+                <br></br>
+
+            <apex:outputPanel id="pgmTable">
+
+                <apex:pageBlockTable value="{!RenewalWrapperLst}" var="renwWrapper" id="pbtRenewals">
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:inputCheckbox onclick="checkAll(this,'checkBox');resetAtt()" id="theChkbx">
+                            </apex:inputCheckbox>
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!renwWrapper.isSelected}"
+                            id="checkBox" >
+<!--                             <apex:actionsupport event="onchange" action="{!autoPopulate1}" rerender="pageMessageId" status="loadingAttachment"/> -->
+                        </apex:inputCheckbox>
+                    </apex:column>
+
+                    
+                    <apex:column >
+                    <apex:facet name="header">   
+                        <apex:commandLink action="{!ViewSortedData_Contract}" value="Name{!IF(sortExpression=='Name',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortName" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                            <apex:param value="Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                        </apex:commandLink>
+                    </apex:facet>
+                        <apex:outputLink value="/{!renwWrapper.contract['Id']}">{!renwWrapper.contract.Name}</apex:outputLink> 
+                    </apex:column>
+                    
+                    <apex:column value="{!renwWrapper.contract['Bank__c']}">
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewSortedData_Contract}" value="Bank{!IF(sortExpression=='Bank__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortBankName" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                                <apex:param value="Bank__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                    </apex:column>
+					
+					 <apex:column >
+                        <apex:facet name="header">
+                        	<apex:outputText value="Stage" />
+                        </apex:facet>
+                    	<apex:outputfield value="{!renwWrapper.contract['Stage__c']}" />
+                    </apex:column>
+                    
+                    <apex:column value="{!renwWrapper.contract['Renewal_Eligibility_Percent__c']}">
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewSortedData_Contract}" value="Renewal Eligibility %{!IF(sortExpression=='Renewal_Eligibility_Percent__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortEligibilityPer" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                                <apex:param value="Renewal_Eligibility_Percent__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                    </apex:column>
+
+                    <apex:column value="{!renwWrapper.contract['Anticipated_Renewal_Date__c']}">
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewSortedData_Contract}" value="Renewal Date{!IF(sortExpression=='Anticipated_Renewal_Date__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortRenewalDate" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                                <apex:param value="Anticipated_Renewal_Date__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewSortedData_Contract}" value="Funding Amount{!IF(sortExpression=='Opportunity__r.Funding_Amount__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortFundingAmt" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                                <apex:param value="Opportunity__r.Funding_Amount__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputfield value="{!renwWrapper.contract['Opportunity__r.Funding_Amount__c']}" />
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewSortedData_Contract}" value="Payback Amount{!IF(sortExpression=='Opportunity__r.Payback_Amount__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortPaybackAmt" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                                <apex:param value="Opportunity__r.Payback_Amount__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputfield value="{!renwWrapper.contract['Opportunity__r.Payback_Amount__c']}" />
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header">
+                        	<apex:outputText value="Date Funded" />
+                        </apex:facet>
+                    	<apex:outputfield value="{!renwWrapper.contract['Opportunity__r.Date_Funded__c']}" />
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewSortedData_Contract}" value="Term (Months){!IF(sortExpression=='Opportunity__r.Term_Months__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortTermMon" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                                <apex:param value="Opportunity__r.Term_Months__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputfield value="{!renwWrapper.contract['Opportunity__r.Term_Months__c']}" />
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header">
+                        	<apex:outputText value="Amount Paid" />
+                        </apex:facet>
+                    	<apex:outputfield value="{!renwWrapper.contract['Paid_Amt__c']}" />
+                    </apex:column>
+                    
+                    <apex:column headervalue="Balance Amount">
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewSortedData_Contract}" value="Balance Amount{!IF(sortExpression=='Current_Balance_Amt__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortBalAmt" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                                <apex:param value="Current_Balance_Amt__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:inputfield value="{!renwWrapper.contract['Current_Balance_Amt__c']}" />
+                    </apex:column>
+
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewSortedData_Contract}" value="Balance Date{!IF(sortExpression=='Current_Balance_Date__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortBalDate" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                                <apex:param value="Current_Balance_Date__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:inputfield value="{!renwWrapper.contract['Current_Balance_Date__c']}" />
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:inputfield value="{!renwWrapper.contract['Performance__c']}" />
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewSortedData_Contract}" value="Performance %{!IF(sortExpression=='Performance__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortPerfomance" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                                <apex:param value="Performance__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink action="{!ViewSortedData_Contract}" value="Payoff %{!IF(sortExpression=='Paid__c',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSortPaid" reRender="pgmTable,pageMessageId" status="loadingAttachment">
+                                <apex:param value="Paid__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputfield value="{!renwWrapper.contract['PaidImage__c']}" />&nbsp;
+                        <apex:outputfield value="{!renwWrapper.contract['Paid__c']}" />
+                    </apex:column>
+
+                </apex:pageBlockTable>
+            </apex:outputPanel>
+
+            
+        </apex:pageBlock>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!showThankyouPage}">
+            <apex:outputPanel rendered="{!newOppLst.size > 0}">
+            <apex:outputlink value="{!$Page.McaApp__ManageRenewal}" style="float: left;"> <apex:outputText value="<< Back To Manage Renewals"/> </apex:outputlink><br/><br/>
+                <apex:outputText value="{!$Label.mcaapp__MovingRenewal_ThankyouMsg}" style="font-size:14px;font-weight: bold; "/>
+                 <apex:pageBlock >
+                     <apex:pageBlockTable value="{!newOppLst}" var="opps">
+                        <apex:column >
+                            <apex:image url="{!URLFOR($Resource.McaApp__SubmissionWizard,'SubmissionWizard/Sent.jpg')}" width="20" height="20"/>
+<!--                            <img src="/resource/SubmissionWizard/SubmissionWizard/Sent.jpg" height="20" width="20"/>&nbsp;&nbsp; -->
+                            <a href="/{!opps.Id}">{!opps.Name}</a>
+                        </apex:column>
+                     </apex:pageBlockTable>
+                 </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

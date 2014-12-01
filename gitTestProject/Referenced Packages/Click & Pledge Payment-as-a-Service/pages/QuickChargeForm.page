@@ -1,0 +1,418 @@
+<apex:page controller="CnP_PaaS.GlobalController" sidebar="false"  showHeader="false">
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/> 
+<script>
+function DynamicDatePicker(d_id)
+{
+DatePicker.pickDate(false,d_id.id,false);
+}
+</script>
+<style>
+.reclab{
+    display:block;
+    
+    text-align:right;
+    font-size:11px;
+    font-weight:bold;
+    color: #333;
+}
+
+.black_overlay{
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 100%;
+background-color: black;
+z-index:1001;
+-moz-opacity: 0.8;
+opacity:.40;
+filter: alpha(opacity=80);
+}
+.white_content {
+display: none;
+position: absolute;
+text-align: center;
+top: 30%;
+left: 47%;
+/*width: 15%;
+height: 4%;*/
+padding: 16px;
+background-color: white;
+z-index:1002;
+overflow: auto;
+border-radius:20px;
+-webkit-border-radius: 20px;
+-moz-border-radius: 20px;
+border:1px solid #000;
+} 
+.calenderIcon{    
+    
+    padding-left: 4px;
+    padding-top: 2px;
+   
+}
+.labelCol {
+width: 36%;
+}
+</style>
+  
+ <script type="text/javascript"> 
+   $.noConflict();
+  $(document).ready(function(){
+   var accountid= jQuery(".accountid").val();
+
+
+         }
+  </script>
+<apex:pagemessages />
+<apex:form >
+<script type="text/javascript">
+jQuery=$.noConflict();
+
+function popitup(url) {  
+
+    newwindow=window.open(url,'name','height=400,width=350,scrollbars=yes');
+    if (window.focus) {newwindow.focus()}
+    return false;
+}
+
+function processing(){
+     $("#light").attr('style','display:none');
+      $("#fade").attr('style','display:none');
+ }
+ 
+ 
+  function calculateunitdeductable()
+ {
+   
+  
+    var deduct = parseFloat($(".unittaxportion").val());
+
+         var price =trim($(".price").val());
+         
+         if(!isNaN(deduct))
+         {            
+             var taxdeductportion=parseFloat(price)*parseFloat(deduct)/100;
+             $(".deduct").val(taxdeductportion); 
+         }
+  
+            
+ }
+ 
+ 
+function Processpayment()
+{
+
+var condition=0;
+var transaction=jQuery.trim(jQuery(".transaction").val());
+var syst = jQuery(".aa").val();
+var validformat=/^\d{1,2}\/\d{1,2}\/\d{4}$/;
+
+var accountid=jQuery(".accountid").val();
+
+if(accountid == null){
+   condition=1;
+alert("Please Select C&P Account Number to process Payments");
+jQuery(".accountid").focus();
+return false; 
+}
+/*
+if(transaction==''){
+condition=1;
+alert("Please Select Transaction Date to process..");
+jQuery(".transaction").focus();
+return false;
+}else if(transaction!='')
+{
+if (!validformat.test(transaction))
+{
+condition=1;
+alert("Invalid Date Format. Please correct and submit again.");
+jQuery(".transaction").focus();
+return false;
+}
+else 
+{
+var monthfield=transaction.split("/")[0]
+
+var dayfield=transaction.split("/")[1]
+
+var yearfield=transaction.split("/")[2]
+
+var dayobj = new Date(yearfield, monthfield-1, dayfield)
+if ((dayobj.getMonth()+1!=monthfield)||(dayobj.getDate()!=dayfield)||(dayobj.getFullYear()!=yearfield))
+{
+condition=1;
+alert("Invalid Day, Month, or Year range detected. Please correct and submit again.");
+jQuery(".transaction").focus();
+return false;
+
+}
+}
+if(new Date(transaction)< new Date(syst))
+{
+condition=1;
+alert("Transaction Date must be greater than system date");
+jQuery(".transaction").focus();
+return false;
+}
+}*/
+
+
+  var amount = jQuery(".price").val();
+  
+  jQuery(".price").val(amount);
+  var deductable=jQuery.trim(jQuery(".deduct").val());  
+  jQuery(".deduct").val(deductable);
+   var itemname=jQuery.trim(jQuery(".itemname").val());    
+   var sku=jQuery.trim(jQuery(".sku").val()); 
+   var reg_sku=/^([a-zA-Z0-9\-\_\:\ ])+$/; 
+  var reg_itemname=/^([a-zA-Z0-9\.\,\#\&\-\ ])+$/;
+
+  if(itemname=='')
+  {
+    condition=1;
+            alert("Please Enter value in Payment for");
+           jQuery(".itemname").focus();
+            return false;
+  }
+  else if(itemname!='' && itemname.length<2)
+            {
+                 condition=1;
+                alert("Please enter atleast two characters in Payment for");
+                jQuery(".itemname").focus();
+                return false;
+            }  
+  
+ if(sku!='' && !reg_sku.test(sku)){
+                  condition=1;
+                 alert("Please Enter a valid data (Alphanumerics,-,_,:,space) in SKU ");
+                 $(".sku").focus();
+                 return false;
+            } 
+        if(isNaN(amount)||amount=="")
+        {
+                condition=1;
+            alert("Please Enter a Number or Decimal value in Amount field");
+           jQuery(".amount").focus();
+            return false;
+        }  
+        if(amount<0 || amount<0.0)
+        {
+                condition=1;
+            alert("Amount $ should not be less than 0 or 0.0");
+           jQuery(".amount").focus();
+            return false;
+        }
+       
+         if(parseFloat(amount) > 99999999.99)
+        {
+                condition=1;
+            alert("Amount $ should not be greater than 99,999,999.99");
+           jQuery(".amount").focus();
+            return false;
+        }
+       if(isNaN(deductable))
+        {
+        condition=1;
+            
+            alert("Please Enter a Number or Decimal value in deductable field");
+           jQuery(".deductable").focus();
+            return false;
+        }else if(deductable<0 || deductable<0.0)
+        {
+        condition=1;
+            alert("Unit Deductible $ must be greater than or equal to 0");
+          jQuery(".deductable").focus();
+            return false;
+        }  
+    
+         if(parseInt(amount) < parseInt(deductable)){
+     condition= 1;
+     alert("Unit Price $ must greater than Unit Deductible$");
+                       $(".price").focus();
+                      return false;
+     }
+     
+    /*  if( new Date(transaction)> new Date(syst) || new Date(transaction)< new Date(syst)){
+       condition =1;
+       alert("Future/Past date transactions are not valid in Quick Charge Form");
+       $(".transaction").focus();
+       return false;
+  } */
+     
+ if(condition == 0){
+                   $("#light").attr('style','display:block');
+                   $("#fade").attr('style','display:block');
+                  return true;
+                  }else{
+                  return false;
+                  }
+
+}
+
+
+</script>
+<apex:pageblock title="Quick Charge Form" rendered="{!IF(CnPAccount.size >0, true,false)}">
+<apex:pageBlockButtons >
+                   <apex:outputpanel rendered="{!processbutton}">
+                   <apex:commandButton value="Process Payment" action="{!save}"   onclick="if(!Processpayment()){return false;}" /><!-- Removed reRender as seexml --> 
+                   </apex:outputpanel>
+                   <apex:outputPanel rendered="{!newtransbutton}">
+                   <apex:commandButton value="New Transaction" action="{!backquick}" />
+                   </apex:outputpanel>
+             </apex:pageBlockButtons>
+             <div id="light" class="white_content">   
+                <apex:image value="{!URLFOR($Resource.CnP_PaaS__LoaderImage)}" title="we are processing your request. please wait..." style="height: 15px;width: 20px;"  /><br/>
+               <apex:outputlabel value="we are processing your request. please wait...                  "  />
+              
+         </div>
+         <div id="fade" class="black_overlay"></div>
+<apex:pageBlockSection title="Quick Charge" Columns="1" collapsible="false" rendered="{!quickchargeform}" >
+ <c:autocomplete objectname="Contact" additionalfield="Email" autocomplete_textbox="{!$Component.account}" autocomplete_hidden="{!$Component.contactid}" />
+
+  <apex:pageBlockSectionItem labelStyle="width:35%;">
+                             <apex:outputLabel value="C&P Account Number" ></apex:outputLabel>                             
+                            <apex:outputPanel styleClass="requiredInput" layout="block"  >
+                       <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                   
+                    <apex:selectList value="{!XmlAuthentication.AccountID}" size="1"  styleClass="accountid">
+                                <Apex:selectOptions value="{!CnPAccount}"></Apex:selectOptions>
+                             </apex:selectList>
+                             
+                             </apex:outputpanel>
+                     </apex:pageBlockSectionItem>
+  <apex:pageBlockSectionItem >
+       
+        <apex:outputLabel value="Transaction Date" style="align:right;width:150px;"/>
+         <!--  <apex:outputPanel styleClass="requiredInput" layout="block"   >
+                       <apex:outputPanel styleClass="requiredBlock" layout="block"/>-->
+        <apex:outputpanel >
+         <apex:outputText value="{!xmltransaction.ChargeDate}"/><!-- id="time" onclick="DynamicDatePicker(this);" size="12"  style="width:150px;"  styleClass="transaction"/>-->
+        <!-- <apex:image url="{!URLFOR($Resource.calendar_icon,'calendar_icon.gif')}" styleClass="calenderIcon"/>
+</apex:outputpanel>-->
+</apex:outputPanel>
+       
+    </apex:pageBlockSectionItem>
+ 
+  <apex:repeat value="{!items}" var="item" id="ItemList">
+   
+     
+              
+              
+           <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Payment For" />
+             <apex:outputPanel styleClass="requiredInput" layout="block"   >
+                       <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+              <apex:inputText value="{!item.ItemName}" size="20" styleClass="itemname" maxlength="100"></apex:inputText>
+              </apex:outputPanel>
+              </apex:pageBlockSectionItem>
+             
+              
+           <apex:pageBlockSectionItem >
+           <apex:outputLabel value="SKU"/>
+              <apex:inputText value="{!item.sku}" size="10"  styleClass="sku" maxlength="100"></apex:inputText>
+              </apex:pageBlockSectionItem>
+          
+               
+          <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Amount $"/>
+            <apex:outputPanel styleClass="requiredInput" layout="block"   >
+                       <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+              <apex:inputText value="{!item.UnitPrice}" size="9"  styleClass="price" maxlength="11" onblur="calculateunitdeductable();"></apex:inputText>
+              </apex:outputpanel>
+              </apex:pageBlockSectionItem>
+
+    
+            <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Tax Deductible $" />
+              <apex:inputText value="{!item.UnitDeductible}" size="9" maxlength="11" styleClass="deduct" ></apex:inputText>
+              </apex:pageBlockSectionItem>
+               <input type="hidden" value="{!unittaxdeductible}" class="unittaxportion" />
+       <!--       <apex:pageBlockSectionItem >
+   <apex:outputLabel value="Send Receipt"/>
+              <apex:inputCheckbox value="{!xmlReceipt.SendReceipt}"></apex:inputCheckbox>
+   </apex:pageBlockSectionItem>-->
+   
+  <!-- <apex:pageBlockSectionItem >
+   <apex:outputLabel value="Credit Card Number"/>
+              <apex:outputtext value="{!xmlPaymentMethod.CardNumber}"></apex:outputText>
+   </apex:pageBlockSectionItem>-->
+ </apex:repeat>    
+        
+
+     
+          </apex:pageBlockSection>    
+          
+          
+         
+          
+          
+           <apex:pageBlockSection collapsible="false"  columns="1" >
+                   <apex:pageBlockSectionItem >
+                 
+                   <apex:outputPanel >
+                          <apex:selectRadio value="{!xmlpaymentMethod.PaymentType}" style="display:none">
+                             <apex:actionSupport event="onchange" reRender="SelectSection" /> 
+                             <apex:selectOptions value="{!xmlstring.PaymentTypes}"></apex:selectOptions>                            
+                          </apex:selectRadio>
+                   </apex:outputPanel>
+                   </apex:pageBlockSectionItem> 
+                 
+                       <apex:outputPanel rendered="{!if(xmlpaymentMethod.PaymentType=='ReferenceTransaction',true,false)}" style="display:none">
+                       <apex:outputLabel value="Previous Payment"/>
+                             <apex:selectList value="{!ReferencePayment}" size="1">
+                                 <apex:selectOptions value="{!ReferenceTrans}"/>
+                             </apex:selectList>
+                       </apex:outputPanel>
+                     
+                       
+                       </apex:pageblocksection>
+          
+         
+            
+ 
+   <apex:outputPanel rendered="{!errorfile}" >
+   <apex:pageBlockSection title="Processing Result" columns="1">
+
+ <b>Error Code</b>&nbsp;&nbsp;<apex:outputtext value="{!xmlstring.TransactionResultCode}"></apex:outputText>
+ <b>Transaction Result</b>&nbsp;&nbsp;<apex:outputText value="{!xmlstring.ErrorData}"></apex:outputText>
+  &nbsp;&nbsp; <apex:outputText value="{!xmlstring.additionalInfo}"></apex:outputText>
+
+   </apex:pageBlockSection>
+      
+   </apex:outputPanel>
+   
+   <apex:outputpanel rendered="{!successfile}" >
+    <apex:pageBlockSection title="Processing Result" columns="1">
+
+<b>Transaction Result</b> &nbsp;&nbsp;  <apex:outputText value="{!xmlstring.ErrorData}"></apex:outputText>
+ <b>Order Number</b>&nbsp;&nbsp;  <apex:outputText value="{!xmlstring.TransactionNumber}"></apex:outputText>
+<!--<b>Authorization Code</b>&nbsp;&nbsp;  <apex:outputText value="{!xmlstring.authorizationcode}"></apex:outputText>-->
+  
+  <b>Vault GUID</b> &nbsp;&nbsp;  <apex:outputText value="{!xmlstring.vaultguid}"></apex:outputText>
+   <b>Gateway Transaction Number</b>&nbsp;&nbsp;  <apex:outputText value="{!xmlstring.gatewaytransactionnumber}"></apex:outputText>
+   
+    </apex:pageBlockSection>
+    </apex:outputPanel>
+  
+   
+ 
+ 
+  
+  
+   
+
+ <apex:inputtext value="{!ss}" style="display:none" styleclass="aa" />
+</apex:pageblock>
+<apex:pageblock title="Quick Charge Form" rendered="{!IF(CnPAccount.size >0, false,true)}">
+  <apex:pageMessage severity="INFO" >
+  <span style="font-weight:normal;"> Sorry but the Quick Charge window is not active for the referenced account.</span><br/><span style="font-weight:normal;">Please enable the Virtual Terminal for the C&amp;P Account used for this transaction by adding the account to the <strong>C&amp;P Settings</strong> tab> <strong> C&amp;P Account </strong>sub tab.
+ </span><br /><br /><br />
+ 
+    
+    </apex:pageMessage>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

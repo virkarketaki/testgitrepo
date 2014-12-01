@@ -1,0 +1,14 @@
+<apex:page standardController="Contact" extensions="GridDemoController" sidebar="false">
+    
+    	<apex:repeat value="{!numbers}" var="num" id="theRepeat">
+    	<apex:outputPanel layout="block" style="width: 25%; float: left;">
+    	<apex:panelGrid columns="3" id="theGrid">
+        	<apex:outputText value="{!num}" id="theFirst"/>
+ 	        <apex:outputText value="Second" id="theSecond"/>
+     	    <apex:outputText value="Third" id="theThird"/>
+        	<apex:outputText value="Fourth" id="theFourth"/>
+</apex:panelGrid>
+</apex:outputPanel>
+        </apex:repeat>
+    
+</apex:page>

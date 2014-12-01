@@ -1,0 +1,23 @@
+<apex:page controller="CnP_PaaS.Pages_TopTen_Contacts_new" contentType="application/x-excel#Top_ten_Contacts_checkoutpage.xls" standardStylesheets="false"  language="english" readOnly="true">
+<h1>Pages Contacts Top 10 $</h1>  
+Download Date and Time : <apex:outputLabel value="{!Dvalue}"></apex:outputLabel>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar"> 
+      
+      <apex:column headerValue="Checkout Page" value="{!ar.CheckPage}"/>
+      <apex:column headerValue="Serial #" value="{!ar.Sno}" style="text-align:center;"/>    
+         
+          <apex:column headerValue="Contact Name" value="{!ar.AccName}" >
+           
+            </apex:column>  
+            <apex:column headerValue="Contact Email" value="{!ar.contactemail}"/>
+            <apex:column headerValue="Contact Phone" value=":{!ar.contactphone}"/>
+          <apex:column headerValue="Total Amount">
+           <apex:outputText value="{0, number,$###,###,##0.00}">
+            <apex:param value="{!ar.TotalAmount}" id="TotalAmount" />
+            </apex:outputText></apex:column> 
+      </apex:pageBlockTable>
+      {!IF(ResultSet.size==0,"NO records available.",NULL)} 
+      </apex:pageBlock>
+      
+      </apex:page>

@@ -1,0 +1,195 @@
+<apex:component controller="McaApp.MCACommissionsTabController" allowDML="true">
+
+  <apex:form id="records" styleClass="records">
+  
+    <c:MCAJQTabComponent />
+  
+    <apex:pageBlock >
+    
+      <apex:pageBlockButtons >
+      
+        <apex:CommandButton action="{!newPayable}" value="New Payable" rerender="records,refreshComponent" immediate="true"></apex:CommandButton>
+        <apex:CommandButton action="{!newReceivable}" value="New Receivable" rerender="records,refreshComponent" immediate="true"></apex:CommandButton>      
+      
+        <apex:CommandButton action="{!saveAll}" value="Save" rerender="records,refreshComponent" status="loadingPanel"></apex:CommandButton>
+        <apex:CommandButton action="{!editAll}" value="Edit All" rerender="records,refreshComponent" status="loadingPanel"></apex:CommandButton>
+        
+        <apex:CommandButton action="{!refresh}" value="Refresh" rerender="records,refreshComponent" status="loadingPanel" immediate="true"></apex:CommandButton>
+        <apex:CommandButton action="{!refresh}" value="Cancel" rerender="records,refreshComponent" status="loadingPanel" immediate="true"></apex:CommandButton>
+        
+      </apex:pageBlockButtons>
+      
+      <apex:pageBlockSection columns="1" title="Payables ({!payables.size})" id="payables" collapsible="false">
+        <apex:pageBlockTable value="{!payables}" var="payable" styleClass="tablesorting tablesorter" headerClass="header">
+          <apex:inlineEditSupport event="ondblclick" />
+        
+        
+          <apex:column >
+          
+            <apex:outputLink value="/{!payable.payable.Id}" target="blank" rendered="{!NOT(ISBLANK(payable.payable.Id))}"> View </apex:outputLink>
+            <apex:outputLabel value=" | " rendered="{!NOT(ISBLANK(payable.payable.Id))}"/>          
+            <apex:commandLink action="{!deletePayable}" value="Del" rerender="records,refreshComponent" rendered="{!NOT(ISBLANK(payable.payable.Id))}" status="loadingPanel" immediate="true">
+              <apex:param name="recordToDelete" value="{!payable.payable.Id}" assignTo="{!recordToDelete}" ></apex:param>
+            </apex:commandLink>
+            
+            <apex:commandLink action="{!removePayable}" value="Remove" rerender="records,refreshComponent" rendered="{!(ISBLANK(payable.payable.Id))}" status="loadingPanel" immediate="true">
+              <apex:param name="indexToRemove" value="{!payable.index}" assignTo="{!indexToRemove}"></apex:param>
+            </apex:commandLink>                                       
+            
+            <apex:facet name="footer">
+              <apex:outputLabel value="Total" rendered="{!payables.size > 0}" />
+            </apex:facet>
+            
+          </apex:column>
+           
+          <apex:column headerValue="{!$ObjectType.McaApp__Payable__c.Fields.McaApp__Type__c.Label}">
+            <apex:outputField value="{!payable.payable.McaApp__Type__c}" rendered="{!AND(NOT(ISBLANK(payable.payable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!payable.payable.McaApp__Type__c}" rendered="{!OR((ISBLANK(payable.payable.Id)), editAll)}"/>
+          </apex:column>
+    
+          <apex:column headerValue="{!$ObjectType.McaApp__Payable__c.Fields.McaApp__Account__c.Label}">
+            <apex:outputField value="{!payable.payable.McaApp__Account__c}" rendered="{!AND(NOT(ISBLANK(payable.payable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!payable.payable.McaApp__Account__c}" rendered="{!OR((ISBLANK(payable.payable.Id)), editAll)}"/>
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Payable__c.Fields.McaApp__Amount_Due__c.Label}">
+            <apex:outputField value="{!payable.payable.McaApp__Amount_Due__c}" rendered="{!AND(NOT(ISBLANK(payable.payable.Id)), NOT(editAll))}" />
+            <apex:inputField value="{!payable.payable.McaApp__Amount_Due__c}" rendered="{!OR((ISBLANK(payable.payable.Id)), editAll)}" />
+            
+            <apex:facet name="footer">
+            
+              <apex:outputPanel layout="block" rendered="{!payables.size > 0}">
+              
+			          <apex:outputText value="${0, number, ###,###,###,##0.00}">
+			            <apex:param value="{!payableAmount}" />
+			          </apex:outputText>
+			                        
+              </apex:outputPanel>
+              
+            </apex:facet>
+            
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Payable__c.Fields.McaApp__Bill_Amount_Due__c.Label}">
+            <apex:outputField value="{!payable.payable.McaApp__Bill_Amount_Due__c}" rendered="{!AND(NOT(ISBLANK(payable.payable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!payable.payable.McaApp__Bill_Amount_Due__c}" rendered="{!OR((ISBLANK(payable.payable.Id)), editAll)}"/>
+            
+            <apex:facet name="footer">
+              <apex:outputPanel layout="block" rendered="{!payables.size > 0}">
+
+			          <apex:outputText value="${0, number, ###,###,###,##0.00}">
+			            <apex:param value="{!payableAmountDue}" />
+			          </apex:outputText>            
+              </apex:outputPanel>
+            </apex:facet>            
+            
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Payable__c.Fields.McaApp__Percentage__c.Label}">
+            <apex:outputField value="{!payable.payable.McaApp__Percentage__c}" rendered="{!AND(NOT(ISBLANK(payable.payable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!payable.payable.McaApp__Percentage__c}" rendered="{!OR((ISBLANK(payable.payable.Id)), editAll)}"/>
+          </apex:column>                        
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Payable__c.Fields.McaApp__Payback_Funded__c.Label}">
+            <apex:outputField value="{!payable.payable.McaApp__Payback_Funded__c}" rendered="{!AND(NOT(ISBLANK(payable.payable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!payable.payable.McaApp__Payback_Funded__c}" rendered="{!OR((ISBLANK(payable.payable.Id)), editAll)}"/>
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Payable__c.Fields.McaApp__Due_Date__c.Label}">
+            <apex:outputField value="{!payable.payable.McaApp__Due_Date__c}" rendered="{!AND(NOT(ISBLANK(payable.payable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!payable.payable.McaApp__Due_Date__c}" rendered="{!OR((ISBLANK(payable.payable.Id)), editAll)}"/>
+          </apex:column>          
+              
+        </apex:pageBlockTable>
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection columns="1" title="Receivables ({!receivables.size})" id="receivables" collapsible="false">
+        <apex:pageBlockTable value="{!receivables}" var="receivable" styleClass="tablesorting tablesorter" headerClass="header">
+          <apex:inlineEditSupport event="ondblclick" />
+        
+          <apex:column >
+          
+            <apex:outputLink value="/{!receivable.receivable.Id}" target="blank" rendered="{!NOT(ISBLANK(receivable.receivable.Id))}"> View </apex:outputLink>
+            <apex:outputLabel value=" | " rendered="{!NOT(ISBLANK(receivable.receivable.Id))}"/>          
+            <apex:commandLink action="{!deleteReceivable}" value="Del" rerender="records,refreshComponent" rendered="{!NOT(ISBLANK(receivable.receivable.Id))}" status="loadingPanel" immediate="true">
+              <apex:param name="recordToDelete" value="{!receivable.receivable.Id}" assignTo="{!recordToDelete}" ></apex:param>
+            </apex:commandLink>
+            
+            <apex:commandLink action="{!removeReceivable}" value="Remove" rerender="records,refreshComponent" rendered="{!(ISBLANK(receivable.receivable.Id))}" status="loadingPanel" immediate="true">
+              <apex:param name="indexToRemove" value="{!receivable.index}" assignTo="{!indexToRemove}"></apex:param>
+            </apex:commandLink>                    
+            
+            <apex:facet name="footer">
+              <apex:outputLabel value="Total" rendered="{!receivables.size > 0}"/>
+            </apex:facet>            
+            
+          </apex:column>           
+        
+          <apex:column headerValue="{!$ObjectType.McaApp__Receivable__c.Fields.McaApp__Type__c.Label}">
+            <apex:outputField value="{!receivable.receivable.McaApp__Type__c}" rendered="{!AND(NOT(ISBLANK(receivable.receivable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!receivable.receivable.McaApp__Type__c}" rendered="{!OR(ISBLANK(receivable.receivable.Id), editAll)}"/>
+          </apex:column>
+    
+          <apex:column headerValue="{!$ObjectType.McaApp__Receivable__c.Fields.McaApp__Due_From_Account__c.Label}">
+            <apex:outputField value="{!receivable.receivable.McaApp__Due_From_Account__c}" rendered="{!AND(NOT(ISBLANK(receivable.receivable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!receivable.receivable.McaApp__Due_From_Account__c}" rendered="{!OR(ISBLANK(receivable.receivable.Id), editAll)}" />
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Receivable__c.Fields.McaApp__Amount__c.Label}">
+            <apex:outputField value="{!receivable.receivable.McaApp__Amount__c}" rendered="{!AND(NOT(ISBLANK(receivable.receivable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!receivable.receivable.McaApp__Amount__c}" rendered="{!OR(ISBLANK(receivable.receivable.Id), editAll)}"/>
+            
+            <apex:facet name="footer">
+            
+              <apex:outputPanel layout="block" rendered="{!receivables.size > 0}">
+
+	              <apex:outputText value="${0, number, ###,###,###,##0.00}">
+	                <apex:param value="{!receivableAmount}" />
+	              </apex:outputText>             
+              </apex:outputPanel>
+            
+            </apex:facet>
+                        
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Receivable__c.Fields.McaApp__Amount_Due__c.Label}">
+            <apex:outputField value="{!receivable.receivable.McaApp__Amount_Due__c}" rendered="{!AND(NOT(ISBLANK(receivable.receivable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!receivable.receivable.McaApp__Amount_Due__c}" rendered="{!OR(ISBLANK(receivable.receivable.Id), editAll)}"/>
+            
+            <apex:facet name="footer">
+              <apex:outputPanel layout="block" rendered="{!receivables.size > 0}">
+              
+	              <apex:outputText value="${0, number, ###,###,###,##0.00}">
+	                <apex:param value="{!receivableAmountDue}" />
+	              </apex:outputText>              
+	              
+              </apex:outputPanel>
+            
+            </apex:facet>
+                        
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Receivable__c.Fields.McaApp__Percentage__c.Label}">
+            <apex:outputField value="{!receivable.receivable.McaApp__Percentage__c}" rendered="{!AND(NOT(ISBLANK(receivable.receivable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!receivable.receivable.McaApp__Percentage__c}" rendered="{!OR(ISBLANK(receivable.receivable.Id), editAll)}"/>
+          </apex:column>                        
+    
+          <apex:column headerValue="{!$ObjectType.McaApp__Receivable__c.Fields.McaApp__Payback_Funded__c.Label}">
+            <apex:outputField value="{!receivable.receivable.McaApp__Payback_Funded__c}" rendered="{!AND(NOT(ISBLANK(receivable.receivable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!receivable.receivable.McaApp__Payback_Funded__c}" rendered="{!OR(ISBLANK(receivable.receivable.Id), editAll)}"/>
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Receivable__c.Fields.McaApp__Due_Date__c.Label}">
+            <apex:outputField value="{!receivable.receivable.McaApp__Due_Date__c}" rendered="{!AND(NOT(ISBLANK(receivable.receivable.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!receivable.receivable.McaApp__Due_Date__c}" rendered="{!OR(ISBLANK(receivable.receivable.Id), editAll)}"/>
+          </apex:column>            
+    
+        </apex:pageBlockTable>    
+      </apex:pageBlockSection>  
+      
+    </apex:pageBlock>
+    
+  </apex:form>
+
+
+</apex:component>

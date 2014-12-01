@@ -1,0 +1,98 @@
+<apex:component controller="McaApp.MCALoanBalanceTabController" allowDML="true">
+
+  <apex:form id="records" styleClass="records">
+  
+    <c:MCAJQTabComponent />
+  
+    <apex:pageBlock >
+    
+      <apex:pageBlockButtons >
+      
+        <apex:CommandButton action="{!newLoanBalance}" value="New Loan Balance" rerender="records,refreshComponent" immediate="true"></apex:CommandButton>
+      
+        <apex:CommandButton action="{!saveAll}" value="Save" rerender="records,refreshComponent" status="loadingPanel"></apex:CommandButton>
+        <apex:CommandButton action="{!editAll}" value="Edit All" rerender="records,refreshComponent" status="loadingPanel"></apex:CommandButton>
+        
+        <apex:CommandButton action="{!refresh}" value="Refresh" rerender="records,refreshComponent" status="loadingPanel" immediate="true"></apex:CommandButton>
+        <apex:CommandButton action="{!refresh}" value="Cancel" rerender="records,refreshComponent" status="loadingPanel" immediate="true"></apex:CommandButton>
+        
+      </apex:pageBlockButtons>
+      
+      <apex:pageBlockSection columns="1" title="Loan Balances ({!containers.size})" collapsible="false">
+        <apex:pageBlockTable value="{!containers}" var="container" styleClass="tablesorting tablesorter" headerClass="header">
+          <apex:inlineEditSupport event="ondblclick" />
+        
+          <apex:column >
+          
+            <apex:outputLink value="/{!container.loanBalance.Id}" target="blank" rendered="{!NOT(ISBLANK(container.loanBalance.Id))}"> View </apex:outputLink>
+            <apex:outputLabel value=" | " rendered="{!NOT(ISBLANK(container.loanBalance.Id))}"/>                    
+            <apex:commandLink action="{!deleteLoanBalance}" value="Del" rerender="records,refreshComponent" rendered="{!NOT(ISBLANK(container.loanBalance.Id))}" status="loadingPanel" immediate="true">
+              <apex:param name="recordToDelete" value="{!container.loanBalance.Id}" assignTo="{!recordToDelete}" ></apex:param>
+            </apex:commandLink>
+            
+            <apex:commandLink action="{!removeLoanBalance}" value="Remove" rerender="records,refreshComponent" rendered="{!(ISBLANK(container.loanBalance.Id))}" status="loadingPanel" immediate="true">
+              <apex:param name="indexToRemove" value="{!container.index}" assignTo="{!indexToRemove}"></apex:param>
+            </apex:commandLink>                                    
+            
+            <apex:facet name="footer">
+              <apex:outputLabel value="Total" rendered="{!containers.size > 0}"/>
+            </apex:facet>            
+            
+          </apex:column>
+        
+          <apex:column headerValue="{!$ObjectType.McaApp__Loan_Balance__c.Fields.Name.Label}">
+            <apex:outputField value="{!container.loanBalance.Name}" rendered="{!AND(NOT(ISBLANK(container.loanBalance.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.loanBalance.Name}" rendered="{!OR((ISBLANK(container.loanBalance.Id)), editAll)}"/>
+          </apex:column>
+    
+          <apex:column headerValue="{!$ObjectType.McaApp__Loan_Balance__c.Fields.McaApp__Funder__c.Label}">
+            <apex:outputField value="{!container.loanBalance.McaApp__Funder__c}" rendered="{!AND(NOT(ISBLANK(container.loanBalance.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.loanBalance.McaApp__Funder__c}" rendered="{!OR((ISBLANK(container.loanBalance.Id)), editAll)}" />
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Loan_Balance__c.Fields.McaApp__Balance__c.Label}">
+            <apex:outputField value="{!container.loanBalance.McaApp__Balance__c}" rendered="{!AND(NOT(ISBLANK(container.loanBalance.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.loanBalance.McaApp__Balance__c}" rendered="{!OR((ISBLANK(container.loanBalance.Id)), editAll)}"/>
+            
+            <apex:facet name="footer">
+              <apex:outputPanel layout="block" rendered="{!containers.size > 0}">
+	              <apex:outputText value="${0, number, ###,###,###,##0.00}">
+	                <apex:param value="{!balanceTotal}" />
+	              </apex:outputText>             
+              </apex:outputPanel>
+            </apex:facet>                
+            
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Loan_Balance__c.Fields.McaApp__Daily_Payment__c.Label}">
+            <apex:outputField value="{!container.loanBalance.McaApp__Daily_Payment__c}" rendered="{!AND(NOT(ISBLANK(container.loanBalance.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.loanBalance.McaApp__Daily_Payment__c}" rendered="{!OR((ISBLANK(container.loanBalance.Id)), editAll)}"/>
+            
+            <apex:facet name="footer">
+              <apex:outputPanel layout="block" rendered="{!containers.size > 0}">
+	              <apex:outputText value="${0, number, ###,###,###,##0.00}">
+	                <apex:param value="{!paymentTotal}" />
+	              </apex:outputText>             
+              </apex:outputPanel>
+            </apex:facet>    
+            
+          </apex:column>
+          
+          <apex:column headerValue="{!$ObjectType.McaApp__Loan_Balance__c.Fields.McaApp__Maturity_Date__c.Label}">
+            <apex:outputField value="{!container.loanBalance.McaApp__Maturity_Date__c}" rendered="{!AND(NOT(ISBLANK(container.loanBalance.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.loanBalance.McaApp__Maturity_Date__c}" rendered="{!OR((ISBLANK(container.loanBalance.Id)), editAll)}"/>
+          </apex:column>                        
+
+          <apex:column headerValue="{!$ObjectType.McaApp__Loan_Balance__c.Fields.McaApp__Active__c.Label}">
+            <apex:outputField value="{!container.loanBalance.McaApp__Active__c}" rendered="{!AND(NOT(ISBLANK(container.loanBalance.Id)), NOT(editAll))}"/>
+            <apex:inputField value="{!container.loanBalance.McaApp__Active__c}" rendered="{!OR((ISBLANK(container.loanBalance.Id)), editAll)}"/>
+          </apex:column>                        
+
+        </apex:pageBlockTable>
+      </apex:pageBlockSection>   
+      
+    </apex:pageBlock>
+    
+  </apex:form>
+
+</apex:component>

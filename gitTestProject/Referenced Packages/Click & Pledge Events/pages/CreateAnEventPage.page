@@ -1,0 +1,646 @@
+<apex:page standardController="CnP_PaaS_EVT__Event__c" extensions="CnP_PaaS_EVT.CreateAnEvent">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script> 
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS_EVT__JsColor, '/jscolor/jscolor.js')}"/>
+
+<script src="/ckeditor/ckeditor-3.6.2/ckeditor.js?t=3.6.2.1"></script>
+
+ <style>
+ .dateFormat {
+    /* padding: 0 50px;*/
+     display:none;
+ }
+ .requiredInput
+ {
+  float:left;
+ }
+ .calenderIcon{    
+    
+    padding-left: 5px;
+    padding-top: 3px;
+}
+.catlook  input{
+
+    width:250px;
+}
+.catlook .errorMsg {
+
+    float:left;
+}
+ </style>
+<script>
+window.onload=function(){
+var CreditValue= document.getElementById('{!$Component.CreateAnEvent.block.SelectPayOptions.CreditCardItem.Credit_card}').checked;
+var temp2=document.getElementById('{!$Component.CreateAnEvent.block.SelectPayOptions.CreditCardItem.CreditCardOptions}');
+
+if(CreditValue==false){
+temp2.style.display='none';
+}
+
+var CustomValue= document.getElementById('{!$Component.CreateAnEvent.block.SelectPayOptions.CreditCardItem.CustomPayment}').checked;
+var temp=document.getElementById('{!$Component.CreateAnEvent.block.SelectPayOptions.CreditCardItem.DisplayCustomPaymentName}');
+
+if(CustomValue==false){
+temp.style.display='none';
+}
+
+var SendReceiptCheck= document.getElementById('{!$Component.CreateAnEvent.block.CustomInfo.SendReceiptItem.Eventinfo_send_receipt}').checked;
+var temp1=document.getElementById('{!$Component.CreateAnEvent.block.SendReceiptSection}');
+if(SendReceiptCheck==false){
+temp1.style.display='none';
+}
+
+};
+$(function($) {
+        $(function(){
+          $(".save").click(function(){
+          var sd = new Date($(".Datetime_StartDT").val());         
+          var ed = new Date($(".Datetime_endDT").val());
+          var pd = new Date($(".Datetime_publishdate").val());
+         
+          var TotalInventory = $(".TotalInventory").val();
+          var InventorySold = $(".InventorySold").val();
+          var ev_internal= $(".Eventinfo_name").val();
+          var ev_external=$(".Eventinfo_title").val();
+          var Eventinfo_siteurl=$(".Eventinfo_siteurl").val();
+          var OrgInfo=$(".Eventinfo_Org_info").val();
+          var ThanksR=$(".Eventinfo_Thanks").val();
+          var RTC=$(".Eventinfo_Receipt_Terms_Condition").val();
+          var Custompayment=$(".CustomPayment").is(':checked');
+          var Custompaymentname=$(".CustomPayment_Name").val();
+           
+           if(Custompayment==false){
+           jQuery(".CustomPayment_Name").val('');
+           }
+           
+          reg_text=/^([a-zA-Z0-9\'\,\.\-\ ])+$/;
+          url = /^(((ht){1}(tps:[/][/]){1})|((www.){1}))[-a-zA-Z0-9:%_\+.~?&//=]+$/;
+          if(ev_internal=="" || !ev_internal.indexOf(' ',0) || !reg_text.test(ev_internal))
+          {
+              alert("Please Enter a Valid Event Name");
+              $(".Eventinfo_name").focus();
+              return false;
+          }
+          if(ev_external=="" || !ev_external.indexOf(' ',0) || !reg_text.test(ev_external))
+          {
+              alert("Please Enter a Valid Event Title");
+              $(".Eventinfo_title").focus();
+              return false;
+          }
+          if(!url.test(Eventinfo_siteurl) || Eventinfo_siteurl=="" || !Eventinfo_siteurl.indexOf(' ',0))
+          {
+             alert("Please Enter The SalesForce Public Site URL\n e.g:- https://salesforce.com");
+             $(".Eventinfo_siteurl").focus();
+             return false;
+          }
+          if(sd=="")
+          {
+               alert('Please enter the "Starts Date"');
+               $(".Datetime_StartDT").focus();
+               return false;
+          }
+          if(ed=="")
+          {
+               alert('Please enter the "Ends Date"');
+               $(".Datetime_endDT").focus();
+               return false;
+          }
+                 
+          if(pd=="")
+          {
+                alert('Please enter the "Published Date"');
+                $(".Datetime_publishdate").focus();
+                return false;
+          }
+         
+          if (Date.parse(sd) > Date.parse(ed)) {
+                alert("Invalid Date Range\nStart Date cannot be after End Date!")
+                return false;
+           }
+           if(Date.parse(pd) > Date.parse(ed))
+           {   
+                alert("Invalid Date Range\nPublish Date cannot be after End Date!")
+                return false;               
+           }
+           var n = $(".actid").val();
+           var reg = /^([0-9])+$/;
+           if(reg.test(n)==false || n=="")
+           {
+                  alert('Please enter valid "C&P Account Number"');
+                  $(".actid").focus();
+                  return false;         
+          }
+          
+          if(OrgInfo.length>1500){
+          alert('Organization Information size should be 1500 charaters');
+          $(".Eventinfo_Org_info").focus();
+                  return false; 
+          }
+          
+          if(ThanksR.length>500){
+          alert('Receipt Thank You Message size should be 500 charaters');
+          $(".Eventinfo_Thanks").focus();
+                  return false; 
+          }
+          
+           if(RTC.length>1500){
+          alert('Receipt Terms & Conditions size should be 1500 charaters');
+          $(".Eventinfo_Receipt_Terms_Condition").focus();
+                  return false; 
+          }
+          
+          
+          if(parseInt(TotalInventory)<parseInt(InventorySold) || parseInt(TotalInventory)==0){
+          
+          alert("Invalid Maximum Capacity");
+          return false;
+          }
+          var Credit=$(".Credit_card").val();
+          var Creditcard =$(".Credit_card").is(':checked');
+          var Visa=$(".Visa_card").is(':checked');
+          var master=$(".Master_card").is(':checked');
+          var Discover=$(".Discover").is(':checked');
+          var AmericanEx=$(".AmericanEx").is(':checked');
+          var e_check=$(".e_check").is(':checked');
+          var InVoice=$(".InVoice").is(':checked');
+          var PurchaseOrder=$(".PurchaseOrder").is(':checked');
+          
+         
+          var acknowledgement=$(".acknowledgement").is(':checked');
+          var showterm = $(".showterm").is(':checked');
+          //alert(Custompayment);
+          
+          if(Creditcard==false){
+          jQuery(".Visa_card").val('');
+          jQuery(".Master_card").val('');
+          jQuery(".Discover").val('');
+          jQuery(".AmericanEx").val('');
+          }
+          
+          if(Custompayment==true && (Custompaymentname=="" || !Custompaymentname.indexOf(' ',0) || !reg_text.test(Custompaymentname))){
+          alert("Please Enter Custom Payment Name");
+          $(".CustomPayment_Name").focus();
+          return false;
+          }
+          
+          if(Custompaymentname.length>50){
+          alert("Custom Payment Name Should Be 50 characters Only.");
+          $(".CustomPayment_Name").focus();
+          return false;
+          }
+         
+          if(Creditcard ==false && e_check==false && InVoice==false && PurchaseOrder==false && Custompayment==false){
+              alert("Please select payment options");
+                      
+                      return false; 
+          }
+          if(Creditcard==true){
+              if(Visa==false && master==false && AmericanEx==false && Discover==false){
+                       alert("Please select Credit Card options");
+                      
+                      return false; 
+              
+              }          
+          }
+         
+          
+          var eid="{!CreateAnEvent.Id}";
+          
+           if(eid=="")
+           {
+              var file = $(".agenda").val();
+              if(file==""){
+                    return true;
+              }else if(file.match(/\.(pdf||PDF)$/) ){
+                       return true;   
+                }
+              else{ 
+                   alert("Please Choose Only Pdf Format!");
+                   $(".agenda").focus();
+                   return false;
+               } 
+           
+            } 
+          })
+        })
+    })
+
+
+function CreditOptions(){
+var CreditValue= document.getElementById('{!$Component.CreateAnEvent.block.SelectPayOptions.CreditCardItem.Credit_card}').checked;
+//alert(CreditValue);
+
+var temp=document.getElementById('{!$Component.CreateAnEvent.block.SelectPayOptions.CreditCardItem.CreditCardOptions}');
+
+if(CreditValue==true){
+temp.style.display='block';
+}
+else if(CreditValue==false){
+temp.style.display='none';
+}
+
+var CustomValue= document.getElementById('{!$Component.CreateAnEvent.block.SelectPayOptions.CreditCardItem.CustomPayment}').checked;
+var temp=document.getElementById('{!$Component.CreateAnEvent.block.SelectPayOptions.CreditCardItem.DisplayCustomPaymentName}');
+
+if(CustomValue==false){
+
+temp.style.display='none';
+}
+if(CustomValue==true){
+temp.style.display='block';
+}
+
+var SendReceiptCheck= document.getElementById('{!$Component.CreateAnEvent.block.CustomInfo.SendReceiptItem.Eventinfo_send_receipt}').checked;
+var temp1=document.getElementById('{!$Component.CreateAnEvent.block.SendReceiptSection}');
+if(SendReceiptCheck==false){
+temp1.style.display='none';
+}
+
+if(SendReceiptCheck==true){
+temp1.style.display='block';
+}
+
+}
+
+function popitup(url) {    
+    newwindow=window.open(url,'name','height=400,width=350,scrollbars=yes');
+    if (window.focus) {newwindow.focus()}
+    return false;
+}
+function changedtohttps(url)
+{
+      url_1 = /^(((ht){1}(tp:[/][/]){1})|((www.){1}))[-a-zA-Z0-9@:%_\+.~#?&//=]+$/;
+      if(url!="")
+      {
+             if(url.match(url_1))
+             {
+                 var re_place = url.replace('http:','https:'); 
+                // var re_place=re_place.replace('force.com','secure.force.com');                   
+                 $(".Eventinfo_siteurl").attr('value',re_place);
+             }
+      }
+}
+function trimvalue(value,fieldclass)
+{
+     var replace=value.trim();
+     $("."+fieldclass).attr('value',replace);
+}
+</script>
+<apex:form id="CreateAnEvent">
+
+    <apex:pageBlock title="Event Information" id="block">
+            
+                <apex:pageBlockButtons >
+                        <apex:commandButton action="{!Save}"  styleClass="save"  value="Save"/>
+                        <apex:commandButton action="{!cancel}" value="Cancel" onclick="return confirmCancel()"/>
+                </apex:pageBlockButtons>
+
+                <apex:pageBlockSection id="EventInfo" title="Event Details" columns="1" collapsible="false">
+                <apex:pageBlockSectionItem >
+                <apex:outputPanel > 
+                <apex:outputLabel value="Event Name"/><br />
+                <apex:outputLabel value="(for internal use)"/>
+                </apex:outputPanel>             
+                        <apex:inputField value="{!CreateAnEvent.Name}" required="true" styleClass="Eventinfo_name" onblur="trimvalue(this.value,'Eventinfo_name');" style="width:250px" id="Eventinfo_name"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                         <apex:outputPanel > 
+                        <apex:outputLabel value="Event Name" /><br/>
+                         <apex:outputLabel value="(for external use)"/>
+                          </apex:outputPanel> 
+                        <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Event_title__c}" styleClass="Eventinfo_title" onblur="trimvalue(this.value,'Eventinfo_title');"  style="width:250px" id="Eventinfo_title"/>
+                        </apex:pageBlockSectionItem>
+                 <apex:pageBlockSectionItem >
+                 
+                 <apex:outputLabel value="Event Coordinator"/>
+                 <apex:outputPanel >  
+                <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__event_coordinator__c}" style="width:250px" id="Eventinfo_Coordinator"/>
+               <!--<script>document.getElementById('{!$Component.Eventinfo_Coordinator}').disabled = true; </script>-->
+               </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                 
+                 <apex:outputLabel value="Event Listing"/>
+                 <apex:outputPanel >  
+                <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Event_listing__c}"  style="width:250px" id="Eventinfo_Listion"/>
+               <!--<script>document.getElementById('{!$Component.Eventinfo_Listion}').disabled = true; </script>-->
+               </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                 
+                 <apex:outputLabel value="SalesForce Public Site URL"/>
+                 <apex:outputPanel >
+                 <span  class="catlook">  
+                <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Site_Url__c}" styleClass="Eventinfo_siteurl" style="width:450px" id="Eventinfo_siteurl" required="true" onblur="changedtohttps(this.value);"/>
+                <span><a href="javascript:void(0);" onclick="return popitup('../0DM/o?setupid=CustomDomain&retURL=%2Fui%2Fsetup%2FSetup%3Fsetupid%3DDevToolsIntegrate')" style="text-decoration:none;float:left;postion:relative;margin-left:5px" class="btn"><apex:outputText value="Get the Site URL"></apex:outputText></a>
+                </span> </span>
+                <br/><br/>
+                <apex:outputlabel value="e.g. https://yourdomain.SECURE.FORCE.COM/pagename" /><br />              
+                 <apex:outputlabel value="[for secure site change URL to .secure.force.com instead of .force.com]" /><br /><br />
+                 </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Category"/>
+                <apex:outputPanel >
+                <span  class="catlook"> <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__category__c}" style="float:left;" id="Eventinfo_Category"/>
+                 
+                <span> <apex:commandLink value="Add New" action="{!AddNewCategory}" target="_blank" styleClass="btn" style="text-decoration:none;float:left;postion:relative;" immediate="true"/>
+                </span>
+                </span>
+                </apex:outputPanel>
+                </apex:pageBlockSectionItem>                
+                 <apex:pageBlockSectionItem >
+                   <apex:outputLabel value="Campaign"></apex:outputLabel>
+                       <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Campaign__c}" style="width:250px" id="EventLevelinfo_Campaign"/>
+                   
+                 </apex:pageBlockSectionItem>                        
+                        <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                        <apex:outputLabel value="Agenda" /><br />
+                        <apex:outputLabel value="(PDF only)" />
+                        </apex:outputPanel>
+                        <apex:inputfile value="{!myAjenda.body}" filename="{!myAjenda.Name}" styleClass="agenda" /> 
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Agenda Display Name" />
+                        <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Agenda_Display_Name__c}"  style="width:250px" id="Eventinfo_ajendaName"/>
+                         </apex:pageBlockSectionItem> 
+                        <apex:pageBlockSectionItem >
+                       <apex:outputLabel value="Maximum Capacity" />
+                       <apex:outputpanel >
+                        <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Total_Inventory__c}" style="width:50px" id="EventSetinfo_Capacity" styleclass="TotalInventory"/>
+                        <apex:inputtext value="{!InventorySold}" style="visibility:hidden" styleclass="InventorySold"/>
+                        </apex:outputpanel>
+                        
+                       </apex:pageBlockSectionItem>
+                       <apex:pageBlockSectionItem >
+                       <apex:outputLabel value="Report Color"></apex:outputLabel>
+                        <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Report_Color__c}" styleClass="color {hash:true}" style="width:63px" id="Eventreport"/>
+                       </apex:pageBlockSectionItem>                     
+                </apex:pageBlockSection>
+                 <apex:pageBlockSection id="DateTimeInfo" title="Event Date and Time" columns="1" collapsible="false">
+                       <!-- <apex:inputfield value="{!CreateAnEvent.Time_zone__c}" id="Datetime_timezone"/> 
+                        <apex:inputfield value="{!CreateAnEvent.Show_time_zone_on_registrationform__c}" id="Datetime_Showtimezone"/> -->
+                                         
+                        <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="Event Starts Date"  />
+                           <apex:outputPanel >
+                           <apex:inputfield value="{!CreateAnEvent.CnP_PaaS_EVT__Start_date_and_time__c}"   style="width:150px;"  styleClass="Datetime_StartDT" id="Datetime_StartDT" />
+                           <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon,'Calendar-Lookup2.gif')}" styleClass="calenderIcon"/>
+                           </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                         <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="Event Ends Date"  />
+                           <apex:outputPanel >
+                        <apex:inputfield value="{!CreateAnEvent.CnP_PaaS_EVT__End_date_and_time__c}"  style="width:150px;" styleClass="Datetime_endDT" id="Datetime_endDT"/>
+                         <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon,'Calendar-Lookup2.gif')}" styleClass="calenderIcon"/>
+                           </apex:outputPanel>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                           <apex:outputLabel value="Event Published Date"  />
+                           <apex:outputPanel >
+                        <apex:inputfield value="{!CreateAnEvent.CnP_PaaS_EVT__Publish_date__c}" required="true" style="width:150px" id="Datetime_publishdate" styleClass="Datetime_publishdate"/>
+                         <apex:image url="{!URLFOR($Resource.CnP_PaaS_EVT__calender_icon,'Calendar-Lookup2.gif')}" styleClass="calenderIcon"/>
+                           </apex:outputPanel>
+                        </apex:pageBlockSectionItem>                                                                                                                                    
+                </apex:pageBlockSection>
+                
+                    <apex:pageBlockSection id="SelectPayOptions" title="Select Payment Options" columns="1" collapsible="false">
+                         <apex:pageblocksectionItem id="AccountIdItem" >
+                         <apex:outputLabel value="C&P Account Number"/>
+                         <!-- <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__C_P_Account_Id__c}" styleClass="actid" /> -->
+                         <apex:selectList value="{!CreateAnEvent.CnP_PaaS_EVT__C_P_Account_Id__c}" size="1" styleClass="actid">                             
+                                <Apex:selectOptions value="{!CnPAccount}"></Apex:selectOptions>
+                             </apex:selectList>
+                         </apex:pageBlockSectionItem>
+                         <!--<apex:pageblocksectionItem id="CurrencyItem">
+                         <apex:outputLabel value="Currency"/>
+                         <apex:inputField value="{!CreateAnEvent.Currency__c}"/>
+                         </apex:pageBlockSectionItem>-->
+                         
+                         <apex:pageblocksectionItem id="CreditCardItem" >
+                                 <apex:outputLabel value="Online Options"/>
+                                 <apex:outputpanel >
+                                 
+                                        <apex:inputfield value="{!CreateAnEvent.CnP_PaaS_EVT__Credit_card__c}" id="Credit_card" onchange="CreditOptions();" styleclass="Credit_card">
+                                        
+                                        </apex:inputfield>
+                                        <apex:outputLabel value="Show Credit Card Symbols For:"/><br />
+                                        <apex:outputpanel id="CreditCardOptions" style="position:relative;left:30px;">
+                                        <apex:outputpanel >
+                                        <apex:inputCheckbox value="{!CreateAnEvent.CnP_PaaS_EVT__Visa__c}" id="Visa_card" styleclass="Visa_card"/>
+                                        <apex:outputLabel value="Visa"/><br />
+                                        <apex:inputCheckbox value="{!CreateAnEvent.CnP_PaaS_EVT__master_card__c}" id="Master_card" StyleClass="Master_card"/>
+                                        <apex:outputLabel value="Master Card"/><br />
+                                        <apex:inputCheckbox value="{!CreateAnEvent.CnP_PaaS_EVT__Discover__c}" id="Discover" StyleClass="Discover"/>
+                                        <apex:outputLabel value="Discover"/><br />
+                                        <apex:inputCheckbox value="{!CreateAnEvent.CnP_PaaS_EVT__American_express__c}" id="AmericanEx" StyleClass="AmericanEx"/>
+                                        <apex:outputLabel value="American Express"/><br />
+                                        
+                                        </apex:outputpanel>
+                                        </apex:outputpanel>
+                                        <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__e_check__c}" id="e_check" StyleClass="e_check"/>
+                                        <apex:outputLabel value="eCheck"/><br />
+                                        <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Invoice_P_O__c}" id="InVoice" StyleClass="InVoice"/>
+                                        <apex:outputLabel value="Invoice"/><br />
+                                        <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Purchase_order__c}" id="PurchaseOrder" StyleClass="PurchaseOrder"/>
+                                        <apex:outputLabel value="Purchase Order"/><br />
+                                        <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Custom_Payment_Check__c}" id="CustomPayment" onchange="CreditOptions();" StyleClass="CustomPayment">
+                                        
+                                        </apex:inputField>
+                                        <apex:outputLabel value="Custom Payment"/><br />
+                                        <apex:outputpanel id="DisplayCustomPaymentName" style="position:relative;left:30px">
+                                        <apex:outputLabel value="Name"/>
+                                        <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Custom_Payment_Name__c}" id="CustomPaymentName"  StyleClass="CustomPayment_Name" onblur="trimvalue(this.value,'CustomPayment_Name');"/>
+                                        </apex:outputpanel>
+                                       </apex:outputpanel>
+                         </apex:pageblocksectionItem>  
+                         <!--<apex:pageblocksectionItem >
+                                    <apex:outputLabel value="Offline options"/>
+                                    <apex:outputpanel >    
+                                      <apex:inputField value="{!CreateAnEvent.Check__c}" id="check"/>
+                                        <apex:outputLabel value="Check"/><br />
+                                        <apex:inputField value="{!CreateAnEvent.Cash__c}" id="Cash"/>
+                                        <apex:outputLabel value="Cash"/><br />
+                                        <apex:inputField value="{!CreateAnEvent.At_the_door__c}" id="At_the_door"/>
+                                        <apex:outputLabel value="At the door"/><br />                                    
+                                      
+                                 </apex:outputpanel>
+                         </apex:pageblocksectionItem> -->                                  
+                </apex:pageBlockSection>
+                 <apex:pageBlockSection id="CustomInfo" title="Messages" columns="1" collapsible="false">                 
+                      <apex:outputLabel value="Event" style="font-weight: bold;"/>
+                       <!-- <apex:pageBlockSectionItem dataStyle="display:none"> 
+                          <apex:inputField value="{!CreateAnEvent.Registration_conformation_message__c}" id="EventSetInfo_agenda"/>                                                                          
+                         </apex:pageBlockSectionItem>-->
+                        <apex:pageBlockSectionItem >                                                                           
+                         <apex:outputLabel value="Sold Out" />
+                             <!-- <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Sold_Out__c}" id="EventSetInfo_soldout" styleClass="EventSetInfo_soldout"/>                -->
+                              <apex:inputTextarea value="{!CreateAnEvent.CnP_PaaS_EVT__Sold_Out__c}" id="EventSetInfo_soldout" styleClass="EventSetInfo_soldout" richText="false"/>
+                         </apex:pageBlockSectionItem>
+                         <apex:pageBlockSectionItem >
+                         <apex:outputLabel value="Event Ended" />
+                             
+                             <apex:inputTextarea value="{!CreateAnEvent.CnP_PaaS_EVT__Event_Ended__c}" id="EventSetInfo_ended" styleClass="EventSetInfo_ended"/>
+                         </apex:pageBlockSectionItem>
+                         
+                        <apex:outputLabel value="Payment" style="font-weight: bold;"/>
+                        
+                        <apex:pageBlockSectionItem >
+                             <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Show_Terms_Conditions__c}" id="EventCustomInfo_ShowTC" styleClass="showterm"/>
+                            
+                             <apex:outputLabel value="Show Terms & Conditions"/>    
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                             <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Acknowledgement_Mandatory__c}" id="EventLayoutCustomInfo_ShowTC" styleClass="acknowledgement"/>
+                             
+                             <apex:outputLabel value="Acknowledgement Mandatory"/>    
+                        </apex:pageBlockSectionItem>
+                       
+                        <apex:pageBlockSectionItem >
+                             <apex:outputLabel value="Terms & Conditions Text"/>
+                             <!--<apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Terms_Conditions__c}" id="EventLayoutCustomInfo_TandC" />-->
+                              <apex:inputTextarea value="{!CreateAnEvent.CnP_PaaS_EVT__Terms_Conditions__c}" id="EventLayoutCustomInfo_TandC"  styleClass="EventLayoutCustomInfo_TandC"/>
+                        </apex:pageBlockSectionItem>
+                        
+                        
+                        
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Thank You"  />
+                        <!--<apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Thank_You__c}" id="Eventinfo_thanku"/>-->
+                         <apex:inputTextarea value="{!CreateAnEvent.CnP_PaaS_EVT__Thank_You__c}" id="Eventinfo_thanku" styleClass="Eventinfo_thanku"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Payment Declined" />
+                       <!-- <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Declined__c}" id="Eventinfo_thanku"/>--> 
+                        <apex:inputTextarea value="{!CreateAnEvent.CnP_PaaS_EVT__Declined__c}" id="Eventinfo_declined" styleClass="Eventinfo_declined"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:outputPanel >
+                        <apex:outputLabel value="Receipt" style="font-weight: bold;"/><br/>
+                        <!--<apex:outputLabel value="(Receipt does not support images in the body of the text)" />-->
+                        </apex:outputPanel>
+                        <apex:pageBlockSectionItem id="SendReceiptItem">
+                        <apex:outputLabel value="Send Receipt" />
+                        <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Send_Receipt__c}" id="Eventinfo_send_receipt" onchange="CreditOptions();">
+                        
+                        </apex:inputField>
+                        </apex:pageBlockSectionItem>
+                       </apex:pageBlockSection><apex:pageBlockSection columns="1" Id="SendReceiptSection">
+                        <apex:pageBlockSectionItem id="DispalyReceiptOrgInfo">
+                        <apex:outputLabel value="Organization Information" />
+                        <!--<apex:inputField value="{!CreateAnEvent.Receipt_Header__c}" id="Eventinfo_receipt_header"/> -->
+                        <!--<apex:inputtextarea value="{!CreateAnEvent.Receipt_Header__c}" id="Eventinfo_receipt_header" styleclass="Eventinfo_receipt_header"/>-->
+                        <apex:inputtextarea value="{!CreateAnEvent.CnP_PaaS_EVT__Organization_Information__c}" id="Eventinfo_Org_info" rows="7" cols="75" styleclass="Eventinfo_Org_info"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem id="DispalyReceiptThanks">
+                        <apex:outputLabel value="Thank You Message" />
+                        <apex:inputtextarea value="{!CreateAnEvent.CnP_PaaS_EVT__Thank_You_Message_Receipt__c}" id="Eventinfo_Thanks" styleclass="Eventinfo_Thanks" rows="7" cols="75"/>
+                        </apex:pageBlockSectionItem>
+                         <apex:pageBlockSectionItem id="DispalyReceiptTC">
+                        <apex:outputLabel value="Terms & Conditions" />
+                        <!--<apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Receipt_Terms_Condition__c}" id="Eventinfo_Receipt_Terms_Condition"/> -->
+                        <!--<apex:inputtextarea value="{!CreateAnEvent.CnP_PaaS_EVT__Receipt_Terms_Condition__c}" id="Eventinfo_Receipt_Terms_Condition" styleClass="Eventinfo_Receipt_Terms_Condition" />-->
+                        <apex:inputtextarea value="{!CreateAnEvent.CnP_PaaS_EVT__Receipt_Terms_Condition__c}" id="Eventinfo_Receipt_Terms_Condition" styleclass="Eventinfo_Receipt_Terms_Condition" rows="7" cols="75"/>
+                        </apex:pageBlockSectionItem>
+                      
+                 </apex:pageBlockSection> 
+                 <apex:pageBlockSection id="OptionalInfo" title="Optional Settings" columns="1" collapsible="false">
+                    <apex:pageBlockSectionItem id="RegFirstPage">
+                    <apex:outputlabel value="Hide First Page of Registration"/>
+                    <apex:inputField value="{!CreateAnEvent.CnP_PaaS_EVT__Hide_First_Page_of_Registration__c}" id="Eventinfo_RegFirstPage" />
+                    </apex:pageBlockSectionItem>
+                 </apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:form>
+<script type="text/javascript">
+  CKEDITOR.replace($(".EventSetInfo_soldout").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".EventSetInfo_ended").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".EventLayoutCustomInfo_TandC").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".Eventinfo_thanku").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".Eventinfo_declined").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".Eventinfo_receipt_header").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.replace($(".Eventinfo_Receipt_Terms_Condition").attr('id'),{sharedSpaces : { top : 'cke_topSpace', bottom : ' cke_bottomSpace' },sfdcLabels : { sfdcSwitchToText : { sfdcSwitchToTextAlt : 'Use plain text'}, CkeImageDialog : { uploadTab : 'Upload Image', infoTab_url : 'URL', error : 'Error:', uploadTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_desc : 'Description', infoTab_url_info : 'Example: http://www.mysite.com/myimage.jpg', btn_insert : 'Insert', missingUrlError : 'You must enter a URL', uploadTab_file : 'Select Image', infoTab_desc : 'Description', wrongFileTypeError : 'You can insert only .gif .jpeg and .png files.', btn_upadte : 'Update', infoTab : 'Web Address', title : 'Insert Image', infoTab_desc_info : 'Enter a description of the image for visually impaired users', uploadTab_file_info : 'Maximum size 1 MB. Only png, gif or jpeg'}}});
+  CKEDITOR.config.baseHref = '/apexpages/ckeditor/';  
+  CKEDITOR.config.filebrowserImageUploadUrl = '/_ui/common/request/servlet/RtaImageUploadServlet';  
+  CKEDITOR.config.contentsCss= ['/sCSS/24.0/sprites/1329331264000/Theme3/default/gc/HtmlDetailElem.css']; 
+  CKEDITOR.config.language = 'en-us';  
+  CKEDITOR.config.customConfig = '{!$Resource.CnP_PaaS_EVT__ckconfig}';
+  CKEDITOR.config.toolbar='Custome';
+ /*var editor2 = new FCKeditor($(".EventSetInfo_soldout").attr('id'), null, 160);
+ editor2.BasePath = '/apexpages/fckeditor/';
+ editor2.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor2.ToolbarSet = 'SalesforceBasic';
+ editor2.Config['SkinPath'] = editor2.BasePath + 'editor/skins/sfdc/';
+ editor2.Config['DefaultLanguage'] = 'en-us';
+ editor2.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme2/default/HtmlDetailElem.css'];
+ editor2.Config['ImageUpload'] = true;
+ editor2.Config['SitesPath'] =  '';
+ editor2.ReplaceTextarea();
+
+ var editor3 = new FCKeditor($(".EventSetInfo_ended").attr('id'), null, 160);
+ editor3.BasePath = '/apexpages/fckeditor/';
+ editor3.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor3.ToolbarSet = 'SalesforceBasic';
+ editor3.Config['SkinPath'] = editor3.BasePath + 'editor/skins/sfdc/';
+ editor3.Config['DefaultLanguage'] = 'en-us';
+ editor3.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme2/default/HtmlDetailElem.css'];
+ editor3.Config['ImageUpload'] = true;
+ editor3.Config['SitesPath'] =  '';
+ editor3.ReplaceTextarea();
+ 
+ var editor4 = new FCKeditor($(".EventLayoutCustomInfo_TandC").attr('id'), null, 160);
+ editor4.BasePath = '/apexpages/fckeditor/';
+ editor4.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor4.ToolbarSet = 'SalesforceBasic';
+ editor4.Config['SkinPath'] = editor4.BasePath + 'editor/skins/sfdc/';
+ editor4.Config['DefaultLanguage'] = 'en-us';
+ editor4.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme2/default/HtmlDetailElem.css'];
+ editor4.Config['ImageUpload'] = true;
+ editor4.Config['SitesPath'] =  '';
+ editor4.ReplaceTextarea();
+ 
+ var editor5 = new FCKeditor($(".Eventinfo_thanku").attr('id'), null, 160);
+ editor5.BasePath = '/apexpages/fckeditor/';
+ editor5.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor5.ToolbarSet = 'SalesforceBasic';
+ editor5.Config['SkinPath'] = editor5.BasePath + 'editor/skins/sfdc/';
+ editor5.Config['DefaultLanguage'] = 'en-us';
+ editor5.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme2/default/HtmlDetailElem.css'];
+ editor5.Config['ImageUpload'] = true;
+ editor5.Config['SitesPath'] =  '';
+ editor5.ReplaceTextarea();
+ 
+ var editor6 = new FCKeditor($(".Eventinfo_declined").attr('id'), null, 160);
+ editor6.BasePath = '/apexpages/fckeditor/';
+ editor6.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor6.ToolbarSet = 'SalesforceBasic';
+ editor6.Config['SkinPath'] = editor6.BasePath + 'editor/skins/sfdc/';
+ editor6.Config['DefaultLanguage'] = 'en-us';
+ editor6.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme2/default/HtmlDetailElem.css'];
+ editor6.Config['ImageUpload'] = true;
+ editor6.Config['SitesPath'] =  '';
+ editor6.ReplaceTextarea();
+ 
+  var editor7 = new FCKeditor($(".Eventinfo_receipt_header").attr('id'), null, 160);
+ editor7.BasePath = '/apexpages/fckeditor/';
+ editor7.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor7.ToolbarSet = 'SalesforceBasic';
+ editor7.Config['SkinPath'] = editor7.BasePath + 'editor/skins/sfdc/';
+ editor7.Config['DefaultLanguage'] = 'en-us';
+ editor7.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme2/default/HtmlDetailElem.css'];
+ editor7.Config['ImageUpload'] = true;
+ editor7.Config['SitesPath'] =  '';
+ editor7.ReplaceTextarea();
+ 
+  var editor8 = new FCKeditor($(".Eventinfo_Receipt_Terms_Condition").attr('id'), null, 160);
+ editor8.BasePath = '/apexpages/fckeditor/';
+ editor8.Config['CustomConfigurationsPath'] = '{!$Resource.CnP_PaaS_EVT__fckconfig}';
+ editor8.ToolbarSet = 'SalesforceBasic';
+ editor8.Config['SkinPath'] = editor8.BasePath + 'editor/skins/sfdc/';
+ editor8.Config['DefaultLanguage'] = 'en-us';
+ editor8.Config['EditorAreaStyles'] = ['/sCSS/20.0/sprites/1292453711000/Theme2/default/HtmlDetailElem.css'];
+ editor8.Config['ImageUpload'] = true;
+ editor8.Config['SitesPath'] =  '';
+ editor8.ReplaceTextarea();*/
+</script>
+</apex:page>

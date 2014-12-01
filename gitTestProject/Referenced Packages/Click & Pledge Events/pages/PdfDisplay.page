@@ -1,0 +1,17 @@
+<apex:page standardController="CnP_PaaS_EVT__Event__c" extensions="CnP_PaaS_EVT.DisplayPdf" >
+   
+       <apex:form > 
+           
+       <apex:outputPanel id="RefreshBlock_1">           
+           <B>PDF Name</B> : <span><a href="/servlet/servlet.FileDownload?file={!PdfId}" target="_blank">{!Pdfname}</a></span>           
+           <apex:commandButton value="Delete" action="{!delCont}" styleClass="Delete" rendered="{!if(PdfId!=null,true,false)}" reRender="RefreshBlock_1" status="statusIdForDelete" style="margin-left:25px;"> 
+           <apex:param name="contIdParam" value="{!PdfId}" assignTo="{!DeleteId}"/>
+           </apex:commandButton> 
+            <apex:actionstatus id="statusIdForDelete" startText="Please wait....">                                
+            <apex:facet name="stop">            
+            </apex:facet>  
+            </apex:actionstatus>    
+       </apex:outputPanel>
+      
+       </apex:form>
+</apex:page>

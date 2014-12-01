@@ -1,0 +1,50 @@
+<!-- 
+	Author : Vasu Takasi
+	Created On: 20th Jun 2013
+	Class Name:AccountLookupVC
+	Descrition : Used in AccountLookupVF
+ -->
+<apex:component controller="McaApp.AccountLookupController" allowDML="true" id="theComp" access="global">
+ <style>
+ 	.dataCol:HOVER {
+	/*background-color:#E8F8FF;*/
+} 
+ </style>
+  <apex:sectionHeader title="Account Edit" subtitle="New Account" />
+  <apex:pageMessages />
+	<apex:pageBlock mode="Edit" id="thePB">
+	  <apex:pageBlockSection title="Application Details" collapsible="false" id="thePBS1">
+	  	<apex:outputField value="{!objAccount.RecordTypeId}" />
+	  </apex:pageBlockSection>
+		<apex:pageBlockSection title="Account Information" collapsible="false" id="thePBS">
+			<apex:inputField value="{!objAccount.Name}" taborderhint="1"/>
+		</apex:pageBlockSection>
+		<apex:pageBlockSection title="Address Information" collapsible="false" id="thePBS2">
+			<apex:inputField value="{!objAccount.Billingstreet}" taborderhint="2"/>
+			<apex:inputField value="{!objAccount.Phone}" taborderhint="7"/>
+			<apex:inputField value="{!objAccount.Billingcity}" taborderhint="3"/>
+			<apex:inputField value="{!objAccount.website}" taborderhint="8"/>
+			<apex:inputField value="{!objAccount.Billingstate}" taborderhint="4"/>
+			<br/>
+			<apex:inputField value="{!objAccount.Billingpostalcode}" taborderhint="5"/>
+			<br/>
+			<apex:inputField value="{!objAccount.billingcountry}" taborderhint="6"/>
+		</apex:pageBlockSection>
+		<div style="text-align:center;">
+			<apex:commandButton value="Save" action="{!saveAccount}"  onclick="this.value='Saving...';this.className='btnDisabled';" reRender="theForm"  />
+		</div>	
+		<script type="text/javascript">
+ 	//function gotoParentpage(){
+ 		var accId="{!objAccount.Id}";
+ 		var accName="{!objAccount.Name}";
+ 		
+ 		if(accId != '' && accName != ''){
+ 			//alert(accId+'---'+accName);
+ 		  window.returnValue = accId+':#:'+accName;
+          self.close();
+         }
+ 	//}
+ </script>
+	</apex:pageBlock>
+	
+</apex:component>

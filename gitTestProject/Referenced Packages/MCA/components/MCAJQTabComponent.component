@@ -1,0 +1,13 @@
+<apex:component >
+
+  <script type="text/javascript">
+ 
+     t$ = jQuery.noConflict();
+     
+     t$(function () {
+      t$(".tablesorting").tablesorter();
+     });
+      
+  </script>
+
+</apex:component>

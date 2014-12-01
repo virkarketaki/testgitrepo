@@ -1,0 +1,31 @@
+<apex:page standardController="obj1__c">
+    <apex:form >
+    <script language="JavaScript1.2" src="/js/functions.js"></script>
+<script src="/soap/ajax/9.0/connection.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            function openGuestServiceWindow()
+            {
+            
+            sforce.connection.sessionId = '{!$Api.Session_ID}';
+         
+                try
+                {
+                    var qr = sforce.connection.query("select Id, ketaki__obj3__r.ketaki__obj4__c from ketaki__obj1__c");
+                    console.log(qr);
+                    alert('abc');
+                    var records = qr.getArray("records");
+                    alert(records);
+                    
+                }
+                catch (error)
+                {
+                    alert(error.faultstring);
+                }
+            
+            }
+            
+                    </script>
+    
+        <apex:commandButton value="Guest Services" onclick="openGuestServiceWindow();"/>
+    </apex:form>
+</apex:page>

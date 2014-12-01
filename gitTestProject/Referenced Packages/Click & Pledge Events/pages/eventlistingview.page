@@ -1,0 +1,130 @@
+<apex:page standardController="CnP_PaaS_EVT__Event_listing__c" extensions="CnP_PaaS_EVT.EventListing" >
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script> 
+<script>
+    $(document).ready(function(){   
+        var site_url = $(".publicsiteurl").text();        
+        $(".copysiteurl").html(site_url);
+    })
+     function confirmdelete()
+     {
+          if(confirm("Are you sure?")==true){
+                return true;
+          }else{
+                 return false;
+          }
+     }
+</script>
+  <apex:form id="CreateEventListingLayout">
+    <apex:pageBlock title="Event Listing Page Layout" id="block">   
+      
+      <apex:pageBlockButtons >    
+               <apex:commandButton value="Edit" action="{!edit}" styleClass="edit" ></apex:commandButton>
+               <apex:commandButton value="Delete" action="{!delete}" styleClass="delete" onclick="return confirmdelete();"></apex:commandButton>
+             <!--  <apex:commandButton action="{!cancel}" value="Cancel" onclick="return confirmCancel()"/> -->
+               <apex:commandLink value="Preview" action="{!preview}" target="_CnP_PaaS_Events_Listing_Preview" styleClass="btn" style="text-decoration:none"/>             
+       </apex:pageBlockButtons>  
+       
+       <apex:pageBlockSection id="EventLayoutmiddleInfo" title="Page Design" columns="1" collapsible="false">
+           <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Event Listing Name"/>
+                <apex:outputField value="{!CreateListing.Name}"  id="Eventlayoutinfo_Name" styleClass="listname" />           
+           </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="SalesForce Public Site URL"/>
+                 <apex:outputPanel > 
+                <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Public_site__c}" id="Eventlayoutinfo_public" styleClass="siteurl" /> 
+               </apex:outputPanel>
+           </apex:pageBlockSectionItem>
+           
+           <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Public Site URL"/>
+                 <apex:outputPanel > 
+                 <apex:outputtext value="{!CreateListing.CnP_PaaS_EVT__Public_Site_Url__c}" styleClass="publicsiteurl" style="display:none" />  
+                <apex:outputLabel styleClass="copysiteurl"></apex:outputLabel> 
+               </apex:outputPanel>
+           </apex:pageBlockSectionItem>    
+           <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__iFrame_Code__c}"  styleClass="siteurl" />                
+           <apex:pageBlockSectionItem >    
+                <apex:outputLabel value="Page Background"/>
+                <apex:outputPanel >
+                   <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Page_background__c}" styleClass="color {hash:true}" style="width:63px" id="Eventlayoutinfo_pagebg"/>
+                </apex:outputPanel> 
+           </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem >
+                
+                <apex:outputLabel value="Page Banner"/>
+                <apex:outputPanel >              
+               <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Upload_banner__c}" id="Eventlayoutinfo_banner" styleClass="eventbanner" />
+                </apex:outputPanel>        
+           </apex:pageBlockSectionItem> 
+       </apex:pageBlockSection>
+       <apex:pageBlockSection id="EventLayoutCustomInfo" title="Title & Information" columns="1" collapsible="false">
+         
+             <apex:pageBlockSectionItem id="HeaderItem">
+                <apex:outputLabel value="Background Color"/>                    
+                <apex:outputPanel >
+                                 <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Page_header__c}" id="Eventlayoutinfo_pageheaders"/>
+                </apex:outputPanel>
+           </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Description"/> 
+             <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Title_and_information__c}" id="EventLayoutCustomInfo_TitleInfo" styleClass="event_title_text" /> 
+           </apex:pageBlockSectionItem>
+           </apex:pageBlockSection>
+           <apex:pageBlockSection id="EventLayoutCustomSection" title="Main Section" columns="1" collapsible="false">
+            <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Title Background Color"></apex:outputLabel>
+                 <apex:outputPanel >
+                   <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Section_titleheader_background__c}" id="Eventlayoutinfo_HeaderBG"/>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Title">
+                     
+                </apex:outputLabel>
+                <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Section_header_title__c}" id="EventLayoutCustomInfo_sectiontitle" styleClass="event_sectiontitle_text" /> 
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Section Background Color"/>
+                <apex:outputPanel >
+                   <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Section_Headers_background__c}" id="Eventlayoutinfo_HeaderBG"/>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Description">
+                     
+                </apex:outputLabel>
+                <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Section_description__c}" id="EventLayoutCustomInfo_sectiondes" styleClass="event_sectiondes_text"/> 
+            </apex:pageBlockSectionItem>          
+           </apex:pageBlockSection>
+           <apex:pageBlockSection id="EventLayoutCustomInfo1" title="Footer" columns="1" collapsible="false">
+        <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="Background Color"/>
+                 <apex:outputPanel >
+                      <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Footer_background__c}" id="Eventlayoutinfo_FooterBG"/>
+                 </apex:outputPanel>
+           </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Description"/>
+             <apex:outputField value="{!CreateListing.CnP_PaaS_EVT__Footer_information__c}" id="EventLayoutCustomInfo_FooterInfo" styleClass="event_footer_text" /> 
+      </apex:pageBlockSectionItem>
+       </apex:pageBlockSection>
+    </apex:pageBlock>
+    <apex:pageBlock title="C&P Events Under This Listing">
+    <apex:pageblocktable value="{!EventsList}" var="Evn">
+    <apex:column headerValue="Event Name(Internal)"><a href="/{!Evn.Id}" target="_ListingEvent"><apex:outputText value="{!Evn.Name}"></apex:outputText></a></apex:column>
+    <apex:column headerValue="Event Name(External)"><apex:outputText value="{!Evn.CnP_PaaS_EVT__Event_title__c}"></apex:outputText></apex:column>
+    <!--<apex:column headerValue="Starts On"><apex:outputText value="{!Evn.CnP_PaaS_EVT__Start_date_and_time__c}"></apex:outputText></apex:column>
+    <apex:column headerValue="Ends On"><apex:outputText value="{!Evn.CnP_PaaS_EVT__End_date_and_time__c}"></apex:outputText></apex:column>
+    <apex:column headerValue="Publish On"><apex:outputText value="{!Evn.CnP_PaaS_EVT__Publish_date__c}"></apex:outputText></apex:column>-->
+    
+    
+    <apex:column headerValue="Starts On"><c:Timeformate date_time_value="{!Evn.CnP_PaaS_EVT__Start_date_and_time__c}"></c:Timeformate></apex:column>
+    <apex:column headerValue="Ends On"><c:Timeformate date_time_value="{!Evn.CnP_PaaS_EVT__End_date_and_time__c}"></c:Timeformate></apex:column>
+    <apex:column headerValue="Publish On"><c:Timeformate date_time_value="{!Evn.CnP_PaaS_EVT__Publish_date__c}"></c:Timeformate></apex:column>
+    
+    </apex:pageblocktable>
+    </apex:pageBlock>   
+ </apex:form>
+</apex:page>

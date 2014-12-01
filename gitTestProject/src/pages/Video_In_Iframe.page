@@ -1,0 +1,8 @@
+<apex:page >
+<apex:form >
+        <apex:outputText value="Displaying video using iframe"/>
+        
+        <apex:iframe width="560" height="315" src="https://www.youtube.com/embed/UTnjkfEAYXM" frameborder="5"/>
+    
+    </apex:form>
+</apex:page>

@@ -1,0 +1,217 @@
+<apex:page standardController="CnP_PaaS__CnPBatchUpload__c" extensions="CnP_PaaS.BatchUploadController" >
+<apex:includeScript value="{!URLFOR($Resource.CnP_PaaS__jquery)}"/>
+   <script type="text/javascript"> 
+      window.setInterval("refresh()",15000); 
+      $(".reloadpage").hide();
+      function refresh(){ 
+           
+           if(document.getElementById('uploadstatus').value!='completed')
+           {
+               $("#light").attr('style','display:block');
+               $("#fade").attr('style','display:block');
+               $(".reloadpage").show();
+               reloadpage();
+            
+           } 
+          
+      }
+      function closereload()
+      {
+          $(".reloadpage").show();
+          $("#light").attr('style','display:none');
+          $("#fade").attr('style','display:none'); 
+      } 
+      $(function(){
+          $(".video").mouseout(function(){
+             
+              $(this).fadeOut(8000);
+             
+          })
+          });
+      
+   </script>
+<style>
+ .helpLink {
+       position:relative;       
+    }
+
+    .video{
+      display:none;
+      width:12%;
+      height:auto;
+      background:#EEE;
+      border:1px solid #CCC;
+      position:absolute;     
+      z-index:10;
+      margin-left:950Px;
+    }
+
+body .bPageBlock .pbBody .labelCol {
+    color: #4A4A56;
+
+}
+.apexp .bPageBlock .detailList {
+    width: 800px;
+}
+    .mGrid {   
+        width: 100%;   
+       /* background-color: #fff;  */ 
+        margin: 5px 0 10px 0;   
+        /*border: solid 1px #525252;   */
+        border-collapse:collapse;   
+    }  
+    .mGrid td {   
+        padding: 2px;   
+        border: solid 1px #c1c1c1;   
+        color: #717171;   
+    }  
+    .mGrid th {   
+        padding: 4px 2px;   
+        color: #fff;   
+        background: #424242 url(grd_head.png) repeat-x top;   
+        border-left: solid 1px #525252;   
+        font-size: 0.9em;   
+    }  
+    .mGrid .alt { background: #fcfcfc url(grd_alt.png) repeat-x top; }  
+    .downbtn {
+    text-decoration:none;
+    border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    color: #666666;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-left: 5px;
+    padding: 4px 4px;background-color:#FFFFFF;
+
+    }
+ h1 {
+ 
+     font-size:15px;
+ }
+ .black_overlay{
+display: none;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 100%;
+height: 100%;
+background-color: black;
+z-index:1001;
+-moz-opacity: 0.8;
+opacity:.40;
+filter: alpha(opacity=80);
+}
+.white_content {
+display: none;
+position: absolute;
+text-align: center;
+top: 30%;
+left: 35%;
+/*width: 25%;
+height: 12%;*/
+padding: 16px;
+background-color: white;
+z-index:1002;
+overflow: auto;
+border-radius:20px;
+-webkit-border-radius: 20px;
+-moz-border-radius: 20px;
+border:1px solid #000;
+} 
+</style>
+<apex:form >
+              <apex:outputLink styleClass="helpLink" rendered="{!subTab['BatchUpload']['BatchUpload'].display=='true'}" >  
+                                
+                                 <Apex:outputLabel value="C&P Help for this Page" style="font-size:90%;margin-left:950Px;margin-right:5Px;" onmouseover="jQuery('[id$=Foo]').css('display','block');"/>      
+                                 <apex:image value="/s.gif" styleClass="helpIcon" onmouseover="jQuery('[id$=Foo]').css('display','block');" />                    
+                          </apex:outputLink>
+                          <apex:outputPanel id="Foo" styleClass="video"  >   
+                           <ul style="padding-left:5px;" >                       
+                              {!subTab['BatchUpload']['BatchUpload'].description} <br/> <br/>
+                           <Apex:outputpanel rendered="{!subTab['BatchUpload']['BatchUpload'].ActiveLink=='true'}"> 
+                              <li><a href="{!subTab['BatchUpload']['BatchUpload'].link}" target="_blank" >{!subTab['BatchUpload']['BatchUpload'].strlink}</a> <br/></li></Apex:outputpanel>  
+                           <Apex:outputpanel rendered="{!subTab['BatchUpload']['BatchUpload'].ActiveVideo=='true'}">    
+                             <li> <a href="{!subTab['BatchUpload']['BatchUpload'].video}"  onclick="window.open(this.href,'Video','height=300,width=400');return false;"  >{!subTab['BatchUpload']['BatchUpload'].strVideo}</a></li></Apex:outputpanel>  
+                           
+                           </ul>
+                          </apex:outputPanel>
+<apex:pageBlock id="reloadpage"> 
+  <apex:actionFunction name="reloadpage" action="{!batchupdate}" reRender="reloadpage" oncomplete="closereload();"/>
+  
+           <div id="light" class="white_content">   
+                <apex:image value="{!URLFOR($Resource.CnP_PaaS__LoaderImage)}" title="we are processing your request. please wait..." style="height: 15px;width: 20px;"  /><br/>
+                <apex:outputlabel value="we are processing your request. please wait...                  "  />
+           </div>
+           <div id="fade" class="black_overlay"></div>
+
+<apex:pageBlockSection id="reloadpage">
+
+<apex:outputLabel ><h1 >Summary</h1></apex:outputLabel><br/>
+<apex:outputField value="{!batch.Name}"/><br/>
+<apex:outputField value="{!batch.CnP_PaaS__Username__c}"/><br/>
+
+<apex:outputField value="{!batch.CnP_PaaS__FileName__c}"  >
+
+
+</apex:outputField><br/>
+<apex:outputField value="{!batch.CnP_PaaS__AuthorizeTransactions__c}"/><br/>
+<apex:outputField value="{!batch.CnP_PaaS__DeclineTransactions__c}"/><br/>
+<apex:outputField value="{!batch.CnP_PaaS__Errors__c}"/><br/>
+<apex:outputField value="{!batch.CnP_PaaS__Upload_Status__c}" /><br/>
+<input type="hidden" id="uploadstatus" value="{!batch.CnP_PaaS__Upload_Status__c}"/>
+
+</apex:pageBlockSection>
+
+<div style="clear:both;"></div>
+<apex:outputLabel ><h1 style="margin-left:10px;padding-top:10px;line-height:30px;">Processed Data (Processed-{!CnP_PaaS__CnPBatchUpload__c.Name}.xls)</h1></apex:outputLabel>
+<span>
+<apex:outputLink value="/apex/batchdownload?id={!sampleId}" styleClass="downbtn" target="_blank">Download</apex:outputLink>
+</span>
+<span>
+<apex:outputLink styleClass="downbtn reloadpage" onclick="javascript:location.reload(true);" >Refresh</apex:outputLink>
+</span>
+<span>
+
+<apex:commandbutton action="{!Backbatch}" value="Back" />
+</span>
+<br/>
+   
+    <table class="mGrid">
+    <thead>
+    <tr class="mGrid">    
+    <apex:repeat value="{!ListValues}" var="lv">
+       <th><apex:outputText value="{!lv.fileheader}" styleClass="mGrid"></apex:outputText></th>
+    </apex:repeat>
+    </tr>
+    </thead>
+    <tbody>  
+   <apex:variable value="1" var="rowNum"/> 
+   <apex:outputPanel ></apex:outputPanel>
+   <apex:repeat value="{!filevalues}" var="fv" rendered="{!IF(VALUE(rowNum) < filevalues.size && VALUE(rowNum) != filevalues.size,true,false)}">
+       <apex:outputPanel rendered="{!IF(VALUE(rowNum) < filevalues.size && VALUE(rowNum) != filevalues.size,true,false)}">
+         <tr>         
+           <apex:variable var="rowNum1" value="0"/>
+           <apex:repeat value="{!ListValues}" var="lv1" >
+               <td>
+                <apex:outputPanel rendered="{!IF(VALUE(rowNum1) < ListValues.size && VALUE(rowNum1) != ListValues.size,true,false)}">               
+                  <apex:outputText value="{!acctIdToOppsMap[rowNum][VALUE(rowNum1)].filevalue}" rendered="{!If(ListValues.size-2!=VALUE(rowNum1),true,false)}"></apex:outputText>
+                  <apex:outputText value=":{!acctIdToOppsMap[rowNum][VALUE(rowNum1)].filevalue}"  rendered="{!If(ListValues.size-2==VALUE(rowNum1),true,false)}"></apex:outputText>
+                </apex:outputPanel>
+              </td>
+               <apex:variable var="rowNum1" value="{!VALUE(rowNum1) + 1}"/>
+             </apex:repeat>          
+           
+        </tr>
+        <apex:variable var="rowNum" value="{!VALUE(rowNum) + 1}"/>
+        </apex:outputPanel>
+   </apex:repeat>
+       
+    </tbody>
+    </table>
+
+  </apex:pageBlock>
+
+  </apex:form>
+ 
+</apex:page>

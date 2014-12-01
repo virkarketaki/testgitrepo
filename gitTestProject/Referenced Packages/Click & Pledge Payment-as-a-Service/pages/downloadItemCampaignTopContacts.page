@@ -1,0 +1,25 @@
+<apex:page controller="CnP_PaaS.Download_Item_Campaign_TopTen_Contacts" contentType="application/x-excel#Item_campaign_contact_Amount.xls" standardStylesheets="false" language="english" readOnly="true"> 
+<h1>Campaign Contacts Top 10 $</h1> 
+Download Date and Time : <apex:outputLabel value="{!Dvalue}"></apex:outputLabel>
+  <apex:pageBlock >  
+      <apex:pageBlockTable value="{!Results}" var="ar">
+      
+        <apex:column headerValue="Campaign" value="CnP-{!ar.campaign}"/>
+        <apex:column headerValue="Serial #" value="{!ar.Sno}" style="text-align:center;"/>  
+         
+          <apex:column headerValue="Contact Name" >
+            <apex:outputlink value="/{!ar.contactid}" target="_blank">
+            <apex:outputLabel value="{!ar.AccName}" style="color: blue;cursor:pointer;"></apex:outputLabel>
+            </apex:outputlink>
+            </apex:column>  
+            <apex:column headerValue="Contact Email" value="{!ar.contactEmail}"/> 
+            <apex:column headerValue="Contact Phone" value=":{!ar.contactphone}" />
+          <apex:column headerValue="Total Amount">
+           <apex:outputText value="{0, number,$###,###,##0.00}">
+            <apex:param value="{!ar.TotalAmount}" id="TotalAmount" />
+            </apex:outputText></apex:column> 
+      </apex:pageBlockTable>
+       {!IF(ResultSet.size==0,"NO records available.",NULL)} 
+      </apex:pageBlock>
+      
+      </apex:page>

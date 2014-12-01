@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Click %26 Pledge PaaS Class Library</fullName>
+    <apiAccessLevel>Unrestricted</apiAccessLevel>
+    <namespacePrefix>CnP_IaaS</namespacePrefix>
+    <types>
+        <members>PaaS_Class</members>
+        <members>PaaS_Cloud</members>
+        <members>PaaS_Cloud_Response</members>
+        <members>TestClass_PaaS_Class</members>
+        <name>ApexClass</name>
+    </types>
+    <version>31.0</version>
+</Package>
