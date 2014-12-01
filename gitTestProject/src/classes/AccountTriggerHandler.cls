@@ -2,6 +2,7 @@ public with sharing class AccountTriggerHandler
 {
     public AccountTriggerHandler()
     {
+    	//account trigger
     }
     
     public void fetchWeekNumber(Account acc)
