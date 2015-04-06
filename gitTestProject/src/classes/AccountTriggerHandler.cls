@@ -7,7 +7,7 @@ public with sharing class AccountTriggerHandler
     
     public void fetchWeekNumber(Account acc)
     {
-        Boolean flag = false;
+        Boolean flag = false
         Date dt;
         	
         Date SlaDt = acc.CreatedDate.date();
